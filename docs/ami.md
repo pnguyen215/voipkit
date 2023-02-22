@@ -1,0 +1,1 @@
+# Asterisk Manager Interface (AMI)

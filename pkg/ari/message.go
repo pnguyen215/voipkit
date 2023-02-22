@@ -12,20 +12,20 @@ import (
 )
 
 // Message AMI message structure
-type Message struct {
+type Message struct { // DONE
 	header textproto.MIMEHeader
 	mu     sync.RWMutex
 }
 
 // NewAction create action message
-func NewAction(name string) *Message {
+func NewAction(name string) *Message { // DONE
 	a := NewMessage()
 	a.AddField("Action", name)
 	return a
 }
 
 // NewMessage creates new empty message
-func NewMessage() *Message {
+func NewMessage() *Message { // DONE
 	h := make(textproto.MIMEHeader)
 	return newMessage(h)
 }
@@ -56,19 +56,19 @@ func FromJSON(jsonString string) (*Message, error) {
 }
 
 // String return AMI message as string
-func (m *Message) String() string {
+func (m *Message) String() string { // DONE
 	buf := m.toByteBuf()
 	return buf.String()
 }
 
 // Bytes return AMI message as byte array
-func (m *Message) Bytes() []byte {
+func (m *Message) Bytes() []byte { // DONE
 	buf := m.toByteBuf()
 	return buf.Bytes()
 }
 
 // Field returns first value associated with the given key
-func (m *Message) Field(key string) string {
+func (m *Message) Field(key string) string { // DONE
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	return m.header.Get(key)
@@ -97,43 +97,43 @@ func (m *Message) Var(key string) (string, bool) {
 }
 
 // FieldValues returns all values associated with the given key
-func (m *Message) FieldValues(key string) []string {
+func (m *Message) FieldValues(key string) []string { // DONE
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	return m.header.Values(key)
 }
 
 // AddField set new field from pair key: value
-func (m *Message) AddField(key, value string) {
+func (m *Message) AddField(key, value string) { // DONE
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.header.Add(key, value)
 }
 
 // DelField deletes fields associated with key
-func (m *Message) DelField(key string) {
+func (m *Message) DelField(key string) { // DONE
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.header.Del(key)
 }
 
 // IsEvent returns true if AMI message is Event
-func (m *Message) IsEvent() bool {
+func (m *Message) IsEvent() bool { // DONE
 	return m.Field("Event") != ""
 }
 
 // IsResponse returns true if AMI message is Response
-func (m *Message) IsResponse() bool {
+func (m *Message) IsResponse() bool { // DONE
 	return m.Field("Response") != ""
 }
 
 // IsSuccess returns true if AMI message is Response with value success
-func (m *Message) IsSuccess() bool {
+func (m *Message) IsSuccess() bool { // DONE
 	return strings.EqualFold(m.Field("Response"), "success")
 }
 
 // AddActionID generate random action id and insert into message
-func (m *Message) AddActionID() {
+func (m *Message) AddActionID() { // DONE
 	b := make([]byte, 12)
 	if _, err := rand.Read(b); err == nil {
 		m.AddField("ActionID", fmt.Sprintf("%x", b))
@@ -180,19 +180,19 @@ func varsSplit(value string) (string, string) {
 }
 
 // ActionID get AMI message action id as string
-func (m *Message) ActionID() string {
+func (m *Message) ActionID() string { // DONE
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	return m.header.Get("actionid")
 }
 
-func newMessage(header textproto.MIMEHeader) *Message {
+func newMessage(header textproto.MIMEHeader) *Message { // DONE
 	m := &Message{}
 	m.header = header
 	return m
 }
 
-func (m *Message) toByteBuf() bytes.Buffer {
+func (m *Message) toByteBuf() bytes.Buffer { // DONE
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	var buf bytes.Buffer
