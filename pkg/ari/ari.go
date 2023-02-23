@@ -24,13 +24,13 @@ type AriClient struct {
 	err    chan error
 }
 
-func NewClient(conn net.Conn, username, password string) (*AriClient, error) {
+func NewClient(conn net.Conn, username, password string) (*AriClient, error) { // DONE
 	return NewClientWith(conn, username, password, NetworkTimeoutAfterSeconds)
 }
 
 // NewClientWith connect to Asterisk Server using net connection and try to login
 // using username, password and timeout after seconds. Create new Asterisk Manager Interface (AMI) and return client or error
-func NewClientWith(conn net.Conn, username, password string, timeout time.Duration) (*AriClient, error) {
+func NewClientWith(conn net.Conn, username, password string, timeout time.Duration) (*AriClient, error) { // DONE
 	client, ctx := newClient(conn)
 
 	err := client.readPrompt(ctx, timeout)
@@ -51,19 +51,19 @@ func NewClientWith(conn net.Conn, username, password string, timeout time.Durati
 
 // AllEvents subscribes to any AMI message received from Asterisk server
 // returns send-only channel or nil
-func (c *AriClient) AllEvents() <-chan *Message {
+func (c *AriClient) AllEvents() <-chan *Message { // DONE
 	return c.subs.subscribe(keyAnyMessage)
 }
 
 // OnEvent subscribes by event by name (case insensitive) and
 // returns send-only channel or nil
-func (c *AriClient) OnEvent(name string) <-chan *Message {
+func (c *AriClient) OnEvent(name string) <-chan *Message { // DONE
 	return c.subs.subscribe(name)
 }
 
 // Action sends AMI message to Asterisk server and returns send-only
 // response channel on nil
-func (c *AriClient) Action(message *Message) bool {
+func (c *AriClient) Action(message *Message) bool { // DONE
 	if message.ActionID() == "" {
 		message.AddActionID()
 	}
@@ -76,7 +76,7 @@ func (c *AriClient) Action(message *Message) bool {
 }
 
 // Close client and destroy all subscriptions to events and action responses
-func (c *AriClient) Close() {
+func (c *AriClient) Close() { // DONE
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.cancel()
@@ -87,13 +87,13 @@ func (c *AriClient) Close() {
 }
 
 // Error returns channel for error and signals that client should be probably restarted
-func (c *AriClient) Error() <-chan error {
+func (c *AriClient) Error() <-chan error { // DONE
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return c.err
 }
 
-func newClient(conn net.Conn) (*AriClient, context.Context) {
+func newClient(conn net.Conn) (*AriClient, context.Context) { // DONE
 	ctx, cancel := context.WithCancel(context.Background())
 	client := &AriClient{
 		reader: textproto.NewReader(bufio.NewReader(conn)),
@@ -104,7 +104,7 @@ func newClient(conn net.Conn) (*AriClient, context.Context) {
 	return client, ctx
 }
 
-func (c *AriClient) readPrompt(parentCtx context.Context, timeout time.Duration) error {
+func (c *AriClient) readPrompt(parentCtx context.Context, timeout time.Duration) error { // DONE
 	ctx, cancel := context.WithTimeout(parentCtx, timeout)
 	defer cancel()
 
@@ -138,7 +138,7 @@ func (c *AriClient) readPrompt(parentCtx context.Context, timeout time.Duration)
 	return nil
 }
 
-func (c *AriClient) login(parentCtx context.Context, timeout time.Duration, username, password string) error {
+func (c *AriClient) login(parentCtx context.Context, timeout time.Duration, username, password string) error { // DONE
 	ctx, cancel := context.WithTimeout(parentCtx, timeout)
 	defer cancel()
 
@@ -179,7 +179,7 @@ func (c *AriClient) login(parentCtx context.Context, timeout time.Duration, user
 	return nil
 }
 
-func (c *AriClient) initReader(ctx context.Context) {
+func (c *AriClient) initReader(ctx context.Context) { // DONE
 	c.subs = newPubsub()
 	c.err = make(chan error)
 
@@ -208,13 +208,13 @@ func (c *AriClient) initReader(ctx context.Context) {
 	}()
 }
 
-func (c *AriClient) publish(msg *Message) {
+func (c *AriClient) publish(msg *Message) { // DONE
 	if msg != nil {
 		c.subs.publish(msg)
 	}
 }
 
-func (c *AriClient) emitError(err error) {
+func (c *AriClient) emitError(err error) { // DONE
 	go func(err error) {
 		c.mu.Lock()
 		defer c.mu.Unlock()
@@ -227,7 +227,7 @@ func (c *AriClient) emitError(err error) {
 	}(err)
 }
 
-func (c *AriClient) write(bytes []byte) error {
+func (c *AriClient) write(bytes []byte) error { // DONE
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if _, err := c.writer.Write(bytes); err != nil {
@@ -239,7 +239,7 @@ func (c *AriClient) write(bytes []byte) error {
 	return nil
 }
 
-func (c *AriClient) read() (*Message, error) {
+func (c *AriClient) read() (*Message, error) { // DONE
 	headers, err := c.reader.ReadMIMEHeader()
 	if err != nil {
 		if err.Error() == ErrorEOF || err.Error() == ErrorIO {

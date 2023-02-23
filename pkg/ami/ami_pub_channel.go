@@ -68,7 +68,7 @@ func (k *AMIPubSubQueue) Publish(message *AMIMessage) bool {
 		return false
 	}
 
-	ch, ok := k.Message[config.KEY_ID_REF]
+	ch, ok := k.Message[config.AmiPubSubKeyRef]
 
 	if ok {
 		go func(ch PubChannel) {
@@ -76,7 +76,7 @@ func (k *AMIPubSubQueue) Publish(message *AMIMessage) bool {
 		}(ch)
 	}
 
-	name := strings.ToLower(message.Field(strings.ToLower(config.ASTERISK_EVENT_KEY)))
+	name := strings.ToLower(message.Field(strings.ToLower(config.AmiEventKey)))
 
 	if name != "" {
 		if ch, ok := k.Message[name]; ok {

@@ -16,7 +16,7 @@ import (
 
 func NewActionWith(name string) *AMIMessage {
 	a := NewMessage()
-	a.AddField(config.ASTERISK_ACTION_KEY, name)
+	a.AddField(config.AmiActionKey, name)
 	return a
 }
 
@@ -33,9 +33,9 @@ func ofMessage(header textproto.MIMEHeader) *AMIMessage {
 
 // Login action by message
 func LoginWith(username, password string) *AMIMessage {
-	a := NewActionWith(config.ASTERISK_LOGIN_KEY)
-	a.AddField(config.ASTERISK_USERNAME_FIELD, username)
-	a.AddField(config.ASTERISK_SECRET_FIELD, password)
+	a := NewActionWith(config.AmiLoginKey)
+	a.AddField(config.AmiUsernameField, username)
+	a.AddField(config.AmiSecretField, password)
 	return a
 }
 
@@ -79,7 +79,7 @@ func (k *AMIMessage) AddFields(fields map[string]string) {
 
 // Added new Action-Id and insert into message
 func (k *AMIMessage) AddActionIdWith(id string) {
-	k.AddField(config.ASTERISK_ACTION_ID_KEY, id)
+	k.AddField(config.AmiActionIdKey, id)
 }
 
 // Added Action-id generated random
@@ -97,7 +97,7 @@ func (k *AMIMessage) AddActionId() {
 func (k *AMIMessage) GetActionId() string {
 	k.Mutex.RLock()
 	defer k.Mutex.RUnlock()
-	return k.Header.Get(strings.ToLower(config.ASTERISK_ACTION_ID_KEY))
+	return k.Header.Get(strings.ToLower(config.AmiActionIdKey))
 }
 
 // Remove fields associated with the given key
@@ -147,17 +147,17 @@ func (k *AMIMessage) Bytes() []byte {
 
 // Return true if the AMI message is event type
 func (k *AMIMessage) IsEvent() bool {
-	return k.Field(config.ASTERISK_EVENT_KEY) != ""
+	return k.Field(config.AmiEventKey) != ""
 }
 
 // Return true if the AMI message is response type
 func (k *AMIMessage) IsResponse() bool {
-	return k.Field(config.ASTERISK_RESPONSE_KEY) != ""
+	return k.Field(config.AmiResponseKey) != ""
 }
 
 // Return true if the AMI message is response type with value success
 func (k *AMIMessage) IsSuccess() bool {
-	return strings.EqualFold(k.Field(config.ASTERISK_RESPONSE_KEY), config.ASTERISK_STATUS_SUCCESS_KEY)
+	return strings.EqualFold(k.Field(config.AmiResponseKey), config.AmiStatusSuccessKey)
 }
 
 func (k *AMIMessage) PreVars() []string {
