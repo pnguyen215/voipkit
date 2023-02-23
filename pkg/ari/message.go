@@ -31,7 +31,7 @@ func NewMessage() *Message { // DONE
 }
 
 // FromJSON creates message from JSON string
-func FromJSON(jsonString string) (*Message, error) {
+func FromJSON(jsonString string) (*Message, error) { // DONE
 	var jb interface{}
 	_message := newMessage(textproto.MIMEHeader{})
 
@@ -77,7 +77,7 @@ func (m *Message) Field(key string) string { // DONE
 // Var search in AMI message fields Variable and ChanVariable for a value
 // of the type key=value or just key. If found, returns value as string
 // and true. Variable name is case sensitive.
-func (m *Message) Var(key string) (string, bool) {
+func (m *Message) Var(key string) (string, bool) { // DONE
 	vars := append(m.FieldValues("variable"), m.FieldValues("chanvariable")...)
 	vars = append(vars, m.FieldValues("ParkeeChanVariable")...)
 	vars = append(vars, m.FieldValues("OrigTransfererChanVariable")...)
@@ -141,7 +141,7 @@ func (m *Message) AddActionID() { // DONE
 }
 
 // JSON returns AMI message as JSON string
-func (m *Message) JSON() string {
+func (m *Message) JSON() string { // DONE
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	data := make(map[string]interface{})
@@ -161,7 +161,7 @@ func (m *Message) JSON() string {
 	return ""
 }
 
-func varsMap(values []string) map[string]string {
+func varsMap(values []string) map[string]string { // DONE
 	res := make(map[string]string)
 	for _, value := range values {
 		k, v := varsSplit(value)
@@ -170,7 +170,7 @@ func varsMap(values []string) map[string]string {
 	return res
 }
 
-func varsSplit(value string) (string, string) {
+func varsSplit(value string) (string, string) { // DONE
 	split := strings.SplitN(value, "=", 2)
 	key := split[0]
 	if len(split) == 1 {
@@ -208,7 +208,7 @@ func (m *Message) toByteBuf() bytes.Buffer { // DONE
 	return buf
 }
 
-func loginMessage(username, password string) *Message {
+func loginMessage(username, password string) *Message { // DONE
 	action := NewAction("Login")
 	action.AddField("Username", username)
 	action.AddField("Secret", password)

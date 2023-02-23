@@ -3,12 +3,16 @@ package ami
 import (
 	"bytes"
 	"crypto/rand"
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/textproto"
+	"reflect"
 	"strings"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/model"
+	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 type amiMessage model.AMIMessage
@@ -28,6 +32,14 @@ func ofMessage(header textproto.MIMEHeader) *amiMessage {
 	m := &amiMessage{}
 	m.Header = header
 	return m
+}
+
+// Login action by message
+func LoginWith(username, password string) *amiMessage {
+	a := NewActionWith(config.ASTERISK_LOGIN_KEY)
+	a.AddField(config.ASTERISK_USERNAME_FIELD, username)
+	a.AddField(config.ASTERISK_SECRET_FIELD, password)
+	return a
 }
 
 // Field return first value associated with then given key
@@ -149,4 +161,99 @@ func (k *amiMessage) IsResponse() bool {
 // Return true if the AMI message is response type with value success
 func (k *amiMessage) IsSuccess() bool {
 	return strings.EqualFold(k.Field(config.ASTERISK_RESPONSE_KEY), config.ASTERISK_STATUS_SUCCESS_KEY)
+}
+
+func (k *amiMessage) PreVars() []string {
+	vars := append(k.FieldValues("variable"), k.FieldValues("chanvariable")...)
+	vars = append(vars, k.FieldValues("ParkeeChanVariable")...)
+	vars = append(vars, k.FieldValues("OrigTransfererChanVariable")...)
+	vars = append(vars, k.FieldValues("SecondTransfererChanVariable")...)
+	vars = append(vars, k.FieldValues("TransfereeChanVariable")...)
+	vars = append(vars, k.FieldValues("TransferTargetChanVariable")...)
+	vars = append(vars, k.FieldValues("SpyeeChanVariable")...)
+	vars = append(vars, k.FieldValues("SpyerChanVariable")...)
+
+	return vars
+}
+
+// Var search in AMI message fields Variable and ChanVariable for a value
+// of the type key=value or just key. If found, returns value as string
+// and true. Variable name is case sensitive.
+func (k *amiMessage) Var(key string) (string, bool) {
+	return k.VarWith(key, k.PreVars())
+}
+
+func (k *amiMessage) VarWith(key string, vars []string) (string, bool) {
+	if len(vars) == 0 || key == "" {
+		return key, false
+	}
+
+	for _, value := range vars {
+		e, v := utils.VarsSplit(value)
+		if e == key || strings.EqualFold(e, key) {
+			return v, true
+		}
+	}
+
+	return "", false
+}
+
+// Return AMI message as interface{}
+func (k *amiMessage) ProduceMessage() map[string]interface{} {
+	k.Mutex.RLock()
+	defer k.Mutex.RUnlock()
+
+	data := make(map[string]interface{})
+
+	for key, value := range k.Header {
+		field := strings.ToLower(key)
+
+		if len(value) == 1 {
+			data[field] = value[0]
+		} else {
+			data[field] = utils.VarsMap(value)
+		}
+	}
+
+	return data
+}
+
+// Return AMI messages as Json string
+func (k *amiMessage) Json() string {
+	result, err := json.Marshal(k.ProduceMessage())
+
+	if err != nil {
+		log.Fatal(err.Error())
+		return ""
+	}
+
+	return string(result)
+}
+
+// Create AMI message from json string
+func FromJson(jsonString string) (*amiMessage, error) {
+	var builder interface{}
+
+	message := ofMessage(textproto.MIMEHeader{})
+
+	err := json.Unmarshal([]byte(jsonString), &builder)
+
+	if err != nil {
+		log.Fatal(err.Error())
+		return message, err
+	}
+
+	for k, v := range builder.(map[string]interface{}) {
+		refType := reflect.ValueOf(v)
+		switch refType.Kind() {
+		case reflect.Map:
+			for v_name, v_val := range v.(map[string]interface{}) {
+				message.AddField(k, fmt.Sprintf("%s=%v", v_name, v_val))
+			}
+		default:
+			message.AddField(k, fmt.Sprintf("%v", v))
+		}
+	}
+
+	return message, nil
 }
