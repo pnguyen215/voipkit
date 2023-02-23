@@ -9,6 +9,10 @@ import (
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
 )
 
+func NewAmi(conn net.Conn, username, password string) (*AMI, error) {
+	return NewAmiWith(conn, username, password, config.NetworkTimeoutAfterSeconds)
+}
+
 // NewAmiWith connect to Asterisk Server using net connection and try to login
 // using username, password and timeout after seconds. Create new Asterisk Manager Interface (AMI) and return client or error
 func NewAmiWith(conn net.Conn, username, password string, timeout time.Duration) (*AMI, error) {
@@ -28,10 +32,6 @@ func NewAmiWith(conn net.Conn, username, password string, timeout time.Duration)
 
 	client.SetReader(ctx)
 	return client, nil
-}
-
-func NewAmi(conn net.Conn, username, password string) (*AMI, error) {
-	return NewAmiWith(conn, username, password, config.NetworkTimeoutAfterSeconds)
 }
 
 func (c *AMI) ReadPrompt(parentCtx context.Context, timeout time.Duration) error {
