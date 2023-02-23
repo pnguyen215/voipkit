@@ -11,31 +11,28 @@ import (
 	"strings"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/model"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
-type amiMessage model.AMIMessage
-
-func NewActionWith(name string) *amiMessage {
+func NewActionWith(name string) *AMIMessage {
 	a := NewMessage()
 	a.AddField(config.ASTERISK_ACTION_KEY, name)
 	return a
 }
 
-func NewMessage() *amiMessage {
+func NewMessage() *AMIMessage {
 	header := make(textproto.MIMEHeader)
 	return ofMessage(header)
 }
 
-func ofMessage(header textproto.MIMEHeader) *amiMessage {
-	m := &amiMessage{}
+func ofMessage(header textproto.MIMEHeader) *AMIMessage {
+	m := &AMIMessage{}
 	m.Header = header
 	return m
 }
 
 // Login action by message
-func LoginWith(username, password string) *amiMessage {
+func LoginWith(username, password string) *AMIMessage {
 	a := NewActionWith(config.ASTERISK_LOGIN_KEY)
 	a.AddField(config.ASTERISK_USERNAME_FIELD, username)
 	a.AddField(config.ASTERISK_SECRET_FIELD, password)
@@ -43,50 +40,50 @@ func LoginWith(username, password string) *amiMessage {
 }
 
 // Field return first value associated with then given key
-func (k *amiMessage) Field(key string) string {
+func (k *AMIMessage) Field(key string) string {
 	k.Mutex.RLock()
 	defer k.Mutex.RUnlock()
 	return k.Header.Get(key)
 }
 
 // Return first value associated of field by the given key
-func (k *amiMessage) GetFirstValueByField(key string) string {
+func (k *AMIMessage) GetFirstValueByField(key string) string {
 	return k.Field(key)
 }
 
 // Field Values return all values associated with the given key
-func (k *amiMessage) FieldValues(key string) []string {
+func (k *AMIMessage) FieldValues(key string) []string {
 	k.Mutex.RLock()
 	defer k.Mutex.RUnlock()
 	return k.Header.Values(key)
 }
 
 // Return all value associated by the given key
-func (k *amiMessage) GetValuesByField(key string) []string {
+func (k *AMIMessage) GetValuesByField(key string) []string {
 	return k.FieldValues(key)
 }
 
 // Added new pair header as form key:value
-func (k *amiMessage) AddField(key, value string) {
+func (k *AMIMessage) AddField(key, value string) {
 	k.Mutex.Lock()
 	defer k.Mutex.Unlock()
 	k.Header.Add(key, value)
 }
 
 // Added collection pair header as form key:value
-func (k *amiMessage) AddFields(fields map[string]string) {
+func (k *AMIMessage) AddFields(fields map[string]string) {
 	for key, value := range fields {
 		k.AddField(key, value)
 	}
 }
 
 // Added new Action-Id and insert into message
-func (k *amiMessage) AddActionIdWith(id string) {
+func (k *AMIMessage) AddActionIdWith(id string) {
 	k.AddField(config.ASTERISK_ACTION_ID_KEY, id)
 }
 
 // Added Action-id generated random
-func (k *amiMessage) AddActionId() {
+func (k *AMIMessage) AddActionId() {
 	b := make([]byte, 12)
 
 	_, err := rand.Read(b)
@@ -97,28 +94,28 @@ func (k *amiMessage) AddActionId() {
 }
 
 // Return AMI message Action Id as string
-func (k *amiMessage) GetActionId() string {
+func (k *AMIMessage) GetActionId() string {
 	k.Mutex.RLock()
 	defer k.Mutex.RUnlock()
 	return k.Header.Get(strings.ToLower(config.ASTERISK_ACTION_ID_KEY))
 }
 
 // Remove fields associated with the given key
-func (k *amiMessage) RemoveField(key string) {
+func (k *AMIMessage) RemoveField(key string) {
 	k.Mutex.Lock()
 	defer k.Mutex.Unlock()
 	k.Header.Del(key)
 }
 
 // Remove fields associated with the collection given keys
-func (k *amiMessage) RemoveFields(keys ...string) {
+func (k *AMIMessage) RemoveFields(keys ...string) {
 	for _, key := range keys {
 		k.RemoveField(key)
 	}
 }
 
 // Return new bytes buffer
-func (k *amiMessage) toBytesBuffer() bytes.Buffer {
+func (k *AMIMessage) toBytesBuffer() bytes.Buffer {
 	k.Mutex.RLock()
 	defer k.Mutex.RUnlock()
 	var buffer bytes.Buffer
@@ -137,33 +134,33 @@ func (k *amiMessage) toBytesBuffer() bytes.Buffer {
 }
 
 // Return headers Asterisk Manager Interface (AMI) as string
-func (k *amiMessage) String() string {
+func (k *AMIMessage) String() string {
 	_buffer := k.toBytesBuffer()
 	return _buffer.String()
 }
 
 // Return headers Asterisk Manager Interface (AMI) as byte array
-func (k *amiMessage) Bytes() []byte {
+func (k *AMIMessage) Bytes() []byte {
 	_buffer := k.toBytesBuffer()
 	return _buffer.Bytes()
 }
 
 // Return true if the AMI message is event type
-func (k *amiMessage) IsEvent() bool {
+func (k *AMIMessage) IsEvent() bool {
 	return k.Field(config.ASTERISK_EVENT_KEY) != ""
 }
 
 // Return true if the AMI message is response type
-func (k *amiMessage) IsResponse() bool {
+func (k *AMIMessage) IsResponse() bool {
 	return k.Field(config.ASTERISK_RESPONSE_KEY) != ""
 }
 
 // Return true if the AMI message is response type with value success
-func (k *amiMessage) IsSuccess() bool {
+func (k *AMIMessage) IsSuccess() bool {
 	return strings.EqualFold(k.Field(config.ASTERISK_RESPONSE_KEY), config.ASTERISK_STATUS_SUCCESS_KEY)
 }
 
-func (k *amiMessage) PreVars() []string {
+func (k *AMIMessage) PreVars() []string {
 	vars := append(k.FieldValues("variable"), k.FieldValues("chanvariable")...)
 	vars = append(vars, k.FieldValues("ParkeeChanVariable")...)
 	vars = append(vars, k.FieldValues("OrigTransfererChanVariable")...)
@@ -179,11 +176,11 @@ func (k *amiMessage) PreVars() []string {
 // Var search in AMI message fields Variable and ChanVariable for a value
 // of the type key=value or just key. If found, returns value as string
 // and true. Variable name is case sensitive.
-func (k *amiMessage) Var(key string) (string, bool) {
+func (k *AMIMessage) Var(key string) (string, bool) {
 	return k.VarWith(key, k.PreVars())
 }
 
-func (k *amiMessage) VarWith(key string, vars []string) (string, bool) {
+func (k *AMIMessage) VarWith(key string, vars []string) (string, bool) {
 	if len(vars) == 0 || key == "" {
 		return key, false
 	}
@@ -199,7 +196,7 @@ func (k *amiMessage) VarWith(key string, vars []string) (string, bool) {
 }
 
 // Return AMI message as interface{}
-func (k *amiMessage) ProduceMessage() map[string]interface{} {
+func (k *AMIMessage) ProduceMessage() map[string]interface{} {
 	k.Mutex.RLock()
 	defer k.Mutex.RUnlock()
 
@@ -219,7 +216,7 @@ func (k *amiMessage) ProduceMessage() map[string]interface{} {
 }
 
 // Return AMI messages as Json string
-func (k *amiMessage) Json() string {
+func (k *AMIMessage) Json() string {
 	result, err := json.Marshal(k.ProduceMessage())
 
 	if err != nil {
@@ -231,7 +228,7 @@ func (k *amiMessage) Json() string {
 }
 
 // Create AMI message from json string
-func FromJson(jsonString string) (*amiMessage, error) {
+func FromJson(jsonString string) (*AMIMessage, error) {
 	var builder interface{}
 
 	message := ofMessage(textproto.MIMEHeader{})

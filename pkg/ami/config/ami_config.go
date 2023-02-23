@@ -17,3 +17,7 @@ const (
 	ASTERISK_SECRET_FIELD   = "Secret"
 	ASTERISK_PASSWORD_FIELD = "Password"
 )
+
+const (
+	KEY_ID_REF = "ami-key"
+)

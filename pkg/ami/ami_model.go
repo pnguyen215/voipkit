@@ -1,4 +1,4 @@
-package model
+package ami
 
 import (
 	"bufio"
@@ -8,8 +8,8 @@ import (
 	"sync"
 )
 
-type pubChannel chan *AMIMessage
-type messageChannel map[string]pubChannel
+type PubChannel chan *AMIMessage
+type MessageChannel map[string]PubChannel
 
 type AMI struct {
 	Mutex  sync.RWMutex
@@ -22,7 +22,7 @@ type AMI struct {
 }
 
 type AMIPubSubQueue struct {
-	Message messageChannel
+	Message MessageChannel
 	Mutex   sync.RWMutex
 	Off     bool
 }

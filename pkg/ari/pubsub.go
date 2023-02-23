@@ -5,35 +5,35 @@ import (
 	"sync"
 )
 
-type pubChan chan *Message
+type pubChan chan *Message // DONE
 
-type messageChanSpy map[string]pubChan
+type messageChanSpy map[string]pubChan // DONE
 
-type pubsub struct {
+type pubsub struct { // DONE
 	mu  sync.RWMutex
 	msg messageChanSpy
 	off bool
 }
 
-func newPubsub() *pubsub {
+func newPubsub() *pubsub { // DONE
 	p := &pubsub{}
 	p.msg = make(messageChanSpy)
 	return p
 }
 
-func (ps *pubsub) disable() {
+func (ps *pubsub) disable() { // DONE
 	ps.mu.Lock()
 	defer ps.mu.Unlock()
 	ps.off = true
 }
 
-func (ps *pubsub) lenMessageChanSpy() int {
+func (ps *pubsub) lenMessageChanSpy() int { // DONE
 	ps.mu.Lock()
 	defer ps.mu.Unlock()
 	return len(ps.msg)
 }
 
-func (ps *pubsub) destroy() {
+func (ps *pubsub) destroy() { // DONE
 	ps.mu.Lock()
 	defer ps.mu.Unlock()
 	if ps.off {
@@ -47,7 +47,7 @@ func (ps *pubsub) destroy() {
 }
 
 // subscribe to event by name or by action id as key
-func (ps *pubsub) subscribe(key string) pubChan {
+func (ps *pubsub) subscribe(key string) pubChan { // DONE
 	ps.mu.Lock()
 	defer ps.mu.Unlock()
 
@@ -64,7 +64,7 @@ func (ps *pubsub) subscribe(key string) pubChan {
 	return ch
 }
 
-func (ps *pubsub) publish(msg *Message) bool {
+func (ps *pubsub) publish(msg *Message) bool { // DONE
 	ps.mu.RLock()
 	defer ps.mu.RUnlock()
 	if ps.off {
