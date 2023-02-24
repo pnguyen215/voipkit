@@ -60,6 +60,28 @@ func (k *AMIPubSubQueue) Subscribe(key string) PubChannel {
 	return ch
 }
 
+func (k *AMIPubSubQueue) Subscribes(keys ...string) PubChannel {
+	k.Mutex.Lock()
+	defer k.Mutex.Unlock()
+
+	if k.Off {
+		return nil
+	}
+
+	ch := make(PubChannel, len((keys)))
+
+	for _, key := range keys {
+		key = strings.ToLower(key)
+		if _, ok := k.Message[key]; !ok {
+			k.Message[key] = ch
+			// ch <- <-k.Message[key]
+		}
+	}
+	// close(ch)
+
+	return ch
+}
+
 func (k *AMIPubSubQueue) Publish(message *AMIMessage) bool {
 	k.Mutex.RLock()
 	defer k.Mutex.RUnlock()

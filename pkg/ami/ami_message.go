@@ -197,13 +197,24 @@ func (k *AMIMessage) VarWith(key string, vars []string) (string, bool) {
 
 // Return AMI message as interface{}
 func (k *AMIMessage) ProduceMessage() map[string]interface{} {
+	return k.ProduceMessageWith(false)
+}
+
+// Return AMI message as interface{}
+func (k *AMIMessage) ProduceMessageWith(lowercaseField bool) map[string]interface{} {
 	k.Mutex.RLock()
 	defer k.Mutex.RUnlock()
 
 	data := make(map[string]interface{})
 
 	for key, value := range k.Header {
-		field := strings.ToLower(key)
+		var field string = key
+
+		if lowercaseField {
+			field = strings.ToLower(key)
+		} else {
+			field = key
+		}
 
 		if len(value) == 1 {
 			data[field] = value[0]

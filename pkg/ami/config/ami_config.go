@@ -50,6 +50,37 @@ const (
 	AmiProtocolHttpsKey = "https://"
 )
 
+const (
+	AmiListenerEventDeviceStateChange   = "DeviceStateChange"
+	AmiListenerEventNewChannel          = "Newchannel"
+	AmiListenerEventNewState            = "Newstate"
+	AmiListenerEventSuccessfulAuth      = "SuccessfulAuth"
+	AmiListenerEventNewExtension        = "Newexten"
+	AmiListenerEventNewCallerId         = "NewCallerid"
+	AmiListenerEventNewConnectedLine    = "NewConnectedLine"
+	AmiListenerEventDialBegin           = "DialBegin"
+	AmiListenerEventUserEvent           = "UserEvent"
+	AmiListenerEventBridgeCreate        = "BridgeCreate"
+	AmiListenerEventBridgeEnter         = "BridgeEnter"
+	AmiListenerEventHangupRequest       = "HangupRequest"
+	AmiListenerEventBridgeLeave         = "BridgeLeave"
+	AmiListenerEventBridgeDestroy       = "BridgeDestroy"
+	AmiListenerEventHangup              = "Hangup"
+	AmiListenerEventSoftHangupRequest   = "SoftHangupRequest"
+	AmiListenerEventQueueParams         = "QueueParams"
+	AmiListenerEventQueueMember         = "QueueMember"
+	AmiListenerEventQueueStatusComplete = "QueueStatusComplete"
+	AmiListenerEventQueueMemberPause    = "QueueMemberPause"
+	AmiListenerEventLocalBridge         = "LocalBridge"
+	AmiListenerEventDialEnd             = "DialEnd"
+	AmiListenerEventConfBridgeJoin      = "ConfbridgeJoin"
+	AmiListenerEventConfBridgeTalking   = "ConfbridgeTalking"
+	AmiListenerEventConfBridgeKick      = "ConfbridgeKick"
+	AmiListenerEventConfBridgeLeave     = "ConfbridgeLeave"
+	AmiListenerEventMessageWaiting      = "MessageWaiting"
+	AmiListenerEventCdr                 = "Cdr"
+)
+
 var (
 	AmiNetworkKeys map[string]bool = map[string]bool{
 		AmiNetworkTcpKey:        true,

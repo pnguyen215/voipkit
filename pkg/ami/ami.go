@@ -258,8 +258,14 @@ func (c *AMI) AllEvents() <-chan *AMIMessage {
 	return c.Subs.Subscribe(config.AmiPubSubKeyRef)
 }
 
-// OnEvent subscribes by event by name (case insensitive) and
+// OnEvent subscribes by event name (case insensitive) and
 // returns send-only channel or nil
 func (c *AMI) OnEvent(name string) <-chan *AMIMessage {
 	return c.Subs.Subscribe(name)
+}
+
+// OnEvents subscribes by events name (case insensitive) and
+// return send-only channel or nil
+func (c *AMI) OnEvents(keys ...string) <-chan *AMIMessage {
+	return c.Subs.Subscribes(keys...)
 }
