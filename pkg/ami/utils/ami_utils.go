@@ -1,6 +1,15 @@
 package utils
 
-import "strings"
+import (
+	"log"
+	"net"
+	"net/url"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
+)
 
 func VarsMap(values []string) map[string]string {
 	r := make(map[string]string)
@@ -22,4 +31,45 @@ func VarsSplit(value string) (string, string) {
 	}
 
 	return k, s[1]
+}
+
+func HasRawConnection(ip string, port int) (bool, error) {
+	timeout := time.Second
+	conn, err := net.DialTimeout(config.AmiNetworkTcpKey, net.JoinHostPort(ip, strconv.Itoa(port)), timeout)
+
+	if err != nil {
+		log.Fatalf("Connecting error: %v", err)
+		return false, err
+	}
+
+	if conn != nil {
+		defer conn.Close()
+		log.Printf("Opened on: %s", net.JoinHostPort(ip, strconv.Itoa(port)))
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func HasRawConnectionWith(ip string, ports []int) (bool, error) {
+	for _, port := range ports {
+
+		if ok, err := HasRawConnection(ip, port); err != nil {
+			return ok, err
+		}
+	}
+
+	return true, nil
+}
+
+func IPDecode(ip string) (string, string, error) {
+	u, err := url.Parse(ip)
+
+	if err != nil {
+		log.Fatalf("IP parse has error occurred = %v", err)
+		return "", "", err
+	}
+
+	host, port, err := net.SplitHostPort(u.Host)
+	return host, port, err
 }
