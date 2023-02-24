@@ -31,3 +31,6 @@ type AMIMessage struct {
 	Header textproto.MIMEHeader
 	Mutex  sync.RWMutex
 }
+
+type AMIEvent struct {
+}
