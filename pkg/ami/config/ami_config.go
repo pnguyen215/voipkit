@@ -125,6 +125,9 @@ const (
 	AmiListenerEventAgentsComplete      = "AgentsComplete"
 	AmiListenerEvenUnHold               = "Unhold"
 	AmiListenerEventDbGetResponse       = "DbGetResponse"
+	AmiListenerEventCommon              = "Common"
+	AmiListenerEventHangupHandlerPush   = "HangupHandlerPush"
+	AmiListenerEventHangupHandlerRun    = "HangupHandlerRun"
 )
 
 var (

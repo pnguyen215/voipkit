@@ -34,3 +34,11 @@ type AMIMessage struct {
 
 type AMIEvent struct {
 }
+
+type AMIDictionary struct {
+}
+
+type AMIEventDictionary struct {
+	EventKey     string `json:"event_key,omitempty"`
+	Dictionaries map[string]string `json:"dictionaries,omitempty"`
+}

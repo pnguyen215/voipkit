@@ -205,15 +205,16 @@ func (k *AMIMessage) ProduceMessageWith(lowercaseField bool) map[string]interfac
 	k.Mutex.RLock()
 	defer k.Mutex.RUnlock()
 
+	translate := NewDictionary()
 	data := make(map[string]interface{})
 
 	for key, value := range k.Header {
 		var field string = key
 
 		if lowercaseField {
-			field = strings.ToLower(key)
+			field = strings.ToLower(translate.TranslateField(key))
 		} else {
-			field = key
+			field = translate.TranslateField(key)
 		}
 
 		if len(value) == 1 {
