@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"log"
 	"net"
 	"net/url"
@@ -72,4 +73,15 @@ func IPDecode(ip string) (string, string, error) {
 
 	host, port, err := net.SplitHostPort(u.Host)
 	return host, port, err
+}
+
+func ToJson(data interface{}) string {
+	result, err := json.Marshal(data)
+
+	if err != nil {
+		log.Fatal(err.Error())
+		return ""
+	}
+
+	return string(result)
 }

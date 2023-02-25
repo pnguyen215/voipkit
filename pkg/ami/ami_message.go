@@ -201,20 +201,30 @@ func (k *AMIMessage) ProduceMessage() map[string]interface{} {
 }
 
 // Return AMI message as interface{}
+func (k *AMIMessage) ProduceMessageTranslator(d *AMIDictionary) map[string]interface{} {
+	return k.ProduceMessageWithDictionaries(false, d)
+}
+
+// Return AMI message as interface{}
 func (k *AMIMessage) ProduceMessageWith(lowercaseField bool) map[string]interface{} {
+	translator := NewDictionary()
+	return k.ProduceMessageWithDictionaries(lowercaseField, translator)
+}
+
+// Return AMI message as interface{}
+func (k *AMIMessage) ProduceMessageWithDictionaries(lowercaseField bool, translator *AMIDictionary) map[string]interface{} {
 	k.Mutex.RLock()
 	defer k.Mutex.RUnlock()
 
-	translate := NewDictionary()
 	data := make(map[string]interface{})
 
 	for key, value := range k.Header {
 		var field string = key
 
 		if lowercaseField {
-			field = strings.ToLower(translate.TranslateField(key))
+			field = strings.ToLower(translator.TranslateField(key))
 		} else {
-			field = translate.TranslateField(key)
+			field = translator.TranslateField(key)
 		}
 
 		if len(value) == 1 {
@@ -227,16 +237,39 @@ func (k *AMIMessage) ProduceMessageWith(lowercaseField bool) map[string]interfac
 	return data
 }
 
-// Return AMI messages as Json string
-func (k *AMIMessage) Json() string {
-	result, err := json.Marshal(k.ProduceMessage())
+// Return AMI message as interface{}
+func (k *AMIMessage) ProduceMessagePure() map[string]interface{} {
+	k.Mutex.RLock()
+	defer k.Mutex.RUnlock()
 
-	if err != nil {
-		log.Fatal(err.Error())
-		return ""
+	data := make(map[string]interface{})
+
+	for key, value := range k.Header {
+		var field string = key
+
+		if len(value) == 1 {
+			data[field] = value[0]
+		} else {
+			data[field] = utils.VarsMap(value)
+		}
 	}
 
-	return string(result)
+	return data
+}
+
+// Return AMI message as Json string
+func (k *AMIMessage) Json() string {
+	return utils.ToJson(k.ProduceMessage())
+}
+
+// Return AMI message as Json string
+func (k *AMIMessage) JsonTranslator(d *AMIDictionary) string {
+	return utils.ToJson(k.ProduceMessageTranslator(d))
+}
+
+// Return AMI message as Json pure string
+func (k *AMIMessage) JsonPure() string {
+	return utils.ToJson(k.ProduceMessagePure())
 }
 
 // Create AMI message from json string
