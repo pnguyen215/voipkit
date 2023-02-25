@@ -85,3 +85,17 @@ func ToJson(data interface{}) string {
 
 	return string(result)
 }
+
+func TakeKeyFromValue(collection map[string]string, value string) string {
+	if len(collection) <= 0 {
+		return value
+	}
+
+	for k, v := range collection {
+		if strings.EqualFold(v, value) {
+			return k
+		}
+	}
+
+	return value
+}

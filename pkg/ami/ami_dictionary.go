@@ -28,51 +28,68 @@ func (d *AMIDictionary) GetDictionaries() *[]AMIEventDictionary {
 	dictionaries = append(dictionaries, AMIEventDictionary{
 		EventKey: config.AmiListenerEventCommon,
 		Dictionaries: map[string]string{
-			"Channel":           "channel",
-			"Channelstate":      "channel_state",
-			"Channelstatedesc":  "channel_state_description",
-			"Connectedlinename": "connected_line_name",
-			"Connectedlinenum":  "connected_line_number",
-			"Context":           "context",
-			"Event":             "event",
-			"Exten":             "exten",
-			"Language":          "lang",
-			"Linkedid":          "linked_id",
-			"Priority":          "priority",
-			"Privilege":         "privilege",
-			"Uniqueid":          "unique_id",
-			"Calleridname":      "caller_id_name",
-			"Calleridnum":       "caller_id_number",
-			"Callerid":          "caller_id",
-			"Accountcode":       "account_code",
-			"Cause":             "cause",
-			"Cause-Txt":         "cause_text",
-			"Handler":           "handler",
-			"Hint":              "hint",
-			"Status":            "status",
-			"Statustext":        "status_text",
-			"Device":            "device",
-			"State":             "state",
-			"Callstaken":        "calls_taken",
-			"Incall":            "in_call",
-			"Interface":         "interface",
-			"Lastcall":          "last_call",
-			"Lastpause":         "last_pause",
-			"Membername":        "member_name",
-			"Membership":        "membership",
-			"Paused":            "paused",
-			"Pausedreason":      "paused_reason",
-			"Penalty":           "penalty",
-			"Ringinuse":         "ring_in_use",
-			"Queue":             "queue",
-			"Stateinterface":    "status_interface",
-			"Wrapuptime":        "wrap_uptime",
-			"Uptime":            "uptime",
-			"Lastreload":        "last_reload",
-			"Channeltype":       "channel_type",
-			"Peer":              "peer",
-			"Peerstatus":        "peer_status",
-			"Address":           "address",
+			"Channel":               "channel",
+			"Channelstate":          "channel_state",
+			"Channelstatedesc":      "channel_state_description",
+			"Connectedlinename":     "connected_line_name",
+			"Connectedlinenum":      "connected_line_number",
+			"Context":               "context",
+			"Event":                 "event",
+			"Exten":                 "exten",
+			"Language":              "lang",
+			"Linkedid":              "linked_id",
+			"Priority":              "priority",
+			"Privilege":             "privilege",
+			"Uniqueid":              "unique_id",
+			"Calleridname":          "caller_id_name",
+			"Calleridnum":           "caller_id_number",
+			"Callerid":              "caller_id",
+			"Accountcode":           "account_code",
+			"Cause":                 "cause",
+			"Cause-Txt":             "cause_text",
+			"Handler":               "handler",
+			"Hint":                  "hint",
+			"Status":                "status",
+			"Statustext":            "status_text",
+			"Device":                "device",
+			"State":                 "state",
+			"Callstaken":            "calls_taken",
+			"Incall":                "in_call",
+			"Interface":             "interface",
+			"Lastcall":              "last_call",
+			"Lastpause":             "last_pause",
+			"Membername":            "member_name",
+			"Membership":            "membership",
+			"Paused":                "paused",
+			"Pausedreason":          "paused_reason",
+			"Penalty":               "penalty",
+			"Ringinuse":             "ring_in_use",
+			"Queue":                 "queue",
+			"Stateinterface":        "status_interface",
+			"Wrapuptime":            "wrap_uptime",
+			"Uptime":                "uptime",
+			"Lastreload":            "last_reload",
+			"Channeltype":           "channel_type",
+			"Peer":                  "peer",
+			"Peerstatus":            "peer_status",
+			"Address":               "address",
+			"Destaccountcode":       "destination_account_code",
+			"Destcalleridname":      "destination_caller_id_name",
+			"Destcalleridnum":       "destination_caller_id_number",
+			"Variable":              "variable",
+			"Value":                 "value",
+			"Destchannel":           "destination_channel",
+			"Destchannelstate":      "destination_channel_state",
+			"Destchannelstatedesc":  "destination_channel_state_description",
+			"Destconnectedlinename": "destination_connected_line_name",
+			"Destconnectedlinenum":  "destination_connected_line_number",
+			"Destcontext":           "destination_context",
+			"Destexten":             "destination_exten",
+			"Destlanguage":          "destination_lang",
+			"Destlinkedid":          "destination_linked_id",
+			"Destpriority":          "destination_priority",
+			"Destuniqueid":          "destination_unique_id",
+			"Dialstring":            "dial_string",
 		},
 	})
 
@@ -195,6 +212,33 @@ func (d *AMIDictionary) TranslateFieldWith(field string, dictionaries []AMIEvent
 	}
 
 	return field
+}
+
+func (d *AMIDictionary) TranslateKey(value string) string {
+	dictionary, _ := d.FindDictionaryByKey(config.AmiListenerEventCommon)
+
+	_key := utils.TakeKeyFromValue(dictionary.Dictionaries, value)
+
+	if !strings.EqualFold(_key, value) {
+		return _key
+	}
+
+	return d.TranslateKeyWith(value, *overlapDictionaries)
+}
+
+func (d *AMIDictionary) TranslateKeyWith(value string, dictionaries []AMIEventDictionary) string {
+	if len(dictionaries) <= 0 {
+		return value
+	}
+
+	for _, e := range dictionaries {
+		_key := utils.TakeKeyFromValue(e.Dictionaries, value)
+		if !strings.EqualFold(_key, value) {
+			return _key
+		}
+	}
+
+	return value
 }
 
 func (d *AMIDictionary) Length() int {

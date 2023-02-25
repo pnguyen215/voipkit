@@ -31,6 +31,22 @@ func ofMessage(header textproto.MIMEHeader) *AMIMessage {
 	return m
 }
 
+func ofMessageWithDictionary(d *AMIDictionary, header textproto.MIMEHeader) *AMIMessage {
+	m := &AMIMessage{}
+
+	if len(header) > 0 {
+		p := make(textproto.MIMEHeader)
+		for k, v := range header {
+			p.Add(d.TranslateField(k), header.Get(k))
+			log.Printf("(AMI). header renew with key = %v and value = %v", k, utils.ToJson(v))
+		}
+		m.Header = p
+	} else {
+		m.Header = header
+	}
+	return m
+}
+
 // Login action by message
 func LoginWith(username, password string) *AMIMessage {
 	a := NewActionWith(config.AmiLoginKey)
@@ -46,9 +62,17 @@ func (k *AMIMessage) Field(key string) string {
 	return k.Header.Get(key)
 }
 
+func (k *AMIMessage) FieldByDictionary(d *AMIDictionary, key string) string {
+	return k.Field(d.TranslateKey(key))
+}
+
 // Return first value associated of field by the given key
 func (k *AMIMessage) GetFirstValueByField(key string) string {
 	return k.Field(key)
+}
+
+func (k *AMIMessage) GetFirstValueByFieldDictionary(d *AMIDictionary, key string) string {
+	return k.FieldByDictionary(d, key)
 }
 
 // Field Values return all values associated with the given key
@@ -58,9 +82,17 @@ func (k *AMIMessage) FieldValues(key string) []string {
 	return k.Header.Values(key)
 }
 
+func (k *AMIMessage) FieldValuesByDictionary(d *AMIDictionary, key string) []string {
+	return k.FieldValues(d.TranslateKey(key))
+}
+
 // Return all value associated by the given key
 func (k *AMIMessage) GetValuesByField(key string) []string {
 	return k.FieldValues(key)
+}
+
+func (k *AMIMessage) GetValuesByFieldDictionary(d *AMIDictionary, key string) []string {
+	return k.FieldValuesByDictionary(d, key)
 }
 
 // Added new pair header as form key:value
@@ -107,10 +139,20 @@ func (k *AMIMessage) RemoveField(key string) {
 	k.Header.Del(key)
 }
 
+func (k *AMIMessage) RemoveFieldDictionary(d *AMIDictionary, key string) {
+	k.RemoveField(d.TranslateKey(key))
+}
+
 // Remove fields associated with the collection given keys
 func (k *AMIMessage) RemoveFields(keys ...string) {
 	for _, key := range keys {
 		k.RemoveField(key)
+	}
+}
+
+func (k *AMIMessage) RemoveFieldsDictionary(d *AMIDictionary, keys ...string) {
+	for _, key := range keys {
+		k.RemoveFieldDictionary(d, key)
 	}
 }
 

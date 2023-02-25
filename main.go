@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"strings"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
@@ -19,4 +20,12 @@ func main() {
 	next.Reset()
 	data = *next.FindDictionariesByKey(config.AmiListenerEventCommon)
 	log.Printf("dictionaries reset = %v", utils.ToJson(data))
+
+	collection := make(map[string]string)
+
+	collection["key1"] = "1"
+	collection["key2"] = "2"
+
+	log.Printf("key found = %v", utils.TakeKeyFromValue(collection, "1"))
+	log.Printf("equal = %v", strings.EqualFold("value_1", "Value_1"))
 }
