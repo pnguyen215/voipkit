@@ -50,7 +50,7 @@ func (t *TelegramBot) ToJson(data interface{}) string {
 	result, err := json.Marshal(data)
 
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Printf(err.Error())
 		return ""
 	}
 

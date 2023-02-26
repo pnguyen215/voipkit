@@ -323,7 +323,7 @@ func FromJson(jsonString string) (*AMIMessage, error) {
 	err := json.Unmarshal([]byte(jsonString), &builder)
 
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Printf(err.Error())
 		return message, err
 	}
 

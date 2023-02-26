@@ -39,6 +39,6 @@ func main() {
 	_, err := instance.SendMessage(collection)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Printf(err.Error())
 	}
 }

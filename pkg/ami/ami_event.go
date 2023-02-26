@@ -22,7 +22,7 @@ func (e *AMIEvent) OpenFullEvents(c *AMI) {
 			log.Printf("ami event: '%s' received = %s", message.Field(strings.ToLower(config.AmiEventKey)), message.Json())
 		case err := <-c.Error():
 			c.Close()
-			log.Fatalf("ami listener has error occurred = %s", err.Error())
+			log.Printf("ami listener has error occurred = %s", err.Error())
 		}
 	}
 }
@@ -38,7 +38,7 @@ func (e *AMIEvent) OpenFullEventsTranslator(c *AMI, d *AMIDictionary) {
 			log.Printf("ami event: '%s' received = %s", message.Field(strings.ToLower(config.AmiEventKey)), message.JsonTranslator(d))
 		case err := <-c.Error():
 			c.Close()
-			log.Fatalf("ami listener has error occurred = %s", err.Error())
+			log.Printf("ami listener has error occurred = %s", err.Error())
 		}
 	}
 }
@@ -54,7 +54,7 @@ func (e *AMIEvent) OpenFullEventsCallbackTranslator(c *AMI, d *AMIDictionary, ca
 			callback(message, message.JsonTranslator(d), nil)
 		case err := <-c.Error():
 			c.Close()
-			log.Fatalf("ami listener has error occurred = %s", err.Error())
+			log.Printf("ami listener has error occurred = %s", err.Error())
 			callback(nil, err.Error(), err)
 		}
 	}
@@ -71,7 +71,7 @@ func (e *AMIEvent) OpenEvent(c *AMI, name string) {
 			log.Printf("ami event: '%s' received = %s", name, message.Json())
 		case err := <-c.Error():
 			c.Close()
-			log.Fatalf("ami listener event: '%s' has error occurred = %s", name, err.Error())
+			log.Printf("ami listener event: '%s' has error occurred = %s", name, err.Error())
 		}
 	}
 }
@@ -87,7 +87,7 @@ func (e *AMIEvent) OpenEventTranslator(c *AMI, d *AMIDictionary, name string) {
 			log.Printf("ami event: '%s' received = %s", name, message.JsonTranslator(d))
 		case err := <-c.Error():
 			c.Close()
-			log.Fatalf("ami listener event: '%s' has error occurred = %s", name, err.Error())
+			log.Printf("ami listener event: '%s' has error occurred = %s", name, err.Error())
 		}
 	}
 }
@@ -103,7 +103,7 @@ func (e *AMIEvent) OpenEventCallbackTranslator(c *AMI, d *AMIDictionary, name st
 			callback(message, message.JsonTranslator(d), nil)
 		case err := <-c.Error():
 			c.Close()
-			log.Fatalf("ami listener event: '%s' has error occurred = %s", name, err.Error())
+			log.Printf("ami listener event: '%s' has error occurred = %s", name, err.Error())
 			callback(nil, err.Error(), err)
 		}
 	}
@@ -120,7 +120,7 @@ func (e *AMIEvent) OpenEvents(c *AMI, keys ...string) {
 			log.Printf("ami event(s): '%s' received = %s", keys, message.Json())
 		case err := <-c.Error():
 			c.Close()
-			log.Fatalf("ami listener event(s): '%s' has error occurred = %s", keys, err.Error())
+			log.Printf("ami listener event(s): '%s' has error occurred = %s", keys, err.Error())
 		}
 	}
 }
@@ -136,7 +136,7 @@ func (e *AMIEvent) OpenEventsTranslator(c *AMI, d *AMIDictionary, keys ...string
 			log.Printf("ami event(s): '%s' received = %s", keys, message.JsonTranslator(d))
 		case err := <-c.Error():
 			c.Close()
-			log.Fatalf("ami listener event(s): '%s' has error occurred = %s", keys, err.Error())
+			log.Printf("ami listener event(s): '%s' has error occurred = %s", keys, err.Error())
 		}
 	}
 }
@@ -152,7 +152,7 @@ func (e *AMIEvent) OpenEventsCallbackTranslator(c *AMI, d *AMIDictionary, callba
 			callback(message, message.JsonTranslator(d), nil)
 		case err := <-c.Error():
 			c.Close()
-			log.Fatalf("ami listener event(s): '%s' has error occurred = %s", keys, err.Error())
+			log.Printf("ami listener event(s): '%s' has error occurred = %s", keys, err.Error())
 			callback(nil, err.Error(), err)
 		}
 	}

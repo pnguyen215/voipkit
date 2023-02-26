@@ -39,7 +39,7 @@ func HasRawConnection(ip string, port int) (bool, error) {
 	conn, err := net.DialTimeout(config.AmiNetworkTcpKey, net.JoinHostPort(ip, strconv.Itoa(port)), timeout)
 
 	if err != nil {
-		log.Fatalf("Connecting error: %v", err)
+		log.Printf("Connecting error: %v", err)
 		return false, err
 	}
 
@@ -67,7 +67,7 @@ func IPDecode(ip string) (string, string, error) {
 	u, err := url.Parse(ip)
 
 	if err != nil {
-		log.Fatalf("IP parse has error occurred = %v", err)
+		log.Printf("IP parse has error occurred = %v", err)
 		return "", "", err
 	}
 
@@ -85,7 +85,7 @@ func ToJson(data interface{}) string {
 	result, err := json.Marshal(data)
 
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Printf(err.Error())
 		return ""
 	}
 
