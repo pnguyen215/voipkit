@@ -31,8 +31,8 @@ func main() {
 	log.Printf("equal = %v", strings.EqualFold("value_1", "Value_1"))
 
 	instance := &telegram.TelegramBot{
-		Token:     "6097117689:AAEInfj6wwy1rOryFUQFslan36q4E0ic56o",
-		ChatId:    1127479716,
+		Token:     "6097117689:",
+		ChatId:    5555555,
 		DebugMode: true,
 	}
 
