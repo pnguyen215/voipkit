@@ -7,6 +7,7 @@ import (
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
+	"github.com/pnguyen215/gobase-voip-core/pkg/bot/telegram"
 )
 
 func main() {
@@ -28,4 +29,16 @@ func main() {
 
 	log.Printf("key found = %v", utils.TakeKeyFromValue(collection, "1"))
 	log.Printf("equal = %v", strings.EqualFold("value_1", "Value_1"))
+
+	instance := &telegram.TelegramBot{
+		Token:     "6097117689:AAEInfj6wwy1rOryFUQFslan36q4E0ic56o",
+		ChatId:    1127479716,
+		DebugMode: true,
+	}
+
+	_, err := instance.SendMessage(collection)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
