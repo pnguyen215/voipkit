@@ -29,3 +29,6 @@ go.work
 
 # MacOS
 .DS_Store
+
+# Logs
+logs/

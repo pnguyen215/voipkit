@@ -123,7 +123,7 @@ const (
 	AmiListenerEventPriEvent            = "PriEvent"
 	AmiListenerEventQueue               = "Queue"
 	AmiListenerEventAgentsComplete      = "AgentsComplete"
-	AmiListenerEventUnHold               = "Unhold"
+	AmiListenerEventUnHold              = "Unhold"
 	AmiListenerEventDbGetResponse       = "DbGetResponse"
 	AmiListenerEventCommon              = "Common"
 	AmiListenerEventHangupHandlerPush   = "HangupHandlerPush"

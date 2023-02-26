@@ -76,6 +76,12 @@ func IPDecode(ip string) (string, string, error) {
 }
 
 func ToJson(data interface{}) string {
+	s, ok := data.(string)
+
+	if ok {
+		return s
+	}
+
 	result, err := json.Marshal(data)
 
 	if err != nil {
