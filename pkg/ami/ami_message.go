@@ -62,8 +62,28 @@ func (k *AMIMessage) Field(key string) string {
 	return k.Header.Get(key)
 }
 
+func (k *AMIMessage) FieldOrRefer(key, ref string) string {
+	value := k.Field(key)
+
+	if value != "" || len(value) > 0 {
+		return value
+	}
+
+	return k.Field(ref)
+}
+
 func (k *AMIMessage) FieldByDictionary(d *AMIDictionary, key string) string {
 	return k.Field(d.TranslateKey(key))
+}
+
+func (k *AMIMessage) FieldDictionaryOrRefer(d *AMIDictionary, key, ref string) string {
+	value := k.FieldByDictionary(d, key)
+
+	if value != "" || len(value) > 0 {
+		return value
+	}
+
+	return k.FieldByDictionary(d, ref)
 }
 
 // Return first value associated of field by the given key
@@ -82,8 +102,24 @@ func (k *AMIMessage) FieldValues(key string) []string {
 	return k.Header.Values(key)
 }
 
+func (k *AMIMessage) FieldValuesOrRefer(key, ref string) []string {
+	values := k.FieldValues(key)
+	if len(values) > 0 {
+		return values
+	}
+	return k.FieldValues(ref)
+}
+
 func (k *AMIMessage) FieldValuesByDictionary(d *AMIDictionary, key string) []string {
 	return k.FieldValues(d.TranslateKey(key))
+}
+
+func (k *AMIMessage) FieldValuesByDictionaryOrRefer(d *AMIDictionary, key, ref string) []string {
+	values := k.FieldValuesByDictionary(d, key)
+	if len(values) > 0 {
+		return values
+	}
+	return k.FieldValuesByDictionary(d, ref)
 }
 
 // Return all value associated by the given key
@@ -104,6 +140,9 @@ func (k *AMIMessage) AddField(key, value string) {
 
 // Added collection pair header as form key:value
 func (k *AMIMessage) AddFields(fields map[string]string) {
+	if len(fields) <= 0 {
+		return
+	}
 	for key, value := range fields {
 		k.AddField(key, value)
 	}
