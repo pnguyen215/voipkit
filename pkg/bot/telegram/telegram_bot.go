@@ -58,7 +58,7 @@ func (t *TelegramBot) ToJson(data interface{}) string {
 }
 
 func (t *TelegramBot) SendMessage(message interface{}) (telegramBot.Message, error) {
-	if t.ChatId <= 0 {
+	if t.ChatId == 0 {
 		return telegramBot.Message{}, errors.New("Chat Id must be provided")
 	}
 
