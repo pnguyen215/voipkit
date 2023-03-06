@@ -1,44 +1,14 @@
 package main
 
 import (
-	"log"
-	"strings"
-
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
-	"github.com/pnguyen215/gobase-voip-core/pkg/bot/telegram"
 )
 
+func NewClient() (*ami.AMI, error) {
+	client, err := ami.NewAmi("127.0.0.1", 5038, "u_username", "u_password")
+	return client, err
+}
+
 func main() {
-	next := ami.NewDictionary()
 
-	log.Printf("len begin = %v", next.Length())
-	next.AddKeyTranslator("test001", "test001").AddKeyTranslator("test002", "test002")
-	log.Printf("dictionaries begin = %v", next.Json())
-	data := *next.FindDictionariesByKey(config.AmiListenerEventCommon)
-	log.Printf("dictionaries after = %v", utils.ToJson(data))
-	next.Reset()
-	data = *next.FindDictionariesByKey(config.AmiListenerEventCommon)
-	log.Printf("dictionaries reset = %v", utils.ToJson(data))
-
-	collection := make(map[string]string)
-
-	collection["key1"] = "1"
-	collection["key2"] = "2"
-
-	log.Printf("key found = %v", utils.TakeKeyFromValue(collection, "1"))
-	log.Printf("equal = %v", strings.EqualFold("value_1", "Value_1"))
-
-	instance := &telegram.TelegramBot{
-		Token:     "6097117689:",
-		ChatId:    5555555,
-		DebugMode: true,
-	}
-
-	_, err := instance.SendMessage(collection)
-
-	if err != nil {
-		log.Printf(err.Error())
-	}
 }
