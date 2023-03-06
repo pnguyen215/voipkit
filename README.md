@@ -1,6 +1,10 @@
-# Package Golang VOIP Core
+# Library Golang VOIP Core
 
-This is a basic layout for building API by [Golang](https://go.dev/)
+This is a basic VOIP core by [Golang](https://go.dev/)
+
+### Documentation
+
+- [Asterisk Manager Interface (AMI)](https://github.com/pnguyen215/gobase-voip-core/blob/master/docs/ami.md)
 
 ### Go Directories
 
