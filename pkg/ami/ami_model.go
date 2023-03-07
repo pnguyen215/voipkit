@@ -45,3 +45,15 @@ type AMIEventDictionary struct {
 
 type AMIGrouping struct {
 }
+
+type AMICommand struct {
+	ActionCmd string `json:"action_cmd"`
+	Timeout   int    `json:"timeout,omitempty"`
+}
+
+type AMIResponse struct {
+	Event        *AMIMessage `json:"message,omitempty"`
+	IsSuccess    bool        `json:"success"`
+	RawJson      string      `json:"raw_json,omitempty"`
+	ErrorMessage string      `json:"error_message,omitempty"`
+}

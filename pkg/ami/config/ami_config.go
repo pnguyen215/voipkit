@@ -175,3 +175,11 @@ var (
 const (
 	NetworkTimeoutAfterSeconds = time.Second * 3 // default is 3 seconds
 )
+
+const (
+	AmiCliCommand string = "Command"
+)
+
+const (
+	AmiCliErrorFieldRequired string = "%v is required"
+)

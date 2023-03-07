@@ -90,6 +90,12 @@ func (d *AMIDictionary) GetDictionaries() *[]AMIEventDictionary {
 			"Destpriority":          "destination_priority",
 			"Destuniqueid":          "destination_unique_id",
 			"Dialstring":            "dial_string",
+			"Actionid":              "action_id",
+			"Message":               "message",
+			"Output":                "output",
+			"Response":              "response",
+			"Header":                "header",
+			"Mutex":                 "mutex",
 		},
 	})
 

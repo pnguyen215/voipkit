@@ -269,3 +269,13 @@ func (c *AMI) OnEvent(name string) <-chan *AMIMessage {
 func (c *AMI) OnEvents(keys ...string) <-chan *AMIMessage {
 	return c.Subs.Subscribes(keys...)
 }
+
+// RunCmd run cli core on asterisk server
+func (c *AMI) RunCmd(cmd string, timeout int) (*AMIResponse, error) {
+	return NewCliWith(cmd, timeout).RunCmd(c)
+}
+
+// RunCmdDictionaries
+func (c *AMI) RunCmdDictionaries(cmd string, timeout int, dictionaries map[string]string) (*AMIResponse, error) {
+	return NewCliWith(cmd, timeout).RunCmdDictionaries(c, dictionaries)
+}
