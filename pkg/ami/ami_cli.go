@@ -32,7 +32,7 @@ func (c *AMICommand) RevokeCommand(a *AMI, d *AMIDictionary, e *AMIMessage, dead
 	}
 
 	// trace log
-	log.Printf("Ami run cli ::: '%v', timeout = %v", e.String(), c.Timeout)
+	log.Printf(" [>] Ami run cli ::: '%v' \n timeout = %v", e.String(), c.Timeout)
 	// call asterisk server cli
 	a.Action(e)
 
