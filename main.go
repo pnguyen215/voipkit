@@ -10,5 +10,4 @@ func NewClient() (*ami.AMI, error) {
 }
 
 func main() {
-
 }

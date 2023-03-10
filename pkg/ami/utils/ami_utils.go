@@ -118,7 +118,7 @@ func Keys(in interface{}) (keys []string) {
 		for k := range z {
 			keys = append(keys, k)
 		}
-	case []int: 
+	case []int:
 		for k := range z {
 			keys = append(keys, strconv.Itoa(k))
 		}
@@ -126,4 +126,19 @@ func Keys(in interface{}) (keys []string) {
 		return []string{}
 	}
 	return keys
+}
+
+func MergeMaps[K comparable, V any](m1 map[K]V, m2 map[K]V) map[K]V {
+	merged := make(map[K]V)
+	if len(m1) > 0 {
+		for key, value := range m1 {
+			merged[key] = value
+		}
+	}
+	if len(m2) > 0 {
+		for key, value := range m2 {
+			merged[key] = value
+		}
+	}
+	return merged
 }

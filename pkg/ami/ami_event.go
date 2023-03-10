@@ -8,7 +8,9 @@ import (
 )
 
 func NewEventListener() *AMIEvent {
-	return &AMIEvent{}
+	e := &AMIEvent{}
+	e.SnapChargingEvent()
+	return e
 }
 
 // Listen All Events
