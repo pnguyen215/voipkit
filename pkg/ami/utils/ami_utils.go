@@ -105,3 +105,25 @@ func TakeKeyFromValue(collection map[string]string, value string) string {
 
 	return value
 }
+
+func Keys(in interface{}) (keys []string) {
+	switch z := in.(type) {
+	case map[string]int:
+	case map[string]int32:
+	case map[string]int64:
+	case map[string]float32:
+	case map[string]float64:
+	case map[string]string:
+	case map[string]bool:
+		for k := range z {
+			keys = append(keys, k)
+		}
+	case []int: 
+		for k := range z {
+			keys = append(keys, strconv.Itoa(k))
+		}
+	default:
+		return []string{}
+	}
+	return keys
+}

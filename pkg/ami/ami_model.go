@@ -57,3 +57,9 @@ type AMIResponse struct {
 	RawJson      string      `json:"raw_json,omitempty"`
 	ErrorMessage string      `json:"error_message,omitempty"`
 }
+
+type AMIChannel struct {
+	ChannelProtocol  string `json:"channel_protocol"`
+	NoDigitExtension int    `json:"no_digit_extension"`
+	Extension        string `json:"extension"`
+}

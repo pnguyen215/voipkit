@@ -25,7 +25,7 @@ func (c *AMICommand) RevokeCommand(a *AMI, d *AMIDictionary, e *AMIMessage, dead
 	var _err error
 
 	if strings.EqualFold(c.ActionCmd, "") {
-		response.ErrorMessage = fmt.Sprintf(config.AmiCliErrorFieldRequired, "cmd")
+		response.ErrorMessage = fmt.Sprintf(config.AmiErrorFieldRequired, "cmd")
 		response.IsSuccess = false
 		_err = fmt.Errorf(response.ErrorMessage)
 		return &response, _err
