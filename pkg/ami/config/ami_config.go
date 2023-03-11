@@ -338,10 +338,8 @@ var (
 
 const (
 	NetworkTimeoutAfterSeconds = time.Second * 3 // default is 3 seconds
-)
-
-const (
-	AmiCliCommand string = "Command"
+	AmiMaxTimeoutInMsForCall   = 100000          // 100000 milliseconds
+	AmiMinTimeoutInMsForCall   = 10000           // 10000 milliseconds
 )
 
 const (
@@ -369,6 +367,13 @@ var (
 		AmiZapChannelProtocol:  true,
 		AmiH323ChannelProtocol: true,
 	}
+)
+
+const (
+	AmiContextOutbound     = "outbound-allroutes"
+	AmiContextDefault      = "default"
+	AmiContextFromInternal = "from-internal"
+	AmiContextFromExternal = "from-external"
 )
 
 var (

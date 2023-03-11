@@ -270,12 +270,17 @@ func (c *AMI) OnEvents(keys ...string) <-chan *AMIMessage {
 	return c.Subs.Subscribes(keys...)
 }
 
-// RunCmd run cli core on asterisk server
-func (c *AMI) RunCmd(cmd string, timeout int) (*AMIResponse, error) {
-	return NewCliWith(cmd, timeout).RunCmd(c)
+// RunAction run action core on asterisk server
+func (c *AMI) RunAction(action string, timeout int) (*AMIResponse, error) {
+	return NewRevokeAction(action, timeout).RunAction(c)
 }
 
-// RunCmdDictionaries
-func (c *AMI) RunCmdDictionaries(cmd string, timeout int, dictionaries map[string]string) (*AMIResponse, error) {
-	return NewCliWith(cmd, timeout).RunCmdDictionaries(c, dictionaries)
+// RunActionDict
+func (c *AMI) RunActionDict(action string, timeout int, dictionaries map[string]string) (*AMIResponse, error) {
+	return NewRevokeAction(action, timeout).RunActionDict(c, dictionaries)
+}
+
+// RunActionScriptDict
+func (c *AMI) RunActionScriptDict(action string, timeout int, script, dictionaries map[string]string) (*AMIResponse, error) {
+	return NewRevokeAction(action, timeout).RunActionScriptDict(c, script, dictionaries)
 }

@@ -46,7 +46,7 @@ type AMIEventDictionary struct {
 type AMIGrouping struct {
 }
 
-type AMICommand struct {
+type AMIAction struct {
 	ActionCmd string `json:"action_cmd"`
 	Timeout   int    `json:"timeout,omitempty"`
 }
@@ -62,4 +62,20 @@ type AMIChannel struct {
 	ChannelProtocol  string `json:"channel_protocol"`
 	NoDigitExtension int    `json:"no_digit_extension"`
 	Extension        string `json:"extension"`
+}
+
+type AMIOriginateCall struct {
+	Channel   string `json:"channel" binding:"required"`
+	Context   string `json:"context" binding:"required"`
+	Extension string `json:"extension" binding:"required"`
+	Priority  int    `json:"priority"`
+	Timeout   int    `json:"timeout"`
+	Variable  string `json:"variable"`
+}
+
+type AMICall struct {
+	AMIOriginateCall
+	NoTarget        string `json:"no_target" binding:"required"`        // like customer phone number or no. extension internal from all routes
+	ChannelProtocol string `json:"channel_protocol" binding:"required"` // protocols include: SIP, H323, IAX...
+	NoExtension     int    `json:"no_extension" binding:"required"`     // like current user using no. extension
 }
