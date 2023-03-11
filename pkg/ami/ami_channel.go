@@ -36,18 +36,18 @@ func (c *AMIChannel) SetExtension(extension string) *AMIChannel {
 func (c *AMIChannel) Valid(regex string, extension string) bool {
 
 	if strings.EqualFold(regex, "") {
-		log.Fatalf(config.AmiErrorFieldRequired, "Regex")
+		log.Printf(config.AmiErrorFieldRequired, "Regex")
 		return false
 	}
 
 	if strings.EqualFold(extension, "") {
-		log.Fatalf(config.AmiErrorFieldRequired, "Extension")
+		log.Printf(config.AmiErrorFieldRequired, "Extension")
 		return false
 	}
 
 	_regexp, err := regexp.Compile(regex)
 	if err != nil {
-		log.Fatalf("regex '%v' has an error compile occurred: %v", regex, err.Error())
+		log.Printf("regex '%v' has an error compile occurred: %v", regex, err.Error())
 		return false
 	}
 
@@ -92,7 +92,7 @@ func (c *AMIChannel) JoinChannelWith(protocol, extension string) string {
 	c.SetChannelProtocol(protocol)
 
 	if strings.EqualFold(extension, "") {
-		log.Fatalf(config.AmiErrorFieldRequired, "Extension")
+		log.Printf(config.AmiErrorFieldRequired, "Extension")
 		return extension
 	}
 
