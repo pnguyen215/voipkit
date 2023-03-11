@@ -96,6 +96,7 @@ func (d *AMIDictionary) GetDictionaries() *[]AMIEventDictionary {
 			"Response":              "response",
 			"Header":                "header",
 			"Mutex":                 "mutex",
+			"Reason":                "reason",
 		},
 	})
 
