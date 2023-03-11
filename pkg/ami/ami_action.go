@@ -9,7 +9,8 @@ import (
 )
 
 func NewAction() *AMIAction {
-	return &AMIAction{}
+	a := &AMIAction{}
+	return a
 }
 
 func NewRevokeAction(cmd string, timeout int) *AMIAction {
@@ -17,6 +18,18 @@ func NewRevokeAction(cmd string, timeout int) *AMIAction {
 	cli.ActionCmd = cmd
 	cli.Timeout = timeout
 	return cli
+}
+
+func (a *AMIAction) SetActionCmd(action string) *AMIAction {
+	a.ActionCmd = action
+	return a
+}
+
+func (a *AMIAction) SetTimeout(timeout int) *AMIAction {
+	if timeout >= config.AmiMinTimeoutInMsForCall && timeout <= config.AmiMaxTimeoutInMsForCall {
+		a.Timeout = timeout
+	}
+	return a
 }
 
 // RevokeAction run cli on asterisk server
@@ -33,7 +46,7 @@ func (c *AMIAction) RevokeAction(a *AMI, d *AMIDictionary, e *AMIMessage, deadlo
 
 	// trace log
 	log.Printf(" [>] Ami run cli ::: '%v' \n timeout = %v", e.String(), c.Timeout)
-	// call asterisk server cli
+	// call action asterisk server
 	a.Action(e)
 
 	// listen all action feedback
