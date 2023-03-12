@@ -971,5 +971,758 @@ const (
 	// Variables - Comma , separated list of variable to include.
 	// AllVariables - If set to "true", the Status event will include all channel variables for the requested channel(s). True or false
 	AmiActionStatus = "Status"
-	//
+	// Mark an object in a sorcery memory cache as stale.
+	// Marks an object as stale within a sorcery memory cache.
+	// Syntax:
+	// Action: SorceryMemoryCacheStaleObject
+	// ActionID: <value>
+	// Cache: <value>
+	// Object: <value>
+	// [Reload:] <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Cache - The name of the cache to mark the object as stale in.
+	// Object - The name of the object to mark as stale.
+	// Reload - If true, then immediately reload the object from the backend cache instead of waiting for the next retrieval
+	AmiActionSorceryMemoryCacheStaleObject = "SorceryMemoryCacheStaleObject"
+	// Marks ALL objects in a sorcery memory cache as stale.
+	// Marks ALL objects in a sorcery memory cache as stale.
+	// Syntax:
+	// Action: SorceryMemoryCacheStale
+	// ActionID: <value>
+	// Cache: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Cache - The name of the cache to mark all object as stale in.
+	AmiActionSorceryMemoryCacheStale = "SorceryMemoryCacheStale"
+	// Expire all objects from a memory cache and populate it with all objects from the backend.
+	// Expires all objects from a memory cache and populate it with all objects from the backend
+	// Syntax:
+	// Action: SorceryMemoryCachePopulate
+	// ActionID: <value>
+	// Cache: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Cache - The name of the cache to populate.
+	AmiActionSorceryMemoryCachePopulate = "SorceryMemoryCachePopulate"
+	// Expire (remove) an object from a sorcery memory cache.
+	// Expires (removes) an object from a sorcery memory cache.
+	// Syntax:
+	// Action: SorceryMemoryCacheExpireObject
+	// ActionID: <value>
+	// Cache: <value>
+	// Object: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned
+	// Cache - The name of the cache to expire the object from.
+	// Object - The name of the object to expire.
+	AmiActionSorceryMemoryCacheExpireObject = "SorceryMemoryCacheExpireObject"
+	// Expire (remove) ALL objects from a sorcery memory cache.
+	// Expires (removes) ALL objects from a sorcery memory cache.
+	// Syntax:
+	// Action: SorceryMemoryCacheExpire
+	// ActionID: <value>
+	// Cache: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Cache - The name of the cache to expire all objects from.
+	AmiActionSorceryMemoryCacheExpire = "SorceryMemoryCacheExpire"
+	// Show SKINNY line (text format).
+	// Show one SKINNY line with details on current status.
+	// Syntax:
+	// Action: SKINNYshowline
+	// ActionID: <value>
+	// Line: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Line - The line name you want to check.
+	AmiActionSKINNYShowLine = "SKINNYshowline"
+	// Show SKINNY device (text format).
+	// Show one SKINNY device with details on current status.
+	// Syntax:
+	// Action: SKINNYshowdevice
+	// ActionID: <value>
+	// Device: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Device - The device name you want to check.
+	AmiActionSKINNYShowDevice = "SKINNYshowdevice"
+	// List SKINNY lines (text format).
+	// Lists Skinny lines in text format with details on current status. Linelist will follow as separate events, followed by a final event called LinelistComplete.
+	// Syntax:
+	// Action: SKINNYlines
+	// ActionID: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	AmiActionSKINNYlines = "SKINNYlines"
+	// List SKINNY devices (text format).
+	// Lists Skinny devices in text format with details on current status. Devicelist will follow as separate events, followed by a final event called DevicelistComplete.
+	// Syntax:
+	// Action: SKINNYdevices
+	// ActionID: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	AmiActionSKINNYdevices = "SKINNYdevices"
+	// Show SIP registrations (text format).
+	// Lists all registration requests and status. Registrations will follow as separate events followed by a final event called RegistrationsComplete.
+	// Syntax:
+	// Action: SIPshowregistry
+	// ActionID: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	AmiActionSIPShowRegistry = "SIPshowregistry"
+	// show SIP peer (text format).
+	// Show one SIP peer with details on current status.
+	// Syntax:
+	// Action: SIPshowpeer
+	// ActionID: <value>
+	// Peer: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Peer - The peer name you want to check.
+	AmiActionSIPShowPeer = "SIPshowpeer"
+	// Qualify SIP peers.
+	// Syntax:
+	// Action: SIPqualifypeer
+	// ActionID: <value>
+	// Peer: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Peer - The peer name you want to qualify.
+	AmiActionSIPQualifyPeer = "SIPqualifypeer"
+	// Show the status of one or all of the sip peers.
+	// Retrieves the status of one or all of the sip peers. If no peer name is specified, status for all of the sip peers will be retrieved
+	// Syntax:
+	// Action: SIPpeerstatus
+	// ActionID: <value>
+	// [Peer:] <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Peer - The peer name you want to check.
+	AmiActionSIPPeerStatus = "SIPpeerstatus"
+	// List SIP peers (text format).
+	// Lists SIP peers in text format with details on current status. Peerlist will follow as separate events, followed by a final event called PeerlistComplete.
+	// Syntax:
+	// Action: SIPpeers
+	// ActionID: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	AmiActionSIPPeers = "SIPpeers"
+	// Send a SIP notify.
+	// Sends a SIP Notify event.
+	// All parameters for this event must be specified in the body of this request via multiple Variable: name=value sequences.
+	// Syntax:
+	// Action: SIPnotify
+	// ActionID: <value>
+	// Channel: <value>
+	// Variable: <value>
+	// [Call-ID:] <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Channel - Peer to receive the notify.
+	// Variable - At least one variable pair must be specified. name=value
+	// Call-ID - When specified, SIP notify will be sent as a part of an existing dialog.
+	AmiActionSIPNotify = "SIPnotify"
+	// Show dialplan contexts and extensions
+	// Show dialplan contexts and extensions. Be aware that showing the full dialplan may take a lot of capacity.
+	// Syntax:
+	// Action: ShowDialPlan
+	// ActionID: <value>
+	// Extension: <value>
+	// Context: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Extension - Show a specific extension.
+	// Context - Show a specific context.
+	AmiActionShowDialPlan = "ShowDialPlan"
+	// Sets a channel variable or function value.
+	// This command can be used to set the value of channel variables or dialplan functions.
+	// Syntax:
+	// Action: Setvar
+	// ActionID: <value>
+	// Channel: <value>
+	// Variable: <value>
+	// Value: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Channel - Channel to set variable for.
+	// Variable - Variable name, function or expression.
+	// Value - Variable or function value.
+	AmiActionSetVar = "Setvar"
+	// Send text message to channel.
+	// Sends A Text Message to a channel while in a call.
+	// Syntax:
+	// Action: SendText
+	// ActionID: <value>
+	// Channel: <value>
+	// Message: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Channel - Channel to send message to.
+	// Message - Message to send.
+	AmiActionSendText = "SendText"
+	// Send a reload event.
+	// Syntax:
+	// Action: Reload
+	// ActionID: <value>
+	// Module: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Module - Name of the module to reload.
+	AmiActionReload = "Reload"
+	// Redirect (transfer) a call.
+	// Syntax:
+	/*
+		Action: Redirect
+		ActionID: <value>
+		Channel: <value>
+		ExtraChannel: <value>
+		Exten: <value>
+		ExtraExten: <value>
+		Context: <value>
+		ExtraContext: <value>
+		Priority: <value>
+		ExtraPriority: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Channel - Channel to redirect.
+		ExtraChannel - Second call leg to transfer (optional).
+		Exten - Extension to transfer to.
+		ExtraExten - Extension to transfer extra channel to (optional).
+		Context - Context to transfer to.
+		ExtraContext - Context to transfer extra channel to (optional).
+		Priority - Priority to transfer to.
+		ExtraPriority - Priority to transfer extra channel to (optional).
+	*/
+	AmiActionRedirect = "Redirect"
+	// Show queue summary.
+	// Request the manager to send a QueueSummary event.
+	// Syntax:
+	// Action: QueueSummary
+	// ActionID: <value>
+	// Queue: <value>
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Queue - Queue for which the summary is requested.
+	AmiActionQueueSummary = "QueueSummary"
+	// Show queue status.
+	// Check the status of one or more queues.
+	// Syntax:
+	/*
+		Action: QueueStatus
+		ActionID: <value>
+		Queue: <value>
+		Member: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Queue - Limit the response to the status of the specified queue.
+		Member - Limit the response to the status of the specified member.
+	*/
+	AmiActionQueueStatus = "QueueStatus"
+	// Queue Rules.
+	// List queue rules defined in queuerules.conf
+	// Syntax:
+	/*
+		Action: QueueRule
+		ActionID: <value>
+		Rule: <value>
+	*/
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Rule - The name of the rule in queuerules.conf whose contents to list.
+	AmiActionQueueRule = "QueueRule"
+	// Reset queue statistics.
+	// Reset the statistics for a queue.
+	// Syntax:
+	/*
+		Action: QueueReset
+		ActionID: <value>
+		Queue: <value>
+	*/
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	// Queue - The name of the queue on which to reset statistics.
+	AmiActionQueueReset = "QueueReset"
+	// Remove interface from queue.
+	// Syntax:
+	/*
+		Action: QueueRemove
+		ActionID: <value>
+		Queue: <value>
+		Interface: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Queue - The name of the queue to take action on.
+		Interface - The interface (tech/name) to remove from queue
+	*/
+	AmiActionQueueRemove = "QueueRemove"
+	// Reload a queue, queues, or any sub-section of a queue or queues.
+	// Syntax:
+	/*
+		Action: QueueReload
+		ActionID: <value>
+		Queue: <value>
+		Members: <value>
+		Rules: <value>
+		Parameters: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Queue - The name of the queue to take action on. If no queue name is specified, then all queues are affected.
+		Members - Whether to reload the queue's members.
+				yes
+				no
+		Rules - Whether to reload queuerules.conf
+				yes
+				no
+		Parameters - Whether to reload the other queue options.
+				yes
+				no
+	*/
+	AmiActionQueueReload = "QueueReload"
+	// Set the penalty for a queue member.
+	// Change the penalty of a queue member
+	// Syntax:
+	/*
+		Action: QueuePenalty
+		ActionID: <value>
+		Interface: <value>
+		Penalty: <value>
+		Queue: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Interface - The interface (tech/name) of the member whose penalty to change.
+		Penalty - The new penalty (number) for the member. Must be nonnegative.
+		Queue - If specified, only set the penalty for the member of this queue. Otherwise, set the penalty for the member in all queues to which
+		the member belongs.
+	*/
+	AmiActionQueuePenalty = "QueuePenalty"
+	// Makes a queue member temporarily unavailable.
+	// Pause or unpause a member in a queue.
+	// Syntax:
+	/*
+		Action: QueuePause
+		ActionID: <value>
+		Interface: <value>
+		Paused: <value>
+		Queue: <value>
+		Reason: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Interface - The name of the interface (tech/name) to pause or unpause.
+		Paused - Pause or unpause the interface. Set to 'true' to pause the member or 'false' to unpause.
+		Queue - The name of the queue in which to pause or unpause this member. If not specified, the member will be paused or unpaused in
+		all the queues it is a member of.
+		Reason - Text description, returned in the event QueueMemberPaused.
+	*/
+	AmiActionQueuePause = "QueuePause"
+	// Set the ringinuse value for a queue member.
+	// Syntax:
+	/*
+		Action: QueueMemberRingInUse
+		ActionID: <value>
+		Interface: <value>
+		RingInUse: <value>
+		Queue: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Interface
+		RingInUse
+		Queue
+	*/
+	AmiActionQueueMemberRingInUse = "QueueMemberRingInUse"
+	// Adds custom entry in queue_log
+	// Syntax:
+	/*
+		Action: QueueLog
+		ActionID: <value>
+		Queue: <value>
+		Event: <value>
+		Uniqueid: <value>
+		Interface: <value>
+		Message: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Queue
+		Event
+		Uniqueid
+		Interface
+		Message
+	*/
+	AmiActionQueueLog = "QueueLog"
+	// Change priority of a caller on queue.
+	// Syntax:
+	/*
+		Action: QueueChangePriorityCaller
+		ActionID: <value>
+		Queue: <value>
+		Caller: <value>
+		Priority: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Queue - The name of the queue to take action on.
+		Caller - The caller (channel) to change priority on queue.
+		Priority - Priority value for change for caller on queue.
+	*/
+	AmiActionQueueChangePriorityCaller = "QueueChangePriorityCaller"
+	// Add interface to queue.
+	// Syntax:
+	/*
+		Action: QueueAdd
+		ActionID: <value>
+		Queue: <value>
+		Interface: <value>
+		Penalty: <value>
+		Paused: <value>
+		MemberName: <value>
+		StateInterface: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Queue - Queue's name.
+		Interface - The name of the interface (tech/name) to add to the queue.
+		Penalty - A penalty (number) to apply to this member. Asterisk will distribute calls to members with higher penalties only after
+		attempting to distribute calls to those with lower penalty.
+		Paused - To pause or not the member initially (true/false or 1/0).
+		MemberName - Text alias for the interface.
+		StateInterface
+	*/
+	AmiActionQueueAdd = "QueueAdd"
+	// Show status of PRI spans.
+	// Similar to the CLI command "pri show spans".
+	// Syntax:
+	/*
+		Action: PRIShowSpans
+		ActionID: <value>
+		Span: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Span - Specify the specific span to show. Show all spans if zero or not present.
+	*/
+	AmiActionPRIShowSpans = "PRIShowSpans"
+	// Set PRI debug levels for a span
+	// Equivalent to the CLI command "pri set debug <level> span <span>".
+	// Syntax:
+	/*
+		Action: PRIDebugSet
+		ActionID: <value>
+		Span: <value>
+		Level: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Span - Which span to affect.
+		Level - What debug level to set. May be a numerical value or a text value from the list below
+			off
+			on
+			hex
+			intense
+	*/
+	AmiActionPRIDebugSet = "PRIDebugSet"
+	// Disables file output for PRI debug messages
+	// Syntax:
+	/*
+		Action: PRIDebugFileUnset
+		ActionID: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+	*/
+	AmiActionPRIDebugFileUnset = "PRIDebugFileUnset"
+	// Set the file used for PRI debug message output
+	// Equivalent to the CLI command "pri set debug file <output-file>"
+	// Syntax:
+	/*
+		Action: PRIDebugFileSet
+		ActionID: <value>
+		File: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		File - Path of file to write debug output.
+	*/
+	AmiActionPRIDebugFileSet = "PRIDebugFileSet"
+	// List the current known presence states.
+	// This will list out all known presence states in a sequence of PresenceStateChange events. When finished, a PresenceStateListComplete event will be emitted.
+	// Syntax:
+	/*
+		Action: PresenceStateList
+		ActionID: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+	*/
+	AmiActionPresenceStateList = "PresenceStateList"
+	// Check Presence State
+	// Report the presence state for the given presence provider.
+	// Will return a Presence State message. The response will include the presence state and, if set, a presence subtype and custom message.
+	// Syntax:
+	/*
+		Action: PresenceState
+		ActionID: <value>
+		Provider: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Provider - Presence Provider to check the state of
+	*/
+	AmiActionPresenceState = "PresenceState"
+	// Play DTMF signal on a specific channel.
+	// Syntax:
+	/*
+		Action: PlayDTMF
+		ActionID: <value>
+		Channel: <value>
+		Digit: <value>
+		[Duration:] <value>
+		[Receive:] <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Channel - Channel name to send digit to.
+		Digit - The DTMF digit to play.
+		Duration - The duration, in milliseconds, of the digit to be played.
+		Receive - Emulate receiving DTMF on this channel instead of sending it out.
+	*/
+	AmiActionPlayDtmf = "PlayDTMF"
+	// Unregister an outbound registration.
+	// Unregister the specified (or all) outbound registration(s) and stops future registration attempts. Call PJSIPRegister to start registration and schedule
+	// re-registrations according to configuration.
+	// Syntax:
+	/*
+		Action: PJSIPUnregister
+		ActionID: <value>
+		Registration: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Registration - The outbound registration to unregister or '*all' to unregister them all.
+	*/
+	AmiActionPJSIPUnregister = "PJSIPUnregister"
+	// Lists subscriptions.
+	// Provides a listing of all outbound subscriptions. An event OutboundSubscriptionDetail is issued for each subscription object. Once all detail events
+	// are completed an OutboundSubscriptionDetailComplete event is issued.
+	// Syntax:
+	// Action: PJSIPShowSubscriptionsOutbound
+	AmiActionPJSIPShowSubscriptionsOutbound = "PJSIPShowSubscriptionsOutbound"
+	// Lists subscriptions
+	// Provides a listing of all inbound subscriptions. An event InboundSubscriptionDetail is issued for each subscription object. Once all detail events are
+	// completed an InboundSubscriptionDetailComplete event is issued.
+	// Syntax:
+	// Action: PJSIPShowSubscriptionsInbound
+	AmiActionPJSIPShowSubscriptionsInbound = "PJSIPShowSubscriptionsInbound"
+	// Displays settings for configured resource lists.
+	// Provides a listing of all resource lists. An event ResourceListDetail is issued for each resource list object. Once all detail events are completed a ResourceListDetailComplete event is issued.
+	// Syntax:
+	// Action: PJSIPShowResourceLists
+	AmiActionPJSIPShowResourceLists = "PJSIPShowResourceLists"
+	// Lists PJSIP outbound registrations.
+	// In response OutboundRegistrationDetail events showing configuration and status information are raised for each outbound registration object.
+	// AuthDetail events are raised for each associated auth object as well. Once all events are completed an OutboundRegistrationDetailComplete is issued
+	// Syntax:
+	// Action: PJSIPShowRegistrationsOutbound
+	AmiActionPJSIPShowRegistrationsOutbound = "PJSIPShowRegistrationsOutbound"
+	// Lists PJSIP inbound registrations.
+	// In response, InboundRegistrationDetail events showing configuration and status information are raised for all contacts, static or dynamic. Once all
+	// events are completed an InboundRegistrationDetailComplete is issued.
+	// Syntax:
+	// Action: PJSIPShowRegistrationsInbound
+	AmiActionPJSIPShowRegistrationsInbound = "PJSIPShowRegistrationsInbound"
+	// Lists ContactStatuses for PJSIP inbound registrations.
+	// In response, ContactStatusDetail events showing status information are raised for each inbound registration (dynamic contact) object. Once all events
+	// are completed a ContactStatusDetailComplete event is issued.
+	// Syntax:
+	// Action: PJSIPShowRegistrationInboundContactStatuses
+	AmiActionPJSIPShowRegistrationInboundContactStatuses = "PJSIPShowRegistrationInboundContactStatuses"
+	// Lists PJSIP endpoints.
+	// Provides a listing of all endpoints. For each endpoint an EndpointList event is raised that contains relevant attributes and status information. Once all
+	// endpoints have been listed an EndpointListComplete event is issued.
+	// Syntax:
+	// Action: PJSIPShowEndpoints
+	AmiActionPJSIPShowEndpoints = "PJSIPShowEndpoints"
+	// Detail listing of an endpoint and its objects.
+	// Provides a detailed listing of options for a given endpoint. Events are issued showing the configuration and status of the endpoint and associated objects.
+	// These events include EndpointDetail, AorDetail, AuthDetail, TransportDetail, and IdentifyDetail. Some events may be listed multiple
+	// times if multiple objects are associated (for instance AoRs). Once all detail events have been raised a final EndpointDetailComplete event is issued
+	// Syntax:
+	/*
+		Action: PJSIPShowEndpoint
+		ActionID: <value>
+		Endpoint: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Endpoint - The endpoint to list.
+	*/
+	AmiActionPJSIPShowEndpoint = "PJSIPShowEndpoint"
+	// Lists PJSIP Contacts.
+	// Provides a listing of all Contacts. For each Contact a ContactList event is raised that contains relevant attributes and status information. Once all
+	// contacts have been listed a ContactListComplete event is issued
+	// Syntax:
+	/*
+		Action: PJSIPShowContacts
+	*/
+	AmiActionPJSIPShowContacts = "PJSIPShowContacts"
+	// Lists PJSIP Auths.
+	// Provides a listing of all Auths. For each Auth an AuthList event is raised that contains relevant attributes and status information. Once all auths have
+	// been listed an AuthListComplete event is issued.
+	// Syntax:
+	// Action: PJSIPShowAuths
+	AmiActionPJSIPShowAuths = "PJSIPShowAuths"
+	// Lists PJSIP AORs.
+	// Provides a listing of all AORs. For each AOR an AorList event is raised that contains relevant attributes and status information. Once all aors have been
+	// listed an AorListComplete event is issued.
+	// Syntax:
+	// Action: PJSIPShowAors
+	AmiActionPJSIPShowAors = "PJSIPShowAors"
+	// Register an outbound registration.
+	// Unregisters the specified (or all) outbound registration(s) then starts registration and schedules re-registrations according to configuration
+	// Syntax:
+	/*
+		Action: PJSIPRegister
+		ActionID: <value>
+		Registration: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Registration - The outbound registration to register or '*all' to register them all.
+	*/
+	AmiActionPJSIPRegister = "PJSIPRegister"
+	// Qualify a chan_pjsip endpoint.
+	// Syntax:
+	/*
+		Action: PJSIPQualify
+		ActionID: <value>
+		Endpoint: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Endpoint - The endpoint you want to qualify.
+	*/
+	AmiActionPJSIPQualify = "PJSIPQualify"
+	// Send a NOTIFY to either an endpoint, an arbitrary URI, or inside a SIP dialog.
+	// Sends a NOTIFY to an endpoint, an arbitrary URI, or inside a SIP dialog.
+	// All parameters for this event must be specified in the body of this requestvia multiple Variable: name=value sequences.
+	// Syntax:
+	/*
+		Action: PJSIPNotify
+		ActionID: <value>
+		[Endpoint:] <value>
+		[URI:] <value>
+		[channel:] <value>
+		Variable: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Endpoint - The endpoint to which to send the NOTIFY.
+		URI - Arbitrary URI to which to send the NOTIFY.
+		channel - Channel name to send the NOTIFY. Must be a PJSIP channel.
+		Variable - Appends variables as headers/content to the NOTIFY. If the variable is named Content, then the value will compose the
+		body of the message if another variable sets Content-Type. name=value
+	*/
+	AmiActionPJSIPNotify = "PJSIPNotify"
+	// Keepalive command.
+	// A 'Ping' action will elicit a 'Pong' response. Used to keep the manager connection open.
+	// Syntax:
+	/*
+		Action: Ping
+		ActionID: <value>
+	*/
+	AmiActionPing = "Ping"
+	// Pause monitoring of a channel.
+	// This action may be used to temporarily stop the recording of a channel.
+	// Syntax:
+	/*
+		Action: PauseMonitor
+		ActionID: <value>
+		Channel: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Channel - Used to specify the channel to record.
+	*/
+	AmiActionPauseMonitor = "PauseMonitor"
+	// Get a list of parking lots
+	// List all parking lots as a series of AMI events
+	// Syntax:
+	/*
+		Action: Parkinglots
+		ActionID: <value>
+	*/
+	// Args:
+	// ActionID - ActionID for this transaction. Will be returned.
+	AmiActionParkingLots = "Parkinglots"
+	// List parked calls.
+	// Syntax:
+	/*
+		Action: ParkedCalls
+		ActionID: <value>
+		ParkingLot: <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		ParkingLot - If specified, only show parked calls from the parking lot with this name.
+	*/
+	AmiActionParkedCalls = "ParkedCalls"
+	// Park a channel.
+	// Park an arbitrary channel with optional arguments for specifying the parking lot used, how long the channel should remain parked, and what dial string to
+	// use as the parker if the call times out.
+	// Syntax:
+	/*
+		Action: Park
+		ActionID: <value>
+		Channel: <value>
+		[TimeoutChannel:] <value>
+		[AnnounceChannel:] <value>
+		[Timeout:] <value>
+		[Parkinglot:] <value>
+	*/
+	// Args:
+	/*
+		ActionID - ActionID for this transaction. Will be returned.
+		Channel - Channel name to park.
+		TimeoutChannel - Channel name to use when constructing the dial string that will be dialed if the parked channel times out. If Timeout
+			Channel is in a two party bridge with Channel, then TimeoutChannel will receive an announcement and be treated as having
+			parked Channel in the same manner as the Park Call DTMF feature.
+		AnnounceChannel - If specified, then this channel will receive an announcement when Channel is parked if AnnounceChannel is in a
+			state where it can receive announcements (AnnounceChannel must be bridged). AnnounceChannel has no bearing on the actual state
+			of the parked call.
+		Timeout - Overrides the timeout of the parking lot for this park action. Specified in milliseconds, but will be converted to seconds. Use a
+			value of 0 to disable the timeout.
+		Parkinglot - The parking lot to use when parking the channel
+	*/
+	AmiActionPark = "Park"
 )
