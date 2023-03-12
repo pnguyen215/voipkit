@@ -9,6 +9,7 @@ import (
 	"net/textproto"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
@@ -164,11 +165,23 @@ func (k *AMIMessage) AddActionId() {
 	}
 }
 
+// Added Date Received at generated
+func (k *AMIMessage) AddFieldDateReceivedAt() {
+	k.AddField(config.AmiFieldDateReceivedAt, time.Now().String())
+}
+
 // Return AMI message Action Id as string
 func (k *AMIMessage) GetActionId() string {
 	k.Mutex.RLock()
 	defer k.Mutex.RUnlock()
 	return k.Header.Get(strings.ToLower(config.AmiActionIdKey))
+}
+
+// Return AMI message Date Received At as string
+func (k *AMIMessage) GetDateReceivedAt() string {
+	k.Mutex.RLock()
+	defer k.Mutex.RUnlock()
+	return k.Header.Get(strings.ToLower(config.AmiFieldDateReceivedAt))
 }
 
 // Remove fields associated with the given key

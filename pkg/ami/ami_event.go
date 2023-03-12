@@ -21,6 +21,7 @@ func (e *AMIEvent) OpenFullEvents(c *AMI) {
 	for {
 		select {
 		case message := <-all:
+			message.AddFieldDateReceivedAt()
 			log.Printf("ami event: '%s' received = %s", message.Field(strings.ToLower(config.AmiEventKey)), message.Json())
 		case err := <-c.Error():
 			c.Close()
@@ -37,6 +38,7 @@ func (e *AMIEvent) OpenFullEventsTranslator(c *AMI, d *AMIDictionary) {
 	for {
 		select {
 		case message := <-all:
+			message.AddFieldDateReceivedAt()
 			log.Printf("ami event: '%s' received = %s", message.Field(strings.ToLower(config.AmiEventKey)), message.JsonTranslator(d))
 		case err := <-c.Error():
 			c.Close()
@@ -53,6 +55,7 @@ func (e *AMIEvent) OpenFullEventsCallbackTranslator(c *AMI, d *AMIDictionary, ca
 	for {
 		select {
 		case message := <-all:
+			message.AddFieldDateReceivedAt()
 			callback(message, message.JsonTranslator(d), nil)
 		case err := <-c.Error():
 			c.Close()
@@ -70,6 +73,7 @@ func (e *AMIEvent) OpenEvent(c *AMI, name string) {
 	for {
 		select {
 		case message := <-event:
+			message.AddFieldDateReceivedAt()
 			log.Printf("ami event: '%s' received = %s", name, message.Json())
 		case err := <-c.Error():
 			c.Close()
@@ -86,6 +90,7 @@ func (e *AMIEvent) OpenEventTranslator(c *AMI, d *AMIDictionary, name string) {
 	for {
 		select {
 		case message := <-event:
+			message.AddFieldDateReceivedAt()
 			log.Printf("ami event: '%s' received = %s", name, message.JsonTranslator(d))
 		case err := <-c.Error():
 			c.Close()
@@ -102,6 +107,7 @@ func (e *AMIEvent) OpenEventCallbackTranslator(c *AMI, d *AMIDictionary, name st
 	for {
 		select {
 		case message := <-event:
+			message.AddFieldDateReceivedAt()
 			callback(message, message.JsonTranslator(d), nil)
 		case err := <-c.Error():
 			c.Close()
@@ -119,6 +125,7 @@ func (e *AMIEvent) OpenEvents(c *AMI, keys ...string) {
 	for {
 		select {
 		case message := <-event:
+			message.AddFieldDateReceivedAt()
 			log.Printf("ami event(s): '%s' received = %s", keys, message.Json())
 		case err := <-c.Error():
 			c.Close()
@@ -135,6 +142,7 @@ func (e *AMIEvent) OpenEventsTranslator(c *AMI, d *AMIDictionary, keys ...string
 	for {
 		select {
 		case message := <-event:
+			message.AddFieldDateReceivedAt()
 			log.Printf("ami event(s): '%s' received = %s", keys, message.JsonTranslator(d))
 		case err := <-c.Error():
 			c.Close()
@@ -151,6 +159,7 @@ func (e *AMIEvent) OpenEventsCallbackTranslator(c *AMI, d *AMIDictionary, callba
 	for {
 		select {
 		case message := <-event:
+			message.AddFieldDateReceivedAt()
 			callback(message, message.JsonTranslator(d), nil)
 		case err := <-c.Error():
 			c.Close()

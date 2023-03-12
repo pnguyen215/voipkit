@@ -8,4 +8,5 @@ const (
 	AmiFieldTimeout   = "Timeout"
 	AmiFieldVariable  = "Variable"
 	AmiFieldAsync     = "Async"
+	AmiFieldDateReceivedAt = "DateReceivedAt"
 )
