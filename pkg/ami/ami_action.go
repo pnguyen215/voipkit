@@ -34,12 +34,7 @@ func (a *AMIAction) SetTimeout(timeout int) *AMIAction {
 
 // RevokeAction run cli on asterisk server
 func (c *AMIAction) RevokeAction(a *AMI, d *AMIDictionary, e *AMIMessage, deadlock bool) (*AMIResponse, error) {
-	if !deadlock {
-		log.Printf(" [>] Ami revoke action (state mutex opened lock~unlock) >>> '%v' \n", e.String())
-		// a.Mutex.Lock()
-		// defer a.Mutex.Unlock()
-	}
-
+	log.Printf(" [>] Ami revoke action (state mutex opened lock~unlock) >>> \n '%v' \n", e.String())
 	var response AMIResponse
 	var _err error
 
@@ -50,12 +45,7 @@ func (c *AMIAction) RevokeAction(a *AMI, d *AMIDictionary, e *AMIMessage, deadlo
 		return &response, _err
 	}
 
-	// trace log
-	log.Printf(" [>] Ami revoke action >>> '%v' \n", e.String())
-	// call action asterisk server
 	a.Action(e)
-
-	// listen all action feedback
 	all := a.AllEvents()
 
 	if deadlock {
