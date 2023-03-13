@@ -100,6 +100,8 @@ func (c *AMI) Read() (*AMIMessage, error) {
 	}
 
 	message := ofMessage(headers)
+	// add callback value
+	c.Raw = message
 	return message, nil
 }
 
@@ -160,6 +162,9 @@ func (c *AMI) Login(parentContext context.Context, timeout time.Duration, userna
 	case msg := <-chMessage:
 		if !msg.IsSuccess() {
 			return config.ErrorAsteriskLogin
+		} else {
+			// add callback value
+			c.Raw = msg
 		}
 	}
 
@@ -211,7 +216,8 @@ func (c *AMI) SetReader(ctx context.Context) {
 						return
 					}
 				}
-
+				// add callback value
+				c.Raw = message
 				c.Publish(message)
 			}
 		}

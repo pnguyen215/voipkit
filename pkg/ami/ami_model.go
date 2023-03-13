@@ -12,13 +12,14 @@ type PubChannel chan *AMIMessage
 type MessageChannel map[string]PubChannel
 
 type AMI struct {
-	Mutex  sync.RWMutex
-	Conn   net.Conn
-	Cancel context.CancelFunc
-	Reader *textproto.Reader
-	Writer *bufio.Writer
-	Subs   *AMIPubSubQueue
-	Err    chan error
+	Mutex  sync.RWMutex       `json:"-"`
+	Conn   net.Conn           `json:"-"`
+	Cancel context.CancelFunc `json:"-"`
+	Reader *textproto.Reader  `json:"-"`
+	Writer *bufio.Writer      `json:"-"`
+	Subs   *AMIPubSubQueue    `json:"-"`
+	Raw    *AMIMessage        `json:"-"`
+	Err    chan error         `json:"-"`
 }
 
 type AMIPubSubQueue struct {
