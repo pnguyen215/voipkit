@@ -288,3 +288,18 @@ func (d *AMIDictionary) AddKeysTranslator(script map[string]string) *AMIDictiona
 	}
 	return d
 }
+
+// AddKeyLinkTranslator
+// Add translator from link github
+// Example:
+// https://raw.githubusercontent.com/pnguyen215/gear-insights-free/master/ami.dictionaries.json
+func (d *AMIDictionary) AddKeyLinkTranslator(link string) *AMIDictionary {
+	keys, err := utils.ForkDictionaryFromLink(link, false)
+
+	if err != nil {
+		return d
+	}
+
+	d.AddKeysTranslator(*keys)
+	return d
+}

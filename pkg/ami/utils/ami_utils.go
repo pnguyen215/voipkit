@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"log"
 	"net"
+	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
 )
 
@@ -141,4 +143,42 @@ func MergeMaps[K comparable, V any](m1 map[K]V, m2 map[K]V) map[K]V {
 		}
 	}
 	return merged
+}
+
+// ForkDictionaryFromLink
+// Link must be provided to file formatted as json
+// Return maps[string]string
+func ForkDictionaryFromLink(link string, debug bool) (*map[string]string, error) {
+	client := resty.New()
+	result := &map[string]string{}
+	// Set retry count to non zero to enable retries
+	client.SetRetryCount(3).
+		// You can override initial retry wait time.
+		// Default is 100 milliseconds.
+		SetRetryWaitTime(10 * time.Second).
+		// MaxWaitTime can be overridden as well.
+		// Default is 2 seconds.
+		SetRetryMaxWaitTime(20 * time.Second).
+		AddRetryCondition(
+			// RetryConditionFunc type is for retry condition function
+			// input: non-nil Response OR request execution error
+			func(r *resty.Response, err error) bool {
+				return r.StatusCode() >= http.StatusBadRequest && r.StatusCode() <= http.StatusNetworkAuthenticationRequired
+			},
+		).
+		// Enable debug mode
+		SetDebug(debug).
+		// Add headers
+		SetHeaders(map[string]string{
+			"Content-Type": "application/json",
+		})
+
+	_, err := client.R().SetResult(&result).ForceContentType("application/json").Get(link)
+
+	if err != nil {
+		log.Printf("fork dictionary from link %v has error occurred %v", link, err.Error())
+		return result, err
+	}
+
+	return result, nil
 }
