@@ -108,6 +108,20 @@ func TakeKeyFromValue(collection map[string]string, value string) string {
 	return value
 }
 
+func TakeValueFromKey(collection map[string]string, key string) string {
+	if len(collection) <= 0 {
+		return key
+	}
+
+	for k, v := range collection {
+		if strings.EqualFold(k, key) {
+			return v
+		}
+	}
+
+	return ""
+}
+
 func Keys(in interface{}) (keys []string) {
 	switch z := in.(type) {
 	case map[string]int:

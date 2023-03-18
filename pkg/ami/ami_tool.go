@@ -237,8 +237,33 @@ func GenUUID() (string, error) {
 	return uuid, nil
 }
 
-func ParseSocketResult(raw string) (AMISocketRaw, error) {
-	response := make(AMISocketRaw)
+func IsSuccess(raw AMIResultRaw) bool {
+	if len(raw) == 0 {
+		return false
+	}
+	response := raw.GetVal(config.AmiResponseKey)
+	return IsResponse(raw) &&
+		strings.EqualFold(response, config.AmiStatusSuccessKey)
+}
+
+func IsEvent(raw AMIResultRaw) bool {
+	if len(raw) == 0 {
+		return false
+	}
+	event := raw.GetVal(config.AmiEventKey)
+	return event != ""
+}
+
+func IsResponse(raw AMIResultRaw) bool {
+	if len(raw) == 0 {
+		return false
+	}
+	response := raw.GetVal(config.AmiResponseKey)
+	return response != ""
+}
+
+func ParseResult(raw string) (AMIResultRaw, error) {
+	response := make(AMIResultRaw)
 	lines := strings.Split(raw, config.AmiSignalLetter)
 
 	for _, line := range lines {
@@ -246,7 +271,8 @@ func ParseSocketResult(raw string) (AMISocketRaw, error) {
 		if len(keys) == 2 {
 			key := strings.TrimSpace(strings.Trim(keys[0], ":"))
 			value := strings.TrimSpace(keys[1])
-			response[key] = append(response[key], value)
+			// response[key] = append(response[key], value) // if the response has model map[string][]string
+			response[key] = value
 		} else if strings.Contains(line, config.AmiSignalLetters) || line == "" {
 			return response, nil
 		}
@@ -255,49 +281,43 @@ func ParseSocketResult(raw string) (AMISocketRaw, error) {
 	return response, nil
 }
 
-func RequestSKC(ctx context.Context, socket AMISocket, c *AMICommand, events []string, ignoreEvents []string) ([]AMISocketRaw, error) {
+func DoGetResult(ctx context.Context, s AMISocket, c *AMICommand, acceptedEvents []string, ignoreEvents []string) ([]AMIResultRaw, error) {
 	bytes, err := c.TransformCommand(c)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if err := socket.Send(string(bytes)); err != nil {
+	if err := s.Send(string(bytes)); err != nil {
 		return nil, err
 	}
 
-	response := make([]AMISocketRaw, 0)
+	response := make([]AMIResultRaw, 0)
 
 	for {
-		raw, err := c.Read(ctx, socket)
+		raw, err := c.Read(ctx, s)
 		if err != nil {
 			return nil, err
 		}
+		log.Printf("raw response = %v", utils.ToJson(raw))
 		_event := raw.GetVal(config.AmiEventKey)
 		_response := raw.GetVal(config.AmiResponseKey)
 
-		if len(events) == 0 {
-			log.Printf("Event 'socket-command' was missing while fetching data from server, event = %v and response = %v", _event, _response)
-			continue
+		if len(acceptedEvents) == 0 {
+			log.Printf("Event %v was missing while fetching data from server, response = %v", _event, _response)
+			break
 		}
 
 		if len(ignoreEvents) > 0 {
 			if slices.Contains(ignoreEvents, _event) || (_response != "" && !strings.EqualFold(_response, config.AmiStatusSuccessKey)) {
+				log.Printf("Event %v was broken while fetching data from server", _event)
 				break
 			}
 		}
 
-		if strings.EqualFold(_response, config.AmiStatusSuccessKey) {
-			if slices.Contains(events, _event) {
-				response = append(response, raw)
-			}
+		if slices.Contains(acceptedEvents, _event) {
+			response = append(response, raw)
 		}
-
-		// if slices.Contains(events, _event) {
-		// 	response = append(response, raw)
-		// } else if slices.Contains(ignoreEvents, _event) || _response != "" && !strings.EqualFold(_response, config.AmiStatusSuccessKey) {
-		// 	break
-		// }
 	}
 
 	return response, nil

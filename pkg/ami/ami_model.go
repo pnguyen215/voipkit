@@ -38,6 +38,7 @@ type AMIEvent struct {
 }
 
 type AMIDictionary struct {
+	AllowForceTranslate bool `json:"allow_force_translate"`
 }
 
 type AMIEventDictionary struct {
@@ -87,12 +88,28 @@ type AMISocket struct {
 	Incoming chan string   `json:"-"`
 	Shutdown chan struct{} `json:"-"`
 	Errors   chan error    `json:"-"`
+	UUID     string        `json:"-" binding:"required"`
 }
 
-type AMISocketRaw map[string][]string
+type AMIResultRaw map[string]string
 
 type AMICommand struct {
 	Action string `ami:"Action" json:"action"`
 	ID     string `ami:"ActionID,omitempty" json:"action_id"`
 	V      []interface{}
+}
+
+type AMIAuth struct {
+	Username string `ami:"Username" json:"username" binding:"required"`
+	Secret   string `ami:"Secret" json:"secret" binding:"required"`
+	Events   string `ami:"Events,omitempty" json:"events" binding:"required"`
+	ID       string `json:"-"` // replace via UUID into AMISocket struct
+}
+
+type AMICore struct {
+	Socket *AMISocket        `json:"-"`
+	Event  chan AMIResultRaw `json:"-"`
+	Stop   chan struct{}     `json:"-"`
+	Wg     sync.WaitGroup    `json:"-"`
+	UUID   string            `json:"uuid,omitempty"`
 }

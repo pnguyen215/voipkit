@@ -9,4 +9,6 @@ const (
 	AmiFieldVariable       = "Variable"
 	AmiFieldAsync          = "Async"
 	AmiFieldDateReceivedAt = "Datereceivedat"
+	AmiFieldMessage        = "Message"
+	AmiFieldGoodbye        = "Goodbye"
 )

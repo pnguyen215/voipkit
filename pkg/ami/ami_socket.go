@@ -17,8 +17,8 @@ func NewAMISocket() *AMISocket {
 	return s
 }
 
-func NewAMISocketResponse() *AMISocketRaw {
-	s := &AMISocketRaw{}
+func NewAMIResultRaw() *AMIResultRaw {
+	s := &AMIResultRaw{}
 	return s
 }
 
@@ -118,19 +118,14 @@ func (s *AMISocket) Run(ctx context.Context, conn net.Conn) {
 	}
 }
 
-func (s AMISocketRaw) GetVal(key string) string {
+func (s AMIResultRaw) GetVal(key string) string {
 	if s == nil {
 		return ""
 	}
 
-	values := s[key]
-	if len(values) == 0 {
+	v := s[key]
+	if len(v) == 0 {
 		return ""
 	}
-	return values[0]
-}
-
-func (s *AMISocketRaw) SetResult(response map[string][]string) *AMISocketRaw {
-	s = (*AMISocketRaw)(&response)
-	return s
+	return v
 }

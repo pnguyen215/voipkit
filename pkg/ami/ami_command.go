@@ -51,7 +51,7 @@ func (a *AMICommand) TransformCommand(c *AMICommand) ([]byte, error) {
 	return Marshal(c)
 }
 
-func (a *AMICommand) Send(ctx context.Context, socket AMISocket, c *AMICommand) (AMISocketRaw, error) {
+func (a *AMICommand) Send(ctx context.Context, socket AMISocket, c *AMICommand) (AMIResultRaw, error) {
 	b, err := a.TransformCommand(c)
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ func (a *AMICommand) Send(ctx context.Context, socket AMISocket, c *AMICommand) 
 	return a.Read(ctx, socket)
 }
 
-func (a *AMICommand) Read(ctx context.Context, socket AMISocket) (AMISocketRaw, error) {
+func (a *AMICommand) Read(ctx context.Context, socket AMISocket) (AMIResultRaw, error) {
 	var buffer bytes.Buffer
 	for {
 		input, err := socket.Received(ctx)
@@ -74,5 +74,5 @@ func (a *AMICommand) Read(ctx context.Context, socket AMISocket) (AMISocketRaw, 
 			break
 		}
 	}
-	return ParseSocketResult(buffer.String())
+	return ParseResult(buffer.String())
 }

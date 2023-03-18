@@ -17,6 +17,11 @@ func NewDictionary() *AMIDictionary {
 	return d
 }
 
+func (d *AMIDictionary) SetAllowForceTranslate(allow bool) *AMIDictionary {
+	d.AllowForceTranslate = allow
+	return d
+}
+
 func (d *AMIDictionary) GetDictionaries() *[]AMIEventDictionary {
 
 	if d.Length() > 0 {
@@ -203,6 +208,13 @@ func (d *AMIDictionary) TranslateField(field string) string {
 
 	if ok {
 		return strings.ToLower(value)
+	} else {
+		if d.AllowForceTranslate {
+			value = utils.TakeValueFromKey(dictionary.Dictionaries, field)
+			if len(value) > 0 {
+				return value
+			}
+		}
 	}
 
 	return d.TranslateFieldWith(field, *overlapDictionaries)
@@ -216,6 +228,13 @@ func (d *AMIDictionary) TranslateFieldWith(field string, dictionaries []AMIEvent
 	for _, e := range dictionaries {
 		if v, ok := e.Dictionaries[field]; ok {
 			return strings.ToLower(v)
+		} else {
+			if d.AllowForceTranslate {
+				value := utils.TakeValueFromKey(e.Dictionaries, field)
+				if len(value) > 0 {
+					return value
+				}
+			}
 		}
 	}
 
