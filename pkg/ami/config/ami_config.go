@@ -27,7 +27,9 @@ const (
 )
 
 const (
-	AmiPubSubKeyRef = "ami-key"
+	AmiPubSubKeyRef    = "ami-key"
+	AmiOmitemptyKeyRef = "omitempty"
+	AmiTagKeyRef       = "ami"
 )
 
 const (
@@ -429,5 +431,6 @@ var (
 )
 
 const (
-	AmiSignalLetter = "\r\n"
+	AmiSignalLetter  = "\r\n"
+	AmiSignalLetters = "\r\n\r\n"
 )

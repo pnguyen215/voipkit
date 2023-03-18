@@ -17,8 +17,8 @@ func NewAMISocket() *AMISocket {
 	return s
 }
 
-func NewAMISocketResponse() *AMISocketResponse {
-	s := &AMISocketResponse{}
+func NewAMISocketResponse() *AMISocketRaw {
+	s := &AMISocketRaw{}
 	return s
 }
 
@@ -118,7 +118,7 @@ func (s *AMISocket) Run(ctx context.Context, conn net.Conn) {
 	}
 }
 
-func (s AMISocketResponse) GetVal(key string) string {
+func (s AMISocketRaw) GetVal(key string) string {
 	if s == nil {
 		return ""
 	}
@@ -130,7 +130,7 @@ func (s AMISocketResponse) GetVal(key string) string {
 	return values[0]
 }
 
-func (s *AMISocketResponse) SetResult(response map[string][]string) *AMISocketResponse {
-	s = (*AMISocketResponse)(&response)
+func (s *AMISocketRaw) SetResult(response map[string][]string) *AMISocketRaw {
+	s = (*AMISocketRaw)(&response)
 	return s
 }

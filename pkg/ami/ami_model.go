@@ -89,4 +89,10 @@ type AMISocket struct {
 	Errors   chan error    `json:"-"`
 }
 
-type AMISocketResponse map[string][]string
+type AMISocketRaw map[string][]string
+
+type AMICommand struct {
+	Action string `ami:"Action" json:"action"`
+	ID     string `ami:"ActionID,omitempty" json:"action_id"`
+	V      []interface{}
+}
