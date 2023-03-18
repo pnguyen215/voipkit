@@ -16,18 +16,12 @@ import (
 
 func OpenContext(conn net.Conn) (*AMI, context.Context) {
 	ctx, cancel := context.WithCancel(context.Background())
-	socket, err := NewAMISocketConn(ctx, conn)
-
-	if err != nil {
-		log.Printf("OpenContext, socket has an error occurred: %v", err.Error())
-	}
 
 	client := &AMI{
 		Reader: textproto.NewReader(bufio.NewReader(conn)),
 		Writer: bufio.NewWriter(conn),
 		Conn:   conn,
 		Cancel: cancel,
-		Socket: socket,
 	}
 
 	return client, ctx
