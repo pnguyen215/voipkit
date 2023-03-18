@@ -32,3 +32,6 @@ go.work
 
 # Logs
 logs/
+
+# Main
+main.go
