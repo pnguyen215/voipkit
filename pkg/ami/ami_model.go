@@ -19,6 +19,7 @@ type AMI struct {
 	Writer *bufio.Writer      `json:"-"`
 	Subs   *AMIPubSubQueue    `json:"-"`
 	Raw    *AMIMessage        `json:"-"`
+	Socket *AMISocket         `json:"-"`
 	Err    chan error         `json:"-"`
 }
 
@@ -80,3 +81,12 @@ type AMICall struct {
 	ChannelProtocol string `json:"channel_protocol" binding:"required"` // protocols include: SIP, H323, IAX...
 	NoExtension     int    `json:"no_extension" binding:"required"`     // like current user using no. extension
 }
+
+type AMISocket struct {
+	Conn     net.Conn      `json:"-"`
+	Incoming chan string   `json:"-"`
+	Shutdown chan struct{} `json:"-"`
+	Errors   chan error    `json:"-"`
+}
+
+type AMISocketResponse map[string][]string

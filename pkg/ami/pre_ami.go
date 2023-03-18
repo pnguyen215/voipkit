@@ -16,12 +16,18 @@ import (
 
 func OpenContext(conn net.Conn) (*AMI, context.Context) {
 	ctx, cancel := context.WithCancel(context.Background())
+	socket, err := NewAMISocketConn(ctx, conn)
+
+	if err != nil {
+		log.Printf("OpenContext, socket has an error occurred: %v", err.Error())
+	}
 
 	client := &AMI{
 		Reader: textproto.NewReader(bufio.NewReader(conn)),
 		Writer: bufio.NewWriter(conn),
 		Conn:   conn,
 		Cancel: cancel,
+		Socket: socket,
 	}
 
 	return client, ctx
@@ -53,6 +59,12 @@ func OpenDialWith(network, ip string, port int) (net.Conn, error) {
 		return net.Dial(network, form)
 	}
 
+	form := RemoveProtocol(ip, port)
+	log.Printf("AMI: dial connection = %v", form)
+	return net.Dial(network, form)
+}
+
+func RemoveProtocol(ip string, port int) string {
 	if strings.HasPrefix(ip, config.AmiProtocolHttpKey) {
 		ip = strings.Replace(ip, config.AmiProtocolHttpKey, "", -1)
 	}
@@ -62,6 +74,5 @@ func OpenDialWith(network, ip string, port int) (net.Conn, error) {
 	}
 
 	form := net.JoinHostPort(ip, strconv.Itoa(port))
-	log.Printf("AMI: dial connection = %v", form)
-	return net.Dial(network, form)
+	return form
 }

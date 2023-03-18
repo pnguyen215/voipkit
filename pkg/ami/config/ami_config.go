@@ -427,3 +427,7 @@ var (
 		AmiAgiCommandWaitForDigit,
 	}
 )
+
+const (
+	AmiSignalLetter = "\r\n"
+)
