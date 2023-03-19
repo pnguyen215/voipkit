@@ -74,5 +74,5 @@ func (a *AMICommand) Read(ctx context.Context, socket AMISocket) (AMIResultRaw, 
 			break
 		}
 	}
-	return ParseResult(buffer.String())
+	return ParseResult(socket, buffer.String())
 }

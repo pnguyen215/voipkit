@@ -84,11 +84,12 @@ type AMICall struct {
 }
 
 type AMISocket struct {
-	Conn     net.Conn      `json:"-"`
-	Incoming chan string   `json:"-"`
-	Shutdown chan struct{} `json:"-"`
-	Errors   chan error    `json:"-"`
-	UUID     string        `json:"-" binding:"required"`
+	Conn       net.Conn       `json:"-"`
+	Incoming   chan string    `json:"-"`
+	Shutdown   chan struct{}  `json:"-"`
+	Errors     chan error     `json:"-"`
+	Dictionary *AMIDictionary `json:"-"`
+	UUID       string         `json:"-" binding:"required"`
 }
 
 type AMIResultRaw map[string]string
@@ -103,13 +104,13 @@ type AMIAuth struct {
 	Username string `ami:"Username" json:"username" binding:"required"`
 	Secret   string `ami:"Secret" json:"secret" binding:"required"`
 	Events   string `ami:"Events,omitempty" json:"events" binding:"required"`
-	ID       string `json:"-"` // replace via UUID into AMISocket struct
 }
 
 type AMICore struct {
-	Socket *AMISocket        `json:"-"`
-	Event  chan AMIResultRaw `json:"-"`
-	Stop   chan struct{}     `json:"-"`
-	Wg     sync.WaitGroup    `json:"-"`
-	UUID   string            `json:"uuid,omitempty"`
+	Socket     *AMISocket        `json:"-"`
+	Event      chan AMIResultRaw `json:"-"`
+	Stop       chan struct{}     `json:"-"`
+	Wg         sync.WaitGroup    `json:"-"`
+	Dictionary *AMIDictionary    `json:"-"`
+	UUID       string            `json:"uuid,omitempty"`
 }

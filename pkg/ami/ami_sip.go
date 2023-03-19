@@ -8,8 +8,8 @@ import (
 
 // SIPPeers lists SIP peers in text format with details on current status.
 // Peerlist will follow as separate events, followed by a final event called PeerlistComplete
-func SIPPeers(ctx context.Context, socket AMISocket, uuid string) ([]AMIResultRaw, error) {
-	c := NewCommand().SetId(uuid).SetAction(config.AmiActionSIPPeers)
-	return DoGetResult(ctx, socket, c, []string{config.AmiListenerEventPeerEntry},
+func SIPPeers(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionSIPPeers)
+	return DoGetResult(ctx, s, c, []string{config.AmiListenerEventPeerEntry},
 		[]string{config.AmiListenerEventPeerlistComplete})
 }

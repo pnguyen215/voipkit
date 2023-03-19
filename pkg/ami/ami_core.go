@@ -3,6 +3,8 @@ package ami
 import (
 	"context"
 	"log"
+
+	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
 )
 
 func NewCore() *AMICore {
@@ -30,6 +32,15 @@ func (c *AMICore) SetStop(stop chan struct{}) *AMICore {
 	return c
 }
 
+func (c *AMICore) SetDictionary(dictionary *AMIDictionary) *AMICore {
+	c.Dictionary = dictionary
+	return c
+}
+
+// NewAmiCore
+// Creating new instance asterisk server connection
+// Firstly, create new instance AMISocket
+// Secondly, create new request body to login
 func NewAmiCore(ctx context.Context, socket AMISocket, auth *AMIAuth) (*AMICore, error) {
 	uuid, err := GenUUID()
 
@@ -37,7 +48,7 @@ func NewAmiCore(ctx context.Context, socket AMISocket, auth *AMIAuth) (*AMICore,
 		return nil, err
 	}
 
-	auth.ID = uuid
+	socket.SetUUID(uuid)
 	err = Login(ctx, socket, auth)
 
 	if err != nil {
@@ -49,12 +60,15 @@ func NewAmiCore(ctx context.Context, socket AMISocket, auth *AMIAuth) (*AMICore,
 	core.SetUUID(uuid)
 	core.SetEvent(make(chan AMIResultRaw))
 	core.SetStop(make(chan struct{}))
+	core.SetDictionary(socket.Dictionary)
 
 	core.Wg.Add(1)
 	go core.Run(ctx)
 	return core, nil
 }
 
+// Run
+// Go-func to consume event from asterisk server response
 func (c *AMICore) Run(ctx context.Context) {
 	defer c.Wg.Done()
 	for {
@@ -66,7 +80,7 @@ func (c *AMICore) Run(ctx context.Context) {
 		default:
 			event, err := Events(ctx, *c.Socket)
 			if err != nil {
-				log.Printf("Ami events failed: %v\n", err)
+				log.Printf(config.AmiErrorConsumeEvent, err)
 				return
 			}
 			c.Event <- event
@@ -74,19 +88,22 @@ func (c *AMICore) Run(ctx context.Context) {
 	}
 }
 
-// Events returns an channel with events received from AMI.
+// Events
+// Consume all events will be returned an channel received from asterisk server log.
 func (c *AMICore) Events() <-chan AMIResultRaw {
 	return c.Event
 }
 
-// SIPPeers fetch the list of SIP peers present on asterisk.
-func (c *AMICore) SIPPeers(ctx context.Context) ([]AMIResultRaw, error) {
-	return SIPPeers(ctx, *c.Socket, c.UUID)
+// GetSIPPeers
+// GetSIPPeers fetch the list of SIP peers present on asterisk.
+func (c *AMICore) GetSIPPeers(ctx context.Context) ([]AMIResultRaw, error) {
+	return SIPPeers(ctx, *c.Socket)
 }
 
+// Logoff
 // Logoff closes the current session with AMI.
 func (c *AMICore) Logoff(ctx context.Context) error {
 	close(c.Stop)
 	c.Wg.Wait()
-	return Logoff(ctx, *c.Socket, c.UUID)
+	return Logoff(ctx, *c.Socket)
 }

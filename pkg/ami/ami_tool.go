@@ -237,50 +237,67 @@ func GenUUID() (string, error) {
 	return uuid, nil
 }
 
+// IsSuccess
+// Check event from asterisk feedback to console is succeeded
 func IsSuccess(raw AMIResultRaw) bool {
 	if len(raw) == 0 {
 		return false
 	}
-	response := raw.GetVal(config.AmiResponseKey)
+	response := raw.GetVal(strings.ToLower(config.AmiResponseKey))
 	return IsResponse(raw) &&
 		strings.EqualFold(response, config.AmiStatusSuccessKey)
 }
 
+// IsEvent
+// Check result from asterisk server to console is event?
+// Get key `Event` and value of `Event` is not equal whitespace
 func IsEvent(raw AMIResultRaw) bool {
 	if len(raw) == 0 {
 		return false
 	}
-	event := raw.GetVal(config.AmiEventKey)
+	event := raw.GetVal(strings.ToLower(config.AmiEventKey))
 	return event != ""
 }
 
+// IsResponse
+// Check result from asterisk server to console is response?
+// Get key `response` and value of `response` is not equal whitespace
 func IsResponse(raw AMIResultRaw) bool {
 	if len(raw) == 0 {
 		return false
 	}
-	response := raw.GetVal(config.AmiResponseKey)
+	response := raw.GetVal(strings.ToLower(config.AmiResponseKey))
 	return response != ""
 }
 
-func ParseResult(raw string) (AMIResultRaw, error) {
+// ParseResult
+// Break line by line for parsing to map[string]string
+func ParseResult(socket AMISocket, raw string) (AMIResultRaw, error) {
 	response := make(AMIResultRaw)
 	lines := strings.Split(raw, config.AmiSignalLetter)
 
 	for _, line := range lines {
 		keys := strings.SplitAfterN(line, ":", 2)
+
 		if len(keys) == 2 {
 			key := strings.TrimSpace(strings.Trim(keys[0], ":"))
 			value := strings.TrimSpace(keys[1])
-			// response[key] = append(response[key], value) // if the response has model map[string][]string
 			response[key] = value
 		} else if strings.Contains(line, config.AmiSignalLetters) || line == "" {
-			return response, nil
+			break
 		}
 	}
 
-	return response, nil
+	return TransformKey(response, socket.Dictionary), nil
 }
 
+// DoGetResult
+// Get result while fetch response command has been sent to asterisk server
+// Arguments:
+// 1. AMISocket - to create new instance connection socket
+// 2. AMICommand - to build command cli will be sent to server
+// 3. acceptedEvents - select event will captured as response
+// 4. ignoreEvents - the event will been stopped fetching command
 func DoGetResult(ctx context.Context, s AMISocket, c *AMICommand, acceptedEvents []string, ignoreEvents []string) ([]AMIResultRaw, error) {
 	bytes, err := c.TransformCommand(c)
 
@@ -294,23 +311,29 @@ func DoGetResult(ctx context.Context, s AMISocket, c *AMICommand, acceptedEvents
 
 	response := make([]AMIResultRaw, 0)
 
+	// allow to convert camel word using dictionary
+	if s.Dictionary == nil {
+		d := NewDictionary()
+		d.SetAllowForceTranslate(true)
+		s.SetDictionary(d)
+	}
+
 	for {
 		raw, err := c.Read(ctx, s)
 		if err != nil {
 			return nil, err
 		}
-		log.Printf("raw response = %v", utils.ToJson(raw))
-		_event := raw.GetVal(config.AmiEventKey)
-		_response := raw.GetVal(config.AmiResponseKey)
+		_event := raw.GetVal(strings.ToLower(config.AmiEventKey))
+		_response := raw.GetVal(strings.ToLower(config.AmiResponseKey))
 
 		if len(acceptedEvents) == 0 {
-			log.Printf("Event %v was missing while fetching data from server, response = %v", _event, _response)
+			log.Printf(config.AmiErrorMissingSocketEvent, _event, _response)
 			break
 		}
 
 		if len(ignoreEvents) > 0 {
 			if slices.Contains(ignoreEvents, _event) || (_response != "" && !strings.EqualFold(_response, config.AmiStatusSuccessKey)) {
-				log.Printf("Event %v was broken while fetching data from server", _event)
+				log.Printf(config.AmiErrorBreakSocketIgnoredEvent, _event)
 				break
 			}
 		}
@@ -321,4 +344,26 @@ func DoGetResult(ctx context.Context, s AMISocket, c *AMICommand, acceptedEvents
 	}
 
 	return response, nil
+}
+
+// TransformKey
+// Find the key transferred from dictionary
+// Example:
+// The field key is Response, so then transferred to response
+// Or from ResponseEvent to response_event
+func TransformKey(response AMIResultRaw, d *AMIDictionary) AMIResultRaw {
+	if len(response) <= 0 {
+		return response
+	}
+
+	if d == nil {
+		return response
+	}
+
+	_m := make(AMIResultRaw, len(response))
+	for k, v := range response {
+		_m[d.TranslateField(k)] = v
+	}
+	response = nil
+	return _m
 }

@@ -345,9 +345,16 @@ const (
 )
 
 const (
-	AmiErrorFieldRequired   string = "%v is required"
-	AmiErrorInvalidProtocol string = "Invalid protocol"
-	AmiErrorProtocolMessage string = "Protocol must have values: %v"
+	AmiErrorFieldRequired           string = "%v is required"
+	AmiErrorInvalidProtocol         string = "Invalid protocol"
+	AmiErrorProtocolMessage         string = "Protocol must have values: %v"
+	AmiErrorConsumeEvent            string = "Ami can not consume event, reason failed: %v"
+	AmiErrorUsernameRequired        string = "(Ami Authentication). username was missing"
+	AmiErrorPasswordRequired        string = "(Ami Authentication). password was missing"
+	AmiErrorLoginFailedMessage      string = "(Ami Authentication). login failed for reason: %v"
+	AmiErrorLogoutFailedMessage     string = "(Ami Authentication). logout failed for reason: %v"
+	AmiErrorBreakSocketIgnoredEvent string = "Event '%v' was broken while fetching from server"
+	AmiErrorMissingSocketEvent      string = "Event %v was missing while fetching from server, response = %v"
 )
 
 const (

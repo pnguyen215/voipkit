@@ -64,6 +64,16 @@ func (s *AMISocket) SetIncoming(incoming chan string) *AMISocket {
 	return s
 }
 
+func (s *AMISocket) SetUUID(uuid string) *AMISocket {
+	s.UUID = uuid
+	return s
+}
+
+func (s *AMISocket) SetDictionary(dictionary *AMIDictionary) *AMISocket {
+	s.Dictionary = dictionary
+	return s
+}
+
 func (s *AMISocket) Connected() bool {
 	return s.Conn != nil
 }

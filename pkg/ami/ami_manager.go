@@ -3,9 +3,11 @@ package ami
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
+	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 func NewAuth() *AMIAuth {
@@ -39,30 +41,32 @@ func (a *AMIAuth) SetEvents(events ...string) *AMIAuth {
 	return a
 }
 
+// Login
 // Login provides the login manager.
 func Login(ctx context.Context, socket AMISocket, auth *AMIAuth) error {
 	if len(auth.Username) <= 0 {
-		return fmt.Errorf("(Ami Auth). username was missing")
+		return fmt.Errorf(config.AmiErrorUsernameRequired)
 	}
 
 	if len(auth.Secret) <= 0 {
-		return fmt.Errorf("(Ami Auth). secret was missing")
+		return fmt.Errorf(config.AmiErrorPasswordRequired)
 	}
 
 	if len(auth.Events) == 0 {
-		auth.Events = config.AmiManagerPerm
+		auth.SetEvent(config.AmiManagerPerm)
 	}
 
 	a := NewCommand()
 
-	if len(auth.ID) <= 0 {
+	if len(socket.UUID) <= 0 {
 		uuid, err := GenUUID()
 		if err != nil {
 			return err
 		}
 		a.SetId(uuid)
+		socket.SetUUID(uuid)
 	} else {
-		a.SetId(auth.ID)
+		a.SetId(socket.UUID)
 	}
 
 	a.SetV(auth)
@@ -74,7 +78,7 @@ func Login(ctx context.Context, socket AMISocket, auth *AMIAuth) error {
 	}
 
 	if !IsSuccess(response) {
-		return fmt.Errorf("(Ami Auth). login failed with reason is >> %v", response.GetVal(config.AmiFieldMessage))
+		return fmt.Errorf(config.AmiErrorLoginFailedMessage, response.GetVal(config.AmiFieldMessage))
 	}
 
 	return nil
@@ -87,26 +91,29 @@ func Events(ctx context.Context, socket AMISocket) (AMIResultRaw, error) {
 	return a.Read(ctx, socket)
 }
 
+// Logoff
 // Logoff logoff the current manager session.
-func Logoff(ctx context.Context, socket AMISocket, uuid string) error {
+func Logoff(ctx context.Context, socket AMISocket) error {
 	a := NewCommand()
 	a.SetAction(config.AmiActionLogoff)
 
-	if len(uuid) <= 0 {
+	if len(socket.UUID) <= 0 {
 		_uuid, err := GenUUID()
 		if err != nil {
 			return err
 		}
-		uuid = _uuid
+		socket.SetUUID(_uuid)
 	}
-	a.SetId(uuid)
+
+	a.SetId(socket.UUID)
 	response, err := a.Send(ctx, socket, a)
 	if err != nil {
 		return err
 	}
 
 	if msg := response.GetVal(config.AmiResponseKey); msg != config.AmiFieldGoodbye {
-		return fmt.Errorf("Ami Logout failed: %v", response.GetVal(config.AmiFieldMessage))
+		log.Printf("Logoff, response failed = %v", utils.ToJson(response))
+		return fmt.Errorf(config.AmiErrorLogoutFailedMessage, response.GetVal(config.AmiFieldMessage))
 	}
 
 	return nil
