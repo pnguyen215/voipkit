@@ -193,4 +193,7 @@ const (
 	AmiListenerEventTransportDetail            = "TransportDetail"            // Provide details about an authentication section.
 	AmiListenerEventUnexpectedAddress          = "UnexpectedAddress"          // Raised when a request has a different source address then what is expected for a session already in progress with a service
 	AmiListenerEventUnload                     = "Unload"                     // Raised when a module has been unloaded in Asterisk.
+	AmiListenerEventSIPpeerstatusComplete      = "SIPpeerstatusComplete"      //
+	AmiListenerEventRegistrationEntry          = "RegistrationEntry"          //
+	AmiListenerEventRegistrationsComplete      = "RegistrationsComplete"      //
 )

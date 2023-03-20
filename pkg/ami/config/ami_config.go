@@ -355,6 +355,7 @@ const (
 	AmiErrorLogoutFailedMessage     string = "(Ami Authentication). logout failed for reason: %v"
 	AmiErrorBreakSocketIgnoredEvent string = "Event '%v' was broken while fetching from server"
 	AmiErrorMissingSocketEvent      string = "Event %v was missing while fetching from server, response = %v"
+	AmiErrorNoExtensionConfigured   string = "There's no sip peers configured"
 )
 
 const (

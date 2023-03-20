@@ -11,4 +11,5 @@ const (
 	AmiFieldDateReceivedAt = "Datereceivedat"
 	AmiFieldMessage        = "Message"
 	AmiFieldGoodbye        = "Goodbye"
+	AmiFieldPeer           = "Peer"
 )

@@ -2,6 +2,7 @@ package ami
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
@@ -96,8 +97,172 @@ func (c *AMICore) Events() <-chan AMIResultRaw {
 
 // GetSIPPeers
 // GetSIPPeers fetch the list of SIP peers present on asterisk.
+// Example:
+/*
+{
+    "Address-IP": "14.238.106.54",
+    "Address-Port": "5060",
+    "Busy-level": "0",
+    "CID-CallingPres": "Presentation Allowed, Not Screened",
+    "Call-limit": "2147483647",
+    "Codecs": "(alaw)",
+    "Default-Username": "5002",
+    "Default-addr-IP": "(null)",
+    "Default-addr-port": "0",
+    "LastMsgsSent": "-1",
+    "MD5SecretExist": "N",
+    "MaxCallBR": "384 kbps",
+    "Maxforwards": "0",
+    "Named Callgroup": "",
+    "Named Pickupgroup": "",
+    "Parkinglot": "",
+    "QualifyFreq": "60000 ms",
+    "Reg-Contact": "sip:5002@14.238.106.54:5060",
+    "RegExpire": "3579 seconds",
+    "RemoteSecretExist": "N",
+    "SIP-AuthInsecure": "no",
+    "SIP-CanReinvite": "N",
+    "SIP-Comedia": "Y",
+    "SIP-DTMFmode": "rfc2833",
+    "SIP-DirectMedia": "N",
+    "SIP-Encryption": "N",
+    "SIP-Forcerport": "Y",
+    "SIP-PromiscRedir": "N",
+    "SIP-RTCP-Mux": "N",
+    "SIP-RTP-Engine": "asterisk",
+    "SIP-Sess-Expires": "1800",
+    "SIP-Sess-Min": "90",
+    "SIP-Sess-Refresh": "uas",
+    "SIP-Sess-Timers": "Accept",
+    "SIP-T.38EC": "Unknown",
+    "SIP-T.38MaxDtgrm": "4294967295",
+    "SIP-T.38Support": "N",
+    "SIP-TextSupport": "N",
+    "SIP-Use-Reason-Header": "N",
+    "SIP-UserPhone": "N",
+    "SIP-Useragent": "ATCOM A1x-2.6.5.d0809 80828708CF75",
+    "SIP-VideoSupport": "N",
+    "SecretExist": "Y",
+    "ToHost": "",
+    "TransferMode": "open",
+    "VoiceMailbox": "",
+    "acl": "Y",
+    "action_id": "bf70fb4d-1c7b-5b1d-e63e-e8a1ab189469",
+    "ama_flags": "Unknown",
+    "call_group": "",
+    "caller_id": "\"TA_5002\" <5002>",
+    "chan_object_type": "peer",
+    "channel_type": "SIP",
+    "context": "from-internal",
+    "description": "",
+    "dynamic": "Y",
+    "lang": "en",
+    "moh_suggest": "",
+    "object_name": "5002",
+    "pickup_group": "",
+    "response": "Success",
+    "status": "OK (41 ms)",
+    "tone_zone": "<Not set>"
+  }
+*/
 func (c *AMICore) GetSIPPeers(ctx context.Context) ([]AMIResultRaw, error) {
-	return SIPPeers(ctx, *c.Socket)
+	var peers []AMIResultRaw
+	response, err := SIPPeers(ctx, *c.Socket)
+	switch {
+	case err != nil:
+		return nil, err
+	case len(response) == 0:
+		return nil, fmt.Errorf(config.AmiErrorNoExtensionConfigured)
+	default:
+		for _, v := range response {
+			peer, err := SIPShowPeer(ctx, *c.Socket, v.GetVal(config.AmiJsonFieldObjectName))
+			if err != nil {
+				return nil, err
+			}
+			peers = append(peers, peer)
+		}
+	}
+
+	return peers, nil
+}
+
+// GetSIPPeerStatus
+// Example:
+/*
+{
+    "action_id": "b6514f81-6047-6b2c-0097-6701bfe6ecd4",
+    "channel_type": "SIP",
+    "event": "PeerStatus",
+    "peer": "SIP/5001",
+    "peer_status": "Reachable",
+    "privilege": "System",
+    "time": "28"
+  }
+*/
+func (c *AMICore) GetSIPPeerStatus(ctx context.Context) ([]AMIResultRaw, error) {
+	var peers []AMIResultRaw
+	response, err := SIPPeers(ctx, *c.Socket)
+	switch {
+	case err != nil:
+		return nil, err
+	case len(response) == 0:
+		return nil, fmt.Errorf(config.AmiErrorNoExtensionConfigured)
+	default:
+		for _, v := range response {
+			peer, err := SIPPeerStatus(ctx, *c.Socket, v.GetVal(config.AmiJsonFieldObjectName))
+			if err != nil {
+				return nil, err
+			}
+			peers = append(peers, peer...)
+		}
+	}
+
+	return peers, nil
+}
+
+// GetSIPShowRegistry
+// Example:
+/*
+
+ */
+func (c *AMICore) GetSIPShowRegistry(ctx context.Context) ([]AMIResultRaw, error) {
+	return SIPShowRegistry(ctx, *c.Socket)
+}
+
+// GetSIPQualifyPeer
+// Example
+/*
+{
+    "action_id": "2d4ddf88-0eed-dc3d-3ab8-0bba9d603328",
+    "message": "SIP peer found - will qualify",
+    "response": "Success"
+  },
+  {
+    "action_id": "2d4ddf88-0eed-dc3d-3ab8-0bba9d603328",
+    "event": "SIPQualifyPeerDone",
+    "peer": "5001",
+    "privilege": "call,all"
+  },
+*/
+func (c *AMICore) GetSIPQualifyPeer(ctx context.Context) ([]AMIResultRaw, error) {
+	var peers []AMIResultRaw
+	response, err := SIPPeers(ctx, *c.Socket)
+	switch {
+	case err != nil:
+		return nil, err
+	case len(response) == 0:
+		return nil, fmt.Errorf(config.AmiErrorNoExtensionConfigured)
+	default:
+		for _, v := range response {
+			peer, err := SIPQualifyPeer(ctx, *c.Socket, v.GetVal(config.AmiJsonFieldObjectName))
+			if err != nil {
+				return nil, err
+			}
+			peers = append(peers, peer)
+		}
+	}
+
+	return peers, nil
 }
 
 // Logoff
