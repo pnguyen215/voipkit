@@ -248,6 +248,12 @@ func IsSuccess(raw AMIResultRaw) bool {
 		strings.EqualFold(response, config.AmiStatusSuccessKey)
 }
 
+// IsFailure
+// Check event from asterisk feedback to console is failure
+func IsFailure(raw AMIResultRaw) bool {
+	return !IsSuccess(raw)
+}
+
 // IsEvent
 // Check result from asterisk server to console is event?
 // Get key `Event` and value of `Event` is not equal whitespace
@@ -291,6 +297,27 @@ func ParseResult(socket AMISocket, raw string) (AMIResultRaw, error) {
 	return TransformKey(response, socket.Dictionary), nil
 }
 
+// ParseResultLevel
+// Break line by line for parsing to map[string]string
+func ParseResultLevel(socket AMISocket, raw string) (AMIResultRawLevel, error) {
+	response := make(AMIResultRawLevel)
+	lines := strings.Split(raw, config.AmiSignalLetter)
+
+	for _, line := range lines {
+		keys := strings.SplitAfterN(line, ":", 2)
+
+		if len(keys) == 2 {
+			key := strings.TrimSpace(strings.Trim(keys[0], ":"))
+			value := strings.TrimSpace(keys[1])
+			response[key] = append(response[key], value)
+		} else if strings.Contains(line, config.AmiSignalLetters) || line == "" {
+			break
+		}
+	}
+
+	return TransformKeyLevel(response, socket.Dictionary), nil
+}
+
 // DoGetResult
 // Get result while fetch response command has been sent to asterisk server
 // Arguments:
@@ -310,13 +337,6 @@ func DoGetResult(ctx context.Context, s AMISocket, c *AMICommand, acceptedEvents
 	}
 
 	response := make([]AMIResultRaw, 0)
-
-	// allow to convert camel word using dictionary
-	if s.Dictionary == nil {
-		d := NewDictionary()
-		d.SetAllowForceTranslate(true)
-		s.SetDictionary(d)
-	}
 
 	for {
 		raw, err := c.Read(ctx, s)
@@ -361,6 +381,28 @@ func TransformKey(response AMIResultRaw, d *AMIDictionary) AMIResultRaw {
 	}
 
 	_m := make(AMIResultRaw, len(response))
+	for k, v := range response {
+		_m[d.TranslateField(k)] = v
+	}
+	response = nil
+	return _m
+}
+
+// TransformKeyLevel
+// Find the key transferred from dictionary
+// Example:
+// The field key is Response, so then transferred to response
+// Or from ResponseEvent to response_event
+func TransformKeyLevel(response AMIResultRawLevel, d *AMIDictionary) AMIResultRawLevel {
+	if len(response) <= 0 {
+		return response
+	}
+
+	if d == nil {
+		return response
+	}
+
+	_m := make(AMIResultRawLevel, len(response))
 	for k, v := range response {
 		_m[d.TranslateField(k)] = v
 	}

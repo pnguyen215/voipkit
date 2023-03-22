@@ -84,15 +84,17 @@ type AMICall struct {
 }
 
 type AMISocket struct {
-	Conn       net.Conn       `json:"-"`
-	Incoming   chan string    `json:"-"`
-	Shutdown   chan struct{}  `json:"-"`
-	Errors     chan error     `json:"-"`
-	Dictionary *AMIDictionary `json:"-"`
-	UUID       string         `json:"-" binding:"required"`
+	Conn             net.Conn       `json:"-"`
+	Incoming         chan string    `json:"-"`
+	Shutdown         chan struct{}  `json:"-"`
+	Errors           chan error     `json:"-"`
+	Dictionary       *AMIDictionary `json:"-"`
+	UUID             string         `json:"uuid" binding:"required"`
+	IsUsedDictionary bool           `json:"is_used_dictionary"`
 }
 
 type AMIResultRaw map[string]string
+type AMIResultRawLevel map[string][]string
 
 type AMICommand struct {
 	Action string `ami:"Action" json:"action"`

@@ -43,7 +43,7 @@ func (a *AMIAuth) SetEvents(events ...string) *AMIAuth {
 
 // Login
 // Login provides the login manager.
-func Login(ctx context.Context, socket AMISocket, auth *AMIAuth) error {
+func Login(ctx context.Context, s AMISocket, auth *AMIAuth) error {
 	if len(auth.Username) <= 0 {
 		return fmt.Errorf(config.AmiErrorUsernameRequired)
 	}
@@ -56,28 +56,32 @@ func Login(ctx context.Context, socket AMISocket, auth *AMIAuth) error {
 		auth.SetEvent(config.AmiManagerPerm)
 	}
 
-	a := NewCommand()
+	c := NewCommand()
 
-	if len(socket.UUID) <= 0 {
+	if len(s.UUID) <= 0 {
 		uuid, err := GenUUID()
 		if err != nil {
 			return err
 		}
-		a.SetId(uuid)
-		socket.SetUUID(uuid)
+		c.SetId(uuid)
+		s.SetUUID(uuid)
 	} else {
-		a.SetId(socket.UUID)
+		c.SetId(s.UUID)
 	}
 
-	a.SetV(auth)
-	a.SetAction(config.AmiActionLogin)
-	response, err := a.Send(ctx, socket, a)
+	c.SetV(auth)
+	c.SetAction(config.AmiActionLogin)
+	response, err := c.Send(ctx, s, c)
+
+	if len(response) == 0 {
+		return fmt.Errorf(config.AmiErrorLoginFailed)
+	}
 
 	if err != nil {
-		return err
+		return fmt.Errorf(config.AmiErrorLoginFailedMessage, err.Error())
 	}
 
-	if !IsSuccess(response) {
+	if IsFailure(response) {
 		return fmt.Errorf(config.AmiErrorLoginFailedMessage, response.GetVal(config.AmiFieldMessage))
 	}
 
@@ -86,16 +90,39 @@ func Login(ctx context.Context, socket AMISocket, auth *AMIAuth) error {
 
 // Events gets events from current client connection
 // It is mandatory set 'events' of ami.Login with "system,call,all,user", to received events.
-func Events(ctx context.Context, socket AMISocket) (AMIResultRaw, error) {
-	a := NewCommand()
-	return a.Read(ctx, socket)
+func Events(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
+	c := NewCommand()
+	return c.Read(ctx, s)
 }
 
 // Logoff
 // Logoff logoff the current manager session.
-func Logoff(ctx context.Context, socket AMISocket) error {
-	a := NewCommand()
-	a.SetAction(config.AmiActionLogoff)
+func Logoff(ctx context.Context, s AMISocket) error {
+	c := NewCommand()
+	c.SetAction(config.AmiActionLogoff)
+
+	if len(s.UUID) <= 0 {
+		_uuid, err := GenUUID()
+		if err != nil {
+			return err
+		}
+		s.SetUUID(_uuid)
+	}
+
+	c.SetId(s.UUID)
+	response, err := c.Send(ctx, s, c)
+	if err != nil {
+		return err
+	}
+	log.Printf("Logoff, response = %v", utils.ToJson(response))
+	return err
+}
+
+// Ping action will ellicit a 'Pong' response.
+// Used to keep the manager connection open.
+func Ping(ctx context.Context, socket AMISocket) error {
+	c := NewCommand()
+	c.SetAction(config.AmiActionPing)
 
 	if len(socket.UUID) <= 0 {
 		_uuid, err := GenUUID()
@@ -105,16 +132,41 @@ func Logoff(ctx context.Context, socket AMISocket) error {
 		socket.SetUUID(_uuid)
 	}
 
-	a.SetId(socket.UUID)
-	response, err := a.Send(ctx, socket, a)
+	c.SetId(socket.UUID)
+
+	response, err := c.Send(ctx, socket, c)
 	if err != nil {
 		return err
 	}
 
-	if msg := response.GetVal(config.AmiResponseKey); msg != config.AmiFieldGoodbye {
-		log.Printf("Logoff, response failed = %v", utils.ToJson(response))
-		return fmt.Errorf(config.AmiErrorLogoutFailedMessage, response.GetVal(config.AmiFieldMessage))
-	}
+	log.Printf("Ping, response = %v", utils.ToJson(response))
+	return err
+}
 
-	return nil
+// Command executes an Asterisk CLI Command.
+func Command(ctx context.Context, s AMISocket, cmd string) (AMIResultRawLevel, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionCommand)
+	c.SetV(map[string]string{
+		config.AmiActionCommand: cmd,
+	})
+	return c.SendLevel(ctx, s, c)
+}
+
+// CoreSettings shows PBX core settings (version etc).
+func CoreSettings(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionCoreSettings)
+	return c.Send(ctx, s, c)
+}
+
+// CoreStatus shows PBX core status variables.
+func CoreStatus(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionCoreStatus)
+	return c.Send(ctx, s, c)
+}
+
+// ListCommands lists available manager commands.
+// Returns the action name and synopsis for every action that is available to the user
+func ListCommands(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionListCommands)
+	return c.Send(ctx, s, c)
 }

@@ -272,3 +272,29 @@ func (c *AMICore) Logoff(ctx context.Context) error {
 	c.Wg.Wait()
 	return Logoff(ctx, *c.Socket)
 }
+
+// Ping
+func (c *AMICore) Ping(ctx context.Context) error {
+	return Ping(ctx, *c.Socket)
+}
+
+// Command executes an Asterisk CLI Command.
+func (c *AMICore) Command(ctx context.Context, cmd string) (AMIResultRawLevel, error) {
+	return Command(ctx, *c.Socket, cmd)
+}
+
+// CoreSettings shows PBX core settings (version etc).
+func (c *AMICore) GetCoreSettings(ctx context.Context) (AMIResultRaw, error) {
+	return CoreSettings(ctx, *c.Socket)
+}
+
+// CoreStatus shows PBX core status variables.
+func (c *AMICore) GetCoreStatus(ctx context.Context) (AMIResultRaw, error) {
+	return CoreStatus(ctx, *c.Socket)
+}
+
+// ListCommands lists available manager commands.
+// Returns the action name and synopsis for every action that is available to the user
+func (c *AMICore) GetListCommands(ctx context.Context) (AMIResultRaw, error) {
+	return ListCommands(ctx, *c.Socket)
+}

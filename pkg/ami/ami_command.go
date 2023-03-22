@@ -62,6 +62,17 @@ func (a *AMICommand) Send(ctx context.Context, socket AMISocket, c *AMICommand) 
 	return a.Read(ctx, socket)
 }
 
+func (a *AMICommand) SendLevel(ctx context.Context, socket AMISocket, c *AMICommand) (AMIResultRawLevel, error) {
+	b, err := a.TransformCommand(c)
+	if err != nil {
+		return nil, err
+	}
+	if err := socket.Send(string(b)); err != nil {
+		return nil, err
+	}
+	return a.ReadLevel(ctx, socket)
+}
+
 func (a *AMICommand) Read(ctx context.Context, socket AMISocket) (AMIResultRaw, error) {
 	var buffer bytes.Buffer
 	for {
@@ -75,4 +86,19 @@ func (a *AMICommand) Read(ctx context.Context, socket AMISocket) (AMIResultRaw, 
 		}
 	}
 	return ParseResult(socket, buffer.String())
+}
+
+func (a *AMICommand) ReadLevel(ctx context.Context, socket AMISocket) (AMIResultRawLevel, error) {
+	var buffer bytes.Buffer
+	for {
+		input, err := socket.Received(ctx)
+		if err != nil {
+			return nil, err
+		}
+		buffer.WriteString(input)
+		if strings.HasSuffix(buffer.String(), config.AmiSignalLetters) {
+			break
+		}
+	}
+	return ParseResultLevel(socket, buffer.String())
 }

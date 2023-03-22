@@ -10,10 +10,15 @@ import (
 	"strings"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
+	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 func NewAMISocket() *AMISocket {
 	s := &AMISocket{}
+	d := NewDictionary()
+	d.SetAllowForceTranslate(true)
+	s.SetDictionary(d)
+	s.SetUsedDictionary(true)
 	return s
 }
 
@@ -40,6 +45,10 @@ func NewAMISocketConn(ctx context.Context, conn net.Conn) (*AMISocket, error) {
 		Shutdown: make(chan struct{}),
 		Errors:   make(chan error),
 	}
+	d := NewDictionary()
+	d.SetAllowForceTranslate(true)
+	s.SetDictionary(d)
+	s.SetUsedDictionary(true)
 	go s.Run(ctx, conn)
 	return s, nil
 }
@@ -71,6 +80,11 @@ func (s *AMISocket) SetUUID(uuid string) *AMISocket {
 
 func (s *AMISocket) SetDictionary(dictionary *AMIDictionary) *AMISocket {
 	s.Dictionary = dictionary
+	return s
+}
+
+func (s *AMISocket) SetUsedDictionary(value bool) *AMISocket {
+	s.IsUsedDictionary = value
 	return s
 }
 
@@ -138,4 +152,37 @@ func (s AMIResultRaw) GetVal(key string) string {
 		return ""
 	}
 	return v
+}
+
+func (s AMIResultRaw) GetValOrPref(key, pref string) string {
+	_v := s.GetVal(key)
+
+	if len(_v) == 0 {
+		return s.GetVal(pref)
+	}
+	return _v
+}
+
+func (s AMIResultRawLevel) GetVal(key string) string {
+	if s == nil {
+		return ""
+	}
+
+	v := s[key]
+	if len(v) == 0 {
+		return ""
+	}
+	if len(v) == 1 {
+		return v[0]
+	}
+	return utils.ToJson(v)
+}
+
+func (s AMIResultRawLevel) GetValOrPref(key, pref string) string {
+	_v := s.GetVal(key)
+
+	if len(_v) == 0 {
+		return s.GetVal(pref)
+	}
+	return _v
 }
