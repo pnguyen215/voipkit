@@ -122,6 +122,8 @@ func (d *AMIDictionary) GetDictionaries() *[]AMIEventDictionary {
 			"CoreReloadTime":        "core_reload_time",
 			"CoreStartupDate":       "core_startup_date",
 			"CoreStartupTime":       "core_startup_time",
+			"Challenge":             "challenge",
+			"JSON":                  "json",
 		},
 	})
 

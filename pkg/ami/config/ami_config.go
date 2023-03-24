@@ -13,6 +13,8 @@ const (
 	AmiActionIdKey    = "ActionID"
 	AmiLoginKey       = "Login"
 	AmiCallManagerKey = "Asterisk Call Manager"
+	AmiAuthTypeKey    = "AuthType"
+	AmiFilenameKey    = "Filename"
 )
 
 const (

@@ -12,4 +12,12 @@ const (
 	AmiFieldMessage        = "Message"
 	AmiFieldGoodbye        = "Goodbye"
 	AmiFieldPeer           = "Peer"
+	AmiFieldFilename       = "Filename"
+	AmiFieldPath           = "Path"
+	AmiFieldSearch         = "Search"
+	AmiFieldFilter         = "Filter"
+	AmiFieldEventMask      = "EventMask"
+	AmiFieldCategory       = "Category"
+	AmiFieldJabber         = "Jabber"
+	AmiFieldJID            = "JID"
 )

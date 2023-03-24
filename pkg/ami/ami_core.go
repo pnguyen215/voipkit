@@ -298,3 +298,44 @@ func (c *AMICore) GetCoreStatus(ctx context.Context) (AMIResultRaw, error) {
 func (c *AMICore) GetListCommands(ctx context.Context) (AMIResultRaw, error) {
 	return ListCommands(ctx, *c.Socket)
 }
+
+// Challenge generates a challenge for MD5 authentication.
+func (c *AMICore) Challenge(ctx context.Context) (AMIResultRaw, error) {
+	return Challenge(ctx, *c.Socket)
+}
+
+// CreateConfig creates an empty file in the configuration directory.
+// This action will create an empty file in the configuration directory.
+// This action is intended to be used before an UpdateConfig action.
+func (c *AMICore) CreateConfig(ctx context.Context, filename string) (AMIResultRaw, error) {
+	return CreateConfig(ctx, *c.Socket, filename)
+}
+
+// DataGet retrieves the data api tree.
+func (c *AMICore) DataGet(ctx context.Context, path, search, filter string) (AMIResultRaw, error) {
+	return DataGet(ctx, *c.Socket, path, search, filter)
+}
+
+// EventFlow control Event Flow.
+// eventMask: Enable/Disable sending of events to this manager client.
+func (c *AMICore) EventFlow(ctx context.Context, eventMask string) (AMIResultRaw, error) {
+	return EventFlow(ctx, *c.Socket, eventMask)
+}
+
+// GetConfig retrieves configuration.
+// This action will dump the contents of a configuration file by category and contents or optionally by specified category only.
+func (c *AMICore) GetConfig(ctx context.Context, filename, category, filter string) (AMIResultRaw, error) {
+	return GetConfig(ctx, *c.Socket, filename, category, filter)
+}
+
+// GetConfigJson retrieves configuration (JSON format).
+// This action will dump the contents of a configuration file by category and contents in JSON format.
+// This only makes sense to be used using raw man over the HTTP interface.
+func (c *AMICore) GetConfigJson(ctx context.Context, filename, category, filter string) (AMIResultRaw, error) {
+	return GetConfigJson(ctx, *c.Socket, filename, category, filter)
+}
+
+// JabberSend sends a message to a Jabber Client
+func (c *AMICore) JabberSend(ctx context.Context, jabber, jid, message string) (AMIResultRaw, error) {
+	return JabberSend(ctx, *c.Socket, jabber, jid, message)
+}

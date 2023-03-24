@@ -34,16 +34,29 @@ func NewAMISocketWith(ctx context.Context, address string) (*AMISocket, error) {
 	if err != nil {
 		return nil, err
 	}
-	return NewAMISocketConn(ctx, conn)
+	return NewAMISocketConn(ctx, conn, true)
 }
 
 // NewSocket provides a new socket client, connecting to a tcp server.
-func NewAMISocketConn(ctx context.Context, conn net.Conn) (*AMISocket, error) {
+// If the reuseConn = true, then using current connection.
+// Otherwise, clone the connection from current connection
+func NewAMISocketConn(ctx context.Context, conn net.Conn, reuseConn bool) (*AMISocket, error) {
 	s := &AMISocket{
-		Conn:     conn,
 		Incoming: make(chan string, 32),
 		Shutdown: make(chan struct{}),
 		Errors:   make(chan error),
+	}
+	if reuseConn {
+		s.Conn = conn
+	} else {
+		// checking conn available
+		if conn != nil {
+			var dialer net.Dialer
+			_conn, err := dialer.DialContext(ctx, config.AmiNetworkTcpKey, conn.RemoteAddr().String())
+			if err == nil {
+				s.Conn = _conn
+			}
+		}
 	}
 	d := NewDictionary()
 	d.SetAllowForceTranslate(true)

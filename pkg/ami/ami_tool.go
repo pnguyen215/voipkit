@@ -19,6 +19,7 @@ import (
 	"golang.org/x/exp/slices"
 )
 
+// OpenContext
 func OpenContext(conn net.Conn) (*AMI, context.Context) {
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -29,13 +30,26 @@ func OpenContext(conn net.Conn) (*AMI, context.Context) {
 		Cancel: cancel,
 	}
 
+	// checking conn available
+	if conn != nil {
+		addr := conn.RemoteAddr().String()
+		_socket, err := NewAMISocketWith(ctx, addr)
+
+		if err == nil {
+			client.Socket = _socket
+			log.Printf("OpenContext, cloning (addr: %v) socket connection succeeded", addr)
+		}
+	}
+
 	return client, ctx
 }
 
+// OpenDial
 func OpenDial(ip string, port int) (net.Conn, error) {
 	return OpenDialWith(config.AmiNetworkTcpKey, ip, port)
 }
 
+// OpenDialWith
 func OpenDialWith(network, ip string, port int) (net.Conn, error) {
 
 	if !config.AmiNetworkKeys[network] {
@@ -70,6 +84,14 @@ func OpenDialWith(network, ip string, port int) (net.Conn, error) {
 // Port: 18080
 // Result: 127.0.0.1:18080
 func RemoveProtocol(ip string, port int) string {
+	if ip == "" {
+		return ip
+	}
+
+	if port < 0 {
+		return ip
+	}
+
 	if strings.HasPrefix(ip, config.AmiProtocolHttpKey) {
 		ip = strings.Replace(ip, config.AmiProtocolHttpKey, "", -1)
 	}
@@ -78,10 +100,30 @@ func RemoveProtocol(ip string, port int) string {
 		ip = strings.Replace(ip, config.AmiProtocolHttpsKey, "", -1)
 	}
 
+	_ip := strings.Split(ip, ":")
+	ip = _ip[0]
+
 	form := net.JoinHostPort(ip, strconv.Itoa(port))
 	return form
 }
 
+// JoinHostPortString
+func JoinHostPortString(ip string, port int) string {
+	return RemoveProtocol(ip, port)
+}
+
+// JoinHostPortStrings
+func JoinHostPortStrings(ip []string, port int) (result []string) {
+	if len(ip) == 0 {
+		return ip
+	}
+	for _, v := range ip {
+		result = append(result, JoinHostPortString(v, port))
+	}
+	return result
+}
+
+// WriteString
 func WriteString(buf *bytes.Buffer, tag, value string) {
 	if len(tag) > 0 {
 		buf.WriteString(tag)
@@ -235,6 +277,14 @@ func GenUUID() (string, error) {
 	}
 	uuid := fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
 	return uuid, nil
+}
+
+func GenUUIDShorten() string {
+	uuid, err := GenUUID()
+	if err != nil {
+		return ""
+	}
+	return uuid
 }
 
 // IsSuccess
