@@ -91,6 +91,9 @@ type AMISocket struct {
 	Dictionary       *AMIDictionary `json:"-"`
 	UUID             string         `json:"uuid" binding:"required"`
 	IsUsedDictionary bool           `json:"is_used_dictionary"`
+	Retry            bool           `json:"retry"`
+	MaxRetries       int            `json:"max_retries"`
+	AllowTrace       bool           `json:"allow_trace"`
 }
 
 type AMIResultRaw map[string]string
@@ -115,4 +118,6 @@ type AMICore struct {
 	Wg         sync.WaitGroup    `json:"-"`
 	Dictionary *AMIDictionary    `json:"-"`
 	UUID       string            `json:"uuid,omitempty"`
+	Retry      bool              `json:"retry"`
+	MaxRetries int               `json:"max_retries"`
 }

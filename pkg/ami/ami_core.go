@@ -10,6 +10,10 @@ import (
 
 func NewCore() *AMICore {
 	c := &AMICore{}
+	c.SetRetry(true)
+	c.SetMaxRetries(2)
+	c.SetEvent(make(chan AMIResultRaw))
+	c.SetStop(make(chan struct{}))
 	return c
 }
 
@@ -38,11 +42,21 @@ func (c *AMICore) SetDictionary(dictionary *AMIDictionary) *AMICore {
 	return c
 }
 
+func (c *AMICore) SetRetry(value bool) *AMICore {
+	c.Retry = value
+	return c
+}
+
+func (c *AMICore) SetMaxRetries(value int) *AMICore {
+	c.MaxRetries = value
+	return c
+}
+
 // NewAmiCore
 // Creating new instance asterisk server connection
 // Firstly, create new instance AMISocket
 // Secondly, create new request body to login
-func NewAmiCore(ctx context.Context, socket AMISocket, auth *AMIAuth) (*AMICore, error) {
+func NewAmiCore(ctx context.Context, socket *AMISocket, auth *AMIAuth) (*AMICore, error) {
 	uuid, err := GenUUID()
 
 	if err != nil {
@@ -50,18 +64,20 @@ func NewAmiCore(ctx context.Context, socket AMISocket, auth *AMIAuth) (*AMICore,
 	}
 
 	socket.SetUUID(uuid)
-	err = Login(ctx, socket, auth)
+	err = Login(ctx, *socket, auth)
 
 	if err != nil {
 		return nil, err
 	}
 
 	core := NewCore()
-	core.SetSocket(&socket)
+	core.SetSocket(socket)
 	core.SetUUID(uuid)
-	core.SetEvent(make(chan AMIResultRaw))
-	core.SetStop(make(chan struct{}))
 	core.SetDictionary(socket.Dictionary)
+	core.Socket.SetRetry(core.Retry)           // sync attr. retry with socket
+	core.Socket.SetMaxRetries(core.MaxRetries) // sync attr. max_retries with socket
+	socket.SetRetry(core.Retry)                // sync attr. retry with socket
+	socket.SetMaxRetries(core.MaxRetries)      // sync attr. max_retries with socket
 
 	core.Wg.Add(1)
 	go core.Run(ctx)
@@ -186,7 +202,80 @@ func (c *AMICore) GetSIPPeers(ctx context.Context) ([]AMIResultRaw, error) {
 	return peers, nil
 }
 
-// GetSIPPeerStatus
+// GetSIPPeer
+// Example:
+/*
+{
+  "acl": "Y",
+  "action_id": "2f412a3b-9270-044a-65be-2e2294552179",
+  "address_ip": "(null)",
+  "address_port": "0",
+  "ama_flags": "Unknown",
+  "busy_level": "0",
+  "call_group": "",
+  "call_limit": "2147483647",
+  "caller_id": "\"Ext_8103\" <8103>",
+  "chan_object_type": "peer",
+  "channel_type": "SIP",
+  "cid_calling_pres": "Presentation Allowed, Not Screened",
+  "codecs": "(alaw)",
+  "context": "from-internal",
+  "default_addr_ip": "(null)",
+  "default_addr_port": "0",
+  "default_username": "8103",
+  "description": "",
+  "dynamic": "Y",
+  "lang": "en",
+  "last_message_sent": "-1",
+  "max_call_br": "384 kbps",
+  "max_forwards": "0",
+  "md5_secret_exist": "N",
+  "moh_suggest": "",
+  "named_call_group": "",
+  "named_pick_up_group": "",
+  "object_name": "8103",
+  "parking_lot": "",
+  "pickup_group": "",
+  "qualify_freq": "60000 ms",
+  "reg_contact": "sip:8103@14.169.112.44:52685;transport=TCP;rinstance=a4b66908dac666a9",
+  "reg_expire": "-1 seconds",
+  "remote_secret_exist": "N",
+  "response": "Success",
+  "secret_exist": "Y",
+  "sip_auth_in_secure": "no",
+  "sip_can_reinvite": "N",
+  "sip_comedia": "Y",
+  "sip_direct_media": "N",
+  "sip_dtmf_mode": "rfc2833",
+  "sip_encryption": "N",
+  "sip_forcer_port": "Y",
+  "sip_promisc_redir": "N",
+  "sip_rtcp_mux": "N",
+  "sip_rtp_engine": "asterisk",
+  "sip_sess_expires": "1800",
+  "sip_sess_min": "90",
+  "sip_sess_refresh": "uas",
+  "sip_sess_timers": "Accept",
+  "sip_text_support": "N",
+  "sip_time_38_ec": "Unknown",
+  "sip_time_38_max_dt_grm": "4294967295",
+  "sip_time_38_support": "N",
+  "sip_use_reason_header": "N",
+  "sip_user_agent": "Z 5.5.14 v2.10.18.6",
+  "sip_user_phone": "N",
+  "sip_video_support": "N",
+  "status": "UNKNOWN",
+  "to_host": "",
+  "tone_zone": "<Not set>",
+  "transfer_mode": "open",
+  "voicemail_box": "8103@default"
+}
+*/
+func (c *AMICore) GetSIPPeer(ctx context.Context, peer string) (AMIResultRaw, error) {
+	return SIPShowPeer(ctx, *c.Socket, peer)
+}
+
+// GetSIPPeersStatus
 // Example:
 /*
 {
@@ -199,7 +288,7 @@ func (c *AMICore) GetSIPPeers(ctx context.Context) ([]AMIResultRaw, error) {
     "time": "28"
   }
 */
-func (c *AMICore) GetSIPPeerStatus(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) GetSIPPeersStatus(ctx context.Context) ([]AMIResultRaw, error) {
 	var peers []AMIResultRaw
 	response, err := SIPPeers(ctx, *c.Socket)
 	switch {
@@ -218,6 +307,30 @@ func (c *AMICore) GetSIPPeerStatus(ctx context.Context) ([]AMIResultRaw, error) 
 	}
 
 	return peers, nil
+}
+
+// GetSIPPeerStatus
+// Example:
+/*
+{
+  "action_id": "2e588d76-d771-fb70-d3bd-fced26dc0bf5",
+  "channel_type": "SIP",
+  "event": "PeerStatus",
+  "peer": "SIP/8104",
+  "peer_status": "Reachable",
+  "privilege": "System",
+  "time": "42"
+}
+*/
+func (c *AMICore) GetSIPPeerStatus(ctx context.Context, peer string) (AMIResultRaw, error) {
+	peers, err := SIPPeerStatus(ctx, *c.Socket, peer)
+	if err != nil {
+		return AMIResultRaw{}, err
+	}
+	if len(peers) == 0 {
+		return AMIResultRaw{}, nil
+	}
+	return peers[0], nil
 }
 
 // GetSIPShowRegistry
@@ -338,4 +451,23 @@ func (c *AMICore) GetConfigJson(ctx context.Context, filename, category, filter 
 // JabberSend sends a message to a Jabber Client
 func (c *AMICore) JabberSend(ctx context.Context, jabber, jid, message string) (AMIResultRaw, error) {
 	return JabberSend(ctx, *c.Socket, jabber, jid, message)
+}
+
+// ListCategories lists categories in configuration file.
+// Example:
+// filename like: manager.conf, extensions.conf, sip.conf...
+func (c *AMICore) ListCategories(ctx context.Context, filename string) (AMIResultRaw, error) {
+	return ListCategories(ctx, *c.Socket, filename)
+}
+
+// ModuleCheck checks if module is loaded.
+// Checks if Asterisk module is loaded. Will return Success/Failure. For success returns, the module revision number is included.
+func (c *AMICore) ModuleCheck(ctx context.Context, module string) (AMIResultRaw, error) {
+	return ModuleCheck(ctx, *c.Socket, module)
+}
+
+// ModuleLoad module management.
+// Loads, unloads or reloads an Asterisk module in a running system.
+func (c *AMICore) ModuleLoad(ctx context.Context, module, loadType string) (AMIResultRaw, error) {
+	return ModuleLoad(ctx, *c.Socket, module, loadType)
 }

@@ -6,25 +6,49 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"strings"
+	"time"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 func NewAMISocket() *AMISocket {
-	s := &AMISocket{}
+	s := &AMISocket{
+		Incoming:   make(chan string, 32),
+		Shutdown:   make(chan struct{}),
+		Errors:     make(chan error),
+		AllowTrace: false,
+	}
 	d := NewDictionary()
 	d.SetAllowForceTranslate(true)
+
 	s.SetDictionary(d)
 	s.SetUsedDictionary(true)
+	s.SetRetry(true)
+	s.SetMaxRetries(2)
 	return s
 }
 
 func NewAMIResultRaw() *AMIResultRaw {
 	s := &AMIResultRaw{}
 	return s
+}
+
+func (s *AMISocket) SetRetry(value bool) *AMISocket {
+	s.Retry = value
+	return s
+}
+
+func (s *AMISocket) SetMaxRetries(value int) *AMISocket {
+	s.MaxRetries = value
+	return s
+}
+
+func (s *AMISocket) Json() string {
+	return utils.ToJson(s)
 }
 
 // NewSocket provides a new socket client, connecting to a tcp server.
@@ -41,11 +65,7 @@ func NewAMISocketWith(ctx context.Context, address string) (*AMISocket, error) {
 // If the reuseConn = true, then using current connection.
 // Otherwise, clone the connection from current connection
 func NewAMISocketConn(ctx context.Context, conn net.Conn, reuseConn bool) (*AMISocket, error) {
-	s := &AMISocket{
-		Incoming: make(chan string, 32),
-		Shutdown: make(chan struct{}),
-		Errors:   make(chan error),
-	}
+	s := NewAMISocket()
 	if reuseConn {
 		s.Conn = conn
 	} else {
@@ -58,10 +78,6 @@ func NewAMISocketConn(ctx context.Context, conn net.Conn, reuseConn bool) (*AMIS
 			}
 		}
 	}
-	d := NewDictionary()
-	d.SetAllowForceTranslate(true)
-	s.SetDictionary(d)
-	s.SetUsedDictionary(true)
 	go s.Run(ctx, conn)
 	return s, nil
 }
@@ -101,6 +117,11 @@ func (s *AMISocket) SetUsedDictionary(value bool) *AMISocket {
 	return s
 }
 
+func (s *AMISocket) SetAllowTrace(value bool) *AMISocket {
+	s.AllowTrace = value
+	return s
+}
+
 func (s *AMISocket) Connected() bool {
 	return s.Conn != nil
 }
@@ -116,7 +137,12 @@ func (s *AMISocket) Close(ctx context.Context) error {
 // Send
 // Send the message to socket using fprintf format
 func (s *AMISocket) Send(message string) error {
-	_, err := fmt.Fprintf(s.Conn, message)
+	_start := time.Now().UnixMilli()
+	v, err := fmt.Fprintf(s.Conn, message)
+	_end := time.Now().UnixMilli() - _start
+	if s.AllowTrace {
+		log.Printf("[>] Ami command, the number of byte(s) written = %v (byte) and idle time = %v (milliseconds)\n%v", v, _end, message)
+	}
 	return err
 }
 
@@ -167,6 +193,27 @@ func (s AMIResultRaw) GetVal(key string) string {
 	return v
 }
 
+func (s AMIResultRaw) Values() []string {
+	if len(s) == 0 {
+		return []string{}
+	}
+	var result []string
+	for k := range s {
+		if config.AmiJsonIgnoringFieldType[k] {
+			continue
+		}
+		v := s.GetVal(k)
+		if !utils.Contains(result, v) {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+func (s AMIResultRaw) LenValue() int {
+	return len(s.Values())
+}
+
 func (s AMIResultRaw) GetValOrPref(key, pref string) string {
 	_v := s.GetVal(key)
 
@@ -189,6 +236,27 @@ func (s AMIResultRawLevel) GetVal(key string) string {
 		return v[0]
 	}
 	return utils.ToJson(v)
+}
+
+func (s AMIResultRawLevel) Values() []string {
+	if len(s) == 0 {
+		return []string{}
+	}
+	var result []string
+	for k := range s {
+		if config.AmiJsonIgnoringFieldType[k] {
+			continue
+		}
+		v := s.GetVal(k)
+		if !utils.Contains(result, v) {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+func (s AMIResultRawLevel) LenValue() int {
+	return len(s.Values())
 }
 
 func (s AMIResultRawLevel) GetValOrPref(key, pref string) string {

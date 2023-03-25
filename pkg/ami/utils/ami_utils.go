@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"encoding/json"
 	"log"
 	"net"
 	"net/http"
@@ -12,7 +11,11 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
+
+	jsonI "github.com/json-iterator/go"
 )
+
+var _json = jsonI.ConfigCompatibleWithStandardLibrary
 
 func VarsMap(values []string) map[string]string {
 	r := make(map[string]string)
@@ -84,7 +87,8 @@ func ToJson(data interface{}) string {
 		return s
 	}
 
-	result, err := json.Marshal(data)
+	// result, err := json.Marshal(data)
+	result, err := MarshalToString(data)
 
 	if err != nil {
 		log.Printf(err.Error())
@@ -135,7 +139,7 @@ func Keys(in interface{}) (keys []string) {
 			keys = append(keys, k)
 		}
 	case []int:
-		for k := range z {
+		for _, k := range z {
 			keys = append(keys, strconv.Itoa(k))
 		}
 	default:
@@ -157,6 +161,16 @@ func MergeMaps[K comparable, V any](m1 map[K]V, m2 map[K]V) map[K]V {
 		}
 	}
 	return merged
+}
+
+// Contains check slice contains value or not
+func Contains[T comparable](s []T, e T) bool {
+	for _, v := range s {
+		if v == e {
+			return true
+		}
+	}
+	return false
 }
 
 // ForkDictionaryFromLink
@@ -195,4 +209,24 @@ func ForkDictionaryFromLink(link string, debug bool) (*map[string]string, error)
 	}
 
 	return result, nil
+}
+
+func MarshalToString(v interface{}) (string, error) {
+	return _json.MarshalToString(v)
+}
+
+func Marshal(v interface{}) ([]byte, error) {
+	return _json.Marshal(v)
+}
+
+func Unmarshal(data []byte, v interface{}) error {
+	return _json.Unmarshal(data, v)
+}
+
+func UnmarshalFromString(str string, v interface{}) error {
+	return _json.UnmarshalFromString(str, v)
+}
+
+func MarshalIndent(v interface{}, prefix, indent string) ([]byte, error) {
+	return _json.MarshalIndent(v, prefix, indent)
 }

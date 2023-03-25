@@ -20,4 +20,6 @@ const (
 	AmiFieldCategory       = "Category"
 	AmiFieldJabber         = "Jabber"
 	AmiFieldJID            = "JID"
+	AmiFieldModule         = "Module"
+	AmiFieldLoadType       = "LoadType"
 )

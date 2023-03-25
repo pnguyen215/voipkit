@@ -397,13 +397,17 @@ func DoGetResult(ctx context.Context, s AMISocket, c *AMICommand, acceptedEvents
 		_response := raw.GetVal(strings.ToLower(config.AmiResponseKey))
 
 		if len(acceptedEvents) == 0 {
-			log.Printf(config.AmiErrorMissingSocketEvent, _event, _response)
+			if s.AllowTrace {
+				log.Printf(config.AmiErrorMissingSocketEvent, _event, _response)
+			}
 			break
 		}
 
 		if len(ignoreEvents) > 0 {
 			if slices.Contains(ignoreEvents, _event) || (_response != "" && !strings.EqualFold(_response, config.AmiStatusSuccessKey)) {
-				log.Printf(config.AmiErrorBreakSocketIgnoredEvent, _event)
+				if s.AllowTrace {
+					log.Printf(config.AmiErrorBreakSocketIgnoredEvent, _event)
+				}
 				break
 			}
 		}

@@ -191,7 +191,8 @@ func (d *AMIDictionary) GetDictionaries() *[]AMIEventDictionary {
 	})
 
 	overlapDictionaries = &dictionaries
-	log.Printf("Dictionaries was initialized, len = %d", d.Length())
+	dictionary, _ := d.FindDictionaryByKey(config.AmiListenerEventCommon)
+	log.Printf("Dictionaries (common) was initialized, len = %d", len(dictionary.Dictionaries))
 	return overlapDictionaries
 }
 
@@ -300,6 +301,13 @@ func (d *AMIDictionary) Reset() {
 
 func (d *AMIDictionary) Json() string {
 	return utils.ToJson(*overlapDictionaries)
+}
+
+func (d *AMIDictionary) LenTranslatorCommon() int {
+	dictionary, _ := d.FindDictionaryByKey(config.AmiListenerEventCommon)
+	_len := len(dictionary.Dictionaries)
+	log.Printf("Translator dictionaries (common) was added, len = %d", _len)
+	return _len
 }
 
 func (d *AMIDictionary) AddKeyTranslator(key, value string) *AMIDictionary {

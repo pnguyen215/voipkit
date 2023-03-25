@@ -247,3 +247,33 @@ func JabberSend(ctx context.Context, s AMISocket, jabber, jid, message string) (
 	})
 	return c.Send(ctx, s, c)
 }
+
+// ListCategories lists categories in configuration file.
+func ListCategories(ctx context.Context, s AMISocket, filename string) (AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionListCategories)
+	c.SetV(map[string]string{
+		config.AmiFieldFilename: filename,
+	})
+	return c.Send(ctx, s, c)
+}
+
+// ModuleCheck checks if module is loaded.
+// Checks if Asterisk module is loaded. Will return Success/Failure. For success returns, the module revision number is included.
+func ModuleCheck(ctx context.Context, s AMISocket, module string) (AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionModuleCheck)
+	c.SetV(map[string]string{
+		config.AmiFieldModule: module,
+	})
+	return c.Send(ctx, s, c)
+}
+
+// ModuleLoad module management.
+// Loads, unloads or reloads an Asterisk module in a running system.
+func ModuleLoad(ctx context.Context, s AMISocket, module, loadType string) (AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionModuleLoad)
+	c.SetV(map[string]string{
+		config.AmiFieldModule:   module,
+		config.AmiFieldLoadType: loadType,
+	})
+	return c.Send(ctx, s, c)
+}
