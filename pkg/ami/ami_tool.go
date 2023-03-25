@@ -16,7 +16,6 @@ import (
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/fatal"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
-	"golang.org/x/exp/slices"
 )
 
 // OpenContext
@@ -376,48 +375,7 @@ func ParseResultLevel(socket AMISocket, raw string) (AMIResultRawLevel, error) {
 // 3. acceptedEvents - select event will captured as response
 // 4. ignoreEvents - the event will been stopped fetching command
 func DoGetResult(ctx context.Context, s AMISocket, c *AMICommand, acceptedEvents []string, ignoreEvents []string) ([]AMIResultRaw, error) {
-	bytes, err := c.TransformCommand(c)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if err := s.Send(string(bytes)); err != nil {
-		return nil, err
-	}
-
-	response := make([]AMIResultRaw, 0)
-
-	for {
-		raw, err := c.Read(ctx, s)
-		if err != nil {
-			return nil, err
-		}
-		_event := raw.GetVal(strings.ToLower(config.AmiEventKey))
-		_response := raw.GetVal(strings.ToLower(config.AmiResponseKey))
-
-		if len(acceptedEvents) == 0 {
-			if s.AllowTrace {
-				log.Printf(config.AmiErrorMissingSocketEvent, _event, _response)
-			}
-			break
-		}
-
-		if len(ignoreEvents) > 0 {
-			if slices.Contains(ignoreEvents, _event) || (_response != "" && !strings.EqualFold(_response, config.AmiStatusSuccessKey)) {
-				if s.AllowTrace {
-					log.Printf(config.AmiErrorBreakSocketIgnoredEvent, _event)
-				}
-				break
-			}
-		}
-
-		if slices.Contains(acceptedEvents, _event) {
-			response = append(response, raw)
-		}
-	}
-
-	return response, nil
+	return c.DoGetResult(ctx, s, c, acceptedEvents, ignoreEvents)
 }
 
 // TransformKey

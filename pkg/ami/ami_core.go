@@ -10,8 +10,6 @@ import (
 
 func NewCore() *AMICore {
 	c := &AMICore{}
-	c.SetRetry(true)
-	c.SetMaxRetries(2)
 	c.SetEvent(make(chan AMIResultRaw))
 	c.SetStop(make(chan struct{}))
 	return c
@@ -42,16 +40,6 @@ func (c *AMICore) SetDictionary(dictionary *AMIDictionary) *AMICore {
 	return c
 }
 
-func (c *AMICore) SetRetry(value bool) *AMICore {
-	c.Retry = value
-	return c
-}
-
-func (c *AMICore) SetMaxRetries(value int) *AMICore {
-	c.MaxRetries = value
-	return c
-}
-
 // NewAmiCore
 // Creating new instance asterisk server connection
 // Firstly, create new instance AMISocket
@@ -74,10 +62,6 @@ func NewAmiCore(ctx context.Context, socket *AMISocket, auth *AMIAuth) (*AMICore
 	core.SetSocket(socket)
 	core.SetUUID(uuid)
 	core.SetDictionary(socket.Dictionary)
-	core.Socket.SetRetry(core.Retry)           // sync attr. retry with socket
-	core.Socket.SetMaxRetries(core.MaxRetries) // sync attr. max_retries with socket
-	socket.SetRetry(core.Retry)                // sync attr. retry with socket
-	socket.SetMaxRetries(core.MaxRetries)      // sync attr. max_retries with socket
 
 	core.Wg.Add(1)
 	go core.Run(ctx)

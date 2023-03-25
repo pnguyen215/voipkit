@@ -84,16 +84,17 @@ type AMICall struct {
 }
 
 type AMISocket struct {
-	Conn             net.Conn       `json:"-"`
-	Incoming         chan string    `json:"-"`
-	Shutdown         chan struct{}  `json:"-"`
-	Errors           chan error     `json:"-"`
-	Dictionary       *AMIDictionary `json:"-"`
-	UUID             string         `json:"uuid" binding:"required"`
-	IsUsedDictionary bool           `json:"is_used_dictionary"`
-	Retry            bool           `json:"retry"`
-	MaxRetries       int            `json:"max_retries"`
-	AllowTrace       bool           `json:"allow_trace"`
+	Conn                 net.Conn       `json:"-"`
+	Incoming             chan string    `json:"-"`
+	Shutdown             chan struct{}  `json:"-"`
+	Errors               chan error     `json:"-"`
+	Dictionary           *AMIDictionary `json:"-"`
+	UUID                 string         `json:"uuid" binding:"required"`
+	IsUsedDictionary     bool           `json:"is_used_dictionary"`
+	Retry                bool           `json:"retry"`
+	MaxRetries           int            `json:"max_retries"`
+	AllowTrace           bool           `json:"allow_trace"`
+	MaxConcurrencyMillis int64          `json:"max_concurrency_millis"`
 }
 
 type AMIResultRaw map[string]string
@@ -118,6 +119,12 @@ type AMICore struct {
 	Wg         sync.WaitGroup    `json:"-"`
 	Dictionary *AMIDictionary    `json:"-"`
 	UUID       string            `json:"uuid,omitempty"`
-	Retry      bool              `json:"retry"`
-	MaxRetries int               `json:"max_retries"`
+}
+
+type AMICallbackHandler struct {
+	Ctx            context.Context `json:"-"`
+	Socket         AMISocket       `json:"-"`
+	Command        *AMICommand     `json:"-"`
+	AcceptedEvents []string        `json:"accepted_events,omitempty"`
+	IgnoreEvents   []string        `json:"ignored_events,omitempty"`
 }

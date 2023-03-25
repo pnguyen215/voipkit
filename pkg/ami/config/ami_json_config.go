@@ -1,17 +1,20 @@
 package config
 
 const (
-	AmiJsonFieldObjectName = "object_name"
-	AmiJsonFieldActionId   = "action_id"
-	AmiJsonFieldEvent      = "event"
-	AmiJsonFieldLastReload = "last_reload"
-	AmiJsonFieldPrivilege  = "privilege"
-	AmiJsonFieldStatus     = "status"
-	AmiJsonFieldUptime     = "uptime"
-	AmiJsonFieldResponse   = "response"
-	AmiJsonFieldMessage    = "message"
-	AmiJsonFieldUniqueId   = "unique_id"
-	AmiJsonFieldPing       = "ping"
+	AmiJsonFieldObjectName  = "object_name"
+	AmiJsonFieldActionId    = "action_id"
+	AmiJsonFieldEvent       = "event"
+	AmiJsonFieldLastReload  = "last_reload"
+	AmiJsonFieldPrivilege   = "privilege"
+	AmiJsonFieldStatus      = "status"
+	AmiJsonFieldUptime      = "uptime"
+	AmiJsonFieldResponse    = "response"
+	AmiJsonFieldMessage     = "message"
+	AmiJsonFieldUniqueId    = "unique_id"
+	AmiJsonFieldPing        = "ping"
+	AmiJsonFieldLinkedId    = "linked_id"
+	AmiJsonFieldChannel     = "channel"
+	AmiJsonFieldDestChannel = "destination_channel"
 )
 
 var (

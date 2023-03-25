@@ -71,7 +71,8 @@ func Login(ctx context.Context, s AMISocket, auth *AMIAuth) error {
 
 	c.SetV(auth)
 	c.SetAction(config.AmiActionLogin)
-	response, err := c.Send(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	response, err := callback.Send()
 
 	if len(response) == 0 {
 		return fmt.Errorf(config.AmiErrorLoginFailed)
@@ -110,7 +111,8 @@ func Logoff(ctx context.Context, s AMISocket) error {
 	}
 
 	c.SetId(s.UUID)
-	response, err := c.Send(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	response, err := callback.Send()
 	if err != nil {
 		return err
 	}
@@ -120,21 +122,21 @@ func Logoff(ctx context.Context, s AMISocket) error {
 
 // Ping action will ellicit a 'Pong' response.
 // Used to keep the manager connection open.
-func Ping(ctx context.Context, socket AMISocket) error {
+func Ping(ctx context.Context, s AMISocket) error {
 	c := NewCommand()
 	c.SetAction(config.AmiActionPing)
 
-	if len(socket.UUID) <= 0 {
+	if len(s.UUID) <= 0 {
 		_uuid, err := GenUUID()
 		if err != nil {
 			return err
 		}
-		socket.SetUUID(_uuid)
+		s.SetUUID(_uuid)
 	}
 
-	c.SetId(socket.UUID)
-
-	response, err := c.Send(ctx, socket, c)
+	c.SetId(s.UUID)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	response, err := callback.Send()
 	if err != nil {
 		return err
 	}
@@ -149,26 +151,30 @@ func Command(ctx context.Context, s AMISocket, cmd string) (AMIResultRawLevel, e
 	c.SetV(map[string]string{
 		config.AmiActionCommand: cmd,
 	})
-	return c.SendLevel(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.SendLevel()
 }
 
 // CoreSettings shows PBX core settings (version etc).
 func CoreSettings(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionCoreSettings)
-	return c.Send(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
 }
 
 // CoreStatus shows PBX core status variables.
 func CoreStatus(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionCoreStatus)
-	return c.Send(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
 }
 
 // ListCommands lists available manager commands.
 // Returns the action name and synopsis for every action that is available to the user
 func ListCommands(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionListCommands)
-	return c.Send(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
 }
 
 // Challenge generates a challenge for MD5 authentication.
@@ -177,7 +183,8 @@ func Challenge(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
 	c.SetV(map[string]string{
 		config.AmiAuthTypeKey: "MD5",
 	})
-	return c.Send(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
 }
 
 // CreateConfig creates an empty file in the configuration directory.
@@ -188,7 +195,8 @@ func CreateConfig(ctx context.Context, s AMISocket, filename string) (AMIResultR
 	c.SetV(map[string]string{
 		config.AmiFilenameKey: filename,
 	})
-	return c.Send(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
 }
 
 // DataGet retrieves the data api tree.
@@ -199,7 +207,8 @@ func DataGet(ctx context.Context, s AMISocket, path, search, filter string) (AMI
 		config.AmiFieldSearch: search,
 		config.AmiFieldFilter: filter,
 	})
-	return c.Send(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
 }
 
 // EventFlow control Event Flow.
@@ -209,7 +218,8 @@ func EventFlow(ctx context.Context, s AMISocket, eventMask string) (AMIResultRaw
 	c.SetV(map[string]string{
 		config.AmiFieldEventMask: eventMask,
 	})
-	return c.Send(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
 }
 
 // GetConfig retrieves configuration.
@@ -221,7 +231,8 @@ func GetConfig(ctx context.Context, s AMISocket, filename, category, filter stri
 		config.AmiFieldFilter:   filter,
 		config.AmiFieldCategory: category,
 	})
-	return c.Send(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
 }
 
 // GetConfigJson retrieves configuration (JSON format).
@@ -234,7 +245,8 @@ func GetConfigJson(ctx context.Context, s AMISocket, filename, category, filter 
 		config.AmiFieldFilter:   filter,
 		config.AmiFieldCategory: category,
 	})
-	return c.Send(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
 }
 
 // JabberSend sends a message to a Jabber Client
@@ -245,7 +257,8 @@ func JabberSend(ctx context.Context, s AMISocket, jabber, jid, message string) (
 		config.AmiFieldJID:     jid,
 		config.AmiFieldMessage: message,
 	})
-	return c.Send(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
 }
 
 // ListCategories lists categories in configuration file.
@@ -254,7 +267,8 @@ func ListCategories(ctx context.Context, s AMISocket, filename string) (AMIResul
 	c.SetV(map[string]string{
 		config.AmiFieldFilename: filename,
 	})
-	return c.Send(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
 }
 
 // ModuleCheck checks if module is loaded.
@@ -264,7 +278,8 @@ func ModuleCheck(ctx context.Context, s AMISocket, module string) (AMIResultRaw,
 	c.SetV(map[string]string{
 		config.AmiFieldModule: module,
 	})
-	return c.Send(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
 }
 
 // ModuleLoad module management.
@@ -275,5 +290,6 @@ func ModuleLoad(ctx context.Context, s AMISocket, module, loadType string) (AMIR
 		config.AmiFieldModule:   module,
 		config.AmiFieldLoadType: loadType,
 	})
-	return c.Send(ctx, s, c)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
 }

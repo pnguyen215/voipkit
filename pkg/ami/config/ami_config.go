@@ -15,6 +15,7 @@ const (
 	AmiCallManagerKey = "Asterisk Call Manager"
 	AmiAuthTypeKey    = "AuthType"
 	AmiFilenameKey    = "Filename"
+	AmiFullyBootedKey = "Fully Booted"
 )
 
 const (
@@ -445,4 +446,8 @@ var (
 const (
 	AmiSignalLetter  = "\r\n"
 	AmiSignalLetters = "\r\n\r\n"
+)
+
+const (
+	AmiMaxConcurrencyMillis = 60000 // millis
 )

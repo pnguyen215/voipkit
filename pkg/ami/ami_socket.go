@@ -9,7 +9,6 @@ import (
 	"log"
 	"net"
 	"strings"
-	"time"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
@@ -28,7 +27,8 @@ func NewAMISocket() *AMISocket {
 	s.SetDictionary(d)
 	s.SetUsedDictionary(true)
 	s.SetRetry(true)
-	s.SetMaxRetries(2)
+	s.SetMaxRetries(3)
+	s.SetMaxConcurrencyMillis(config.AmiMaxConcurrencyMillis) // 1 minute = 60000 millis
 	return s
 }
 
@@ -44,6 +44,13 @@ func (s *AMISocket) SetRetry(value bool) *AMISocket {
 
 func (s *AMISocket) SetMaxRetries(value int) *AMISocket {
 	s.MaxRetries = value
+	return s
+}
+
+func (s *AMISocket) SetMaxConcurrencyMillis(value int64) *AMISocket {
+	if value > 0 {
+		s.MaxConcurrencyMillis = value
+	}
 	return s
 }
 
@@ -137,11 +144,9 @@ func (s *AMISocket) Close(ctx context.Context) error {
 // Send
 // Send the message to socket using fprintf format
 func (s *AMISocket) Send(message string) error {
-	_start := time.Now().UnixMilli()
 	v, err := fmt.Fprintf(s.Conn, message)
-	_end := time.Now().UnixMilli() - _start
 	if s.AllowTrace {
-		log.Printf("[>] Ami command, the number of byte(s) written = %v (byte) and idle time = %v (milliseconds)\n%v", v, _end, message)
+		log.Printf("[>] Ami command, the number of byte(s) written = %v (byte)\n%v", v, message)
 	}
 	return err
 }
@@ -186,6 +191,10 @@ func (s AMIResultRaw) GetVal(key string) string {
 		return ""
 	}
 
+	if len(s) == 0 {
+		return ""
+	}
+
 	v := s[key]
 	if len(v) == 0 {
 		return ""
@@ -225,6 +234,10 @@ func (s AMIResultRaw) GetValOrPref(key, pref string) string {
 
 func (s AMIResultRawLevel) GetVal(key string) string {
 	if s == nil {
+		return ""
+	}
+
+	if len(s) == 0 {
 		return ""
 	}
 
