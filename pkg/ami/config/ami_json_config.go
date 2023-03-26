@@ -15,6 +15,8 @@ const (
 	AmiJsonFieldLinkedId    = "linked_id"
 	AmiJsonFieldChannel     = "channel"
 	AmiJsonFieldDestChannel = "destination_channel"
+	AmiJsonFieldExten       = "exten"
+	AmiJsonFieldContext     = "context"
 )
 
 var (

@@ -124,6 +124,10 @@ func (d *AMIDictionary) GetDictionaries() *[]AMIEventDictionary {
 			"CoreStartupTime":       "core_startup_time",
 			"Challenge":             "challenge",
 			"JSON":                  "json",
+			"Available":             "available",
+			"Callers":               "callers",
+			"LoggedIn":              "logged_in",
+			"LongestHoldTime":       "longest_hold_time",
 		},
 	})
 

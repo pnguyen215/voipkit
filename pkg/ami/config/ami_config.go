@@ -359,6 +359,7 @@ const (
 	AmiErrorBreakSocketIgnoredEvent string = "Event '%v' was broken while fetching from server"
 	AmiErrorMissingSocketEvent      string = "Event %v was missing while fetching from server, response = %v"
 	AmiErrorNoExtensionConfigured   string = "There's no sip peers configured"
+	AmiErrorNoExtensionsConfigured  string = "There's no extensions configured"
 	AmiErrorLoginFailed             string = "(Ami Authentication). login failed"
 	AmiErrorPingFailed              string = "(Ami Authentication). Ping failed for reason: %v"
 )

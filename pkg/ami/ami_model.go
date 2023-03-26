@@ -152,3 +152,60 @@ type AMIUpdateConfigAction struct {
 	Var      string `ami:"Var,omitempty" json:"var,omitempty"`
 	Value    string `ami:"Value,omitempty" json:"value,omitempty"`
 }
+
+// AMIQueueData holds to queue calls.
+// used in functions:
+//
+//	QueueAdd, QueueLog, QueuePause,
+//	QueuePenalty, QueueReload, QueueRemove,
+//	QueueReset
+type AMIQueueData struct {
+	Queue          string `ami:"Queue,omitempty"`
+	Interface      string `ami:"Interface,omitempty"`
+	Penalty        string `ami:"Penalty,omitempty"`
+	Paused         string `ami:"Paused,omitempty"`
+	MemberName     string `ami:"MemberName,omitempty"`
+	StateInterface string `ami:"StateInterface,omitempty"`
+	Event          string `ami:"Event,omitempty"`
+	UniqueID       string `ami:"UniqueID,omitempty"`
+	Message        string `ami:"Message,omitempty"`
+	Reason         string `ami:"Reason,omitempty"`
+	Members        string `ami:"Members,omitempty"`
+	Rules          string `ami:"Rules,omitempty"`
+	Parameters     string `ami:"Parameters,omitempty"`
+}
+
+// AMIOriginateData holds information used to originate outgoing calls.
+//
+//	Channel - Channel name to call.
+//	Exten - Extension to use (requires Context and Priority)
+//	Context - Context to use (requires Exten and Priority)
+//	Priority - Priority to use (requires Exten and Context)
+//	Application - Application to execute.
+//	Data - Data to use (requires Application).
+//	Timeout - How long to wait for call to be answered (in ms.).
+//	CallerID - Caller ID to be set on the outgoing channel.
+//	Variable - Channel variable to set, multiple Variable: headers are allowed.
+//	Account - Account code.
+//	EarlyMedia - Set to true to force call bridge on early media.
+//	Async - Set to true for fast origination.
+//	Codecs - Comma-separated list of codecs to use for this call.
+//	ChannelId - Channel UniqueId to be set on the channel.
+//	OtherChannelId - Channel UniqueId to be set on the second local channel.
+type AMIOriginateData struct {
+	Channel        string   `ami:"Channel,omitempty"`
+	Exten          string   `ami:"Exten,omitempty"`
+	Context        string   `ami:"Context,omitempty"`
+	Priority       int      `ami:"Priority,omitempty"`
+	Application    string   `ami:"Application,omitempty"`
+	Data           string   `ami:"Data,omitempty"`
+	Timeout        int      `ami:"Timeout,omitempty"`
+	CallerID       string   `ami:"CallerID,omitempty"`
+	Variable       []string `ami:"Variable,omitempty"`
+	Account        string   `ami:"Account,omitempty"`
+	EarlyMedia     string   `ami:"EarlyMedia,omitempty"`
+	Async          string   `ami:"Async,omitempty"`
+	Codecs         string   `ami:"Codecs,omitempty"`
+	ChannelID      string   `ami:"ChannelId,omitempty"`
+	OtherChannelID string   `ami:"OtherChannelId,omitempty"`
+}

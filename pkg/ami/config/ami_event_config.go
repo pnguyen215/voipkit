@@ -198,4 +198,9 @@ const (
 	AmiListenerEventRegistrationsComplete      = "RegistrationsComplete"      //
 	AmiListenerEventListDialplan               = "ListDialplan"               //
 	AmiListenerEventShowDialPlanComplete       = "ShowDialPlanComplete"       //
+	AmiListenerEventQueueEntry                 = "QueueEntry"                 //
+	AmiListenerEventQueueSummary               = "QueueSummary"               //
+	AmiListenerEventQueueSummaryComplete       = "QueueSummaryComplete"       //
+	AmiListenerEventParkedCallsComplete        = "ParkedCallsComplete"        //
+	AmiListenerEventParkinglotsComplete        = "ParkinglotsComplete"
 )

@@ -521,3 +521,209 @@ ActionID: 495446608
 func (c *AMICore) UpdateConfig(ctx context.Context, sourceFilename, destinationFilename string, reload bool, actions ...AMIUpdateConfigAction) (AMIResultRaw, error) {
 	return UpdateConfig(ctx, *c.Socket, sourceFilename, destinationFilename, reload, actions...)
 }
+
+// GetQueueStatuses
+// QueueStatuses show status all members in queue.
+// Example:
+/*
+[
+  {
+    "action_id": "ba1f72f2-4d33-48a9-a395-f2295ec19c2b",
+    "calls_taken": "0",
+    "event": "QueueMember",
+    "in_call": "0",
+    "last_call": "0",
+    "last_pause": "0",
+    "location": "Local/8101@from-queue/n",
+    "membership": "dynamic",
+    "name": "Ext_8101",
+    "paused": "0",
+    "paused_reason": "",
+    "penalty": "0",
+    "queue": "8002",
+    "status": "5",
+    "status_interface": "hint:8101@ext-local",
+    "wrap_uptime": "0"
+  }
+]
+*/
+func (c *AMICore) GetQueueStatuses(ctx context.Context, queue string) ([]AMIResultRaw, error) {
+	return QueueStatuses(ctx, *c.Socket, queue)
+}
+
+// GetQueueSummary
+// QueueSummary show queue summary.
+// Example:
+/*
+[
+  {
+    "action_id": "1dc27f71-1569-3ef7-f256-70674eb33f9e",
+    "available": "0",
+    "callers": "0",
+    "event": "QueueSummary",
+    "hold_time": "0",
+    "logged_in": "0",
+    "longest_hold_time": "0",
+    "queue": "8001",
+    "talk_time": "0"
+  }
+]
+*/
+func (c *AMICore) GetQueueSummary(ctx context.Context, queue string) ([]AMIResultRaw, error) {
+	return QueueSummary(ctx, *c.Socket, queue)
+}
+
+// QueueMemberRingInUse
+func (c *AMICore) QueueMemberRingInUse(ctx context.Context, _interface, ringInUse, queue string) (AMIResultRaw, error) {
+	return QueueMemberRingInUse(ctx, *c.Socket, _interface, ringInUse, queue)
+}
+
+// QueueStatus
+func (c *AMICore) QueueStatus(ctx context.Context, queue, member string) (AMIResultRaw, error) {
+	return QueueStatus(ctx, *c.Socket, queue, member)
+}
+
+// QueueRule
+func (c *AMICore) QueueRule(ctx context.Context, rule string) (AMIResultRaw, error) {
+	return QueueRule(ctx, *c.Socket, rule)
+}
+
+// QueueReset
+// QueueReset resets queue statistics.
+func (c *AMICore) QueueReset(ctx context.Context, queue string) (AMIResultRaw, error) {
+	return QueueReset(ctx, *c.Socket, queue)
+}
+
+// QueueRemove
+// QueueRemove removes interface from queue.
+func (c *AMICore) QueueRemove(ctx context.Context, queue AMIQueueData) (AMIResultRaw, error) {
+	return QueueRemove(ctx, *c.Socket, queue)
+}
+
+// QueueReload
+// QueueReload reloads a queue, queues, or any sub-section of a queue or queues.
+func (c *AMICore) QueueReload(ctx context.Context, queue AMIQueueData) (AMIResultRaw, error) {
+	return QueueReload(ctx, *c.Socket, queue)
+}
+
+// QueuePenalty
+// QueuePenalty sets the penalty for a queue member.
+func (c *AMICore) QueuePenalty(ctx context.Context, queue AMIQueueData) (AMIResultRaw, error) {
+	return QueuePenalty(ctx, *c.Socket, queue)
+}
+
+// QueuePause
+// QueuePause makes a queue member temporarily unavailable.
+func (c *AMICore) QueuePause(ctx context.Context, queue AMIQueueData) (AMIResultRaw, error) {
+	return QueuePause(ctx, *c.Socket, queue)
+}
+
+// QueueLog
+// QueueLog adds custom entry in queue_log.
+func (c *AMICore) QueueLog(ctx context.Context, queue AMIQueueData) (AMIResultRaw, error) {
+	return QueueLog(ctx, *c.Socket, queue)
+}
+
+// QueueAdd
+// QueueAdd adds interface to queue.
+func (c *AMICore) QueueAdd(ctx context.Context, queue AMIQueueData) (AMIResultRaw, error) {
+	return QueueAdd(ctx, *c.Socket, queue)
+}
+
+// GetExtensionStateList
+// GetExtensionStateList list the current known extension states.
+// Example:
+/*
+[
+  {
+    "action_id": "70a7ed51-dd26-154a-4c6e-9d683e6457cf",
+    "context": "ext-local",
+    "event": "ExtensionStatus",
+    "exten": "5001",
+    "hint": "SIP/5001&Custom:DND5001,CustomPresence:5001",
+    "status": "0",
+    "status_text": "Idle"
+  }
+]
+*/
+func (c *AMICore) ExtensionStateList(ctx context.Context) ([]AMIResultRaw, error) {
+	return ExtensionStateList(ctx, *c.Socket)
+}
+
+// ExtensionState
+// Example
+/*
+{
+  "action_id": "35560f93-55c9-bd4f-6bce-b7f541819e5e",
+  "context": "ext-local",
+  "exten": "5001",
+  "hint": "SIP/5001&Custom:DND5001,CustomPresence:5001",
+  "message": "Extension Status",
+  "response": "Success",
+  "status": "0",
+  "status_text": "Idle"
+}
+*/
+func (c *AMICore) ExtensionState(ctx context.Context, exten, context string) (AMIResultRaw, error) {
+	return ExtensionState(ctx, *c.Socket, exten, context)
+}
+
+// GetExtensionStates
+func (c *AMICore) GetExtensionStates(ctx context.Context) ([]AMIResultRaw, error) {
+	var extensions []AMIResultRaw
+	response, err := ExtensionStateList(ctx, *c.Socket)
+	switch {
+	case err != nil:
+		return nil, err
+	case len(response) == 0:
+		return nil, fmt.Errorf(config.AmiErrorNoExtensionsConfigured)
+	default:
+		for _, v := range response {
+			extension, err := ExtensionState(ctx, *c.Socket, v.GetVal(config.AmiJsonFieldExten), v.GetVal(config.AmiJsonFieldContext))
+			if err != nil {
+				return nil, err
+			}
+			extensions = append(extensions, extension)
+		}
+	}
+
+	return extensions, nil
+}
+
+// CoreShowChannels
+func (c *AMICore) CoreShowChannels(ctx context.Context) ([]AMIResultRaw, error) {
+	return CoreShowChannels(ctx, *c.Socket)
+}
+
+// AbsoluteTimeout
+// Hangup a channel after a certain time. Acknowledges set time with Timeout Set message.
+func (c *AMICore) AbsoluteTimeout(ctx context.Context, channel string, timeout int) (AMIResultRaw, error) {
+	return AbsoluteTimeout(ctx, *c.Socket, channel, timeout)
+}
+
+// Hangup
+// Hangup hangups channel.
+func (c *AMICore) Hangup(ctx context.Context, channel, cause string) (AMIResultRaw, error) {
+	return Hangup(ctx, *c.Socket, channel, cause)
+}
+
+// Originate
+func (c *AMICore) Originate(ctx context.Context, originate AMIOriginateData) (AMIResultRaw, error) {
+	return Originate(ctx, *c.Socket, originate)
+}
+
+// ParkedCalls
+func (c *AMICore) ParkedCalls(ctx context.Context) ([]AMIResultRaw, error) {
+	return ParkedCalls(ctx, *c.Socket)
+}
+
+// Park
+// Park parks a channel.
+func (c *AMICore) Park(ctx context.Context, channel1, channel2 string, timeout int, parkinglot string) (AMIResultRaw, error) {
+	return Park(ctx, *c.Socket, channel1, channel2, timeout, parkinglot)
+}
+
+// Parkinglots
+func (c *AMICore) Parkinglots(ctx context.Context) ([]AMIResultRaw, error) {
+	return Parkinglots(ctx, *c.Socket)
+}

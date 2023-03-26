@@ -31,4 +31,12 @@ const (
 	AmiFieldCategoryPrefix      = "Cat-"
 	AmiFieldVarPrefix           = "Var-"
 	AmiFieldValuePrefix         = "Value-"
+	AmiFieldQueue               = "Queue"
+	AmiFieldInterface           = "Interface"
+	AmiFieldRingInUse           = "RingInUse"
+	AmiFieldMember              = "Member"
+	AmiFieldRule                = "Rule"
+	AmiFieldCause               = "Cause"
+	AmiFieldChannel2            = "Channel2"
+	AmiFieldParkinglot          = "Parkinglot"
 )

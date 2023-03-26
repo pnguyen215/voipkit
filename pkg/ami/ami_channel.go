@@ -1,9 +1,11 @@
 package ami
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
@@ -98,4 +100,74 @@ func (c *AMIChannel) JoinChannelWith(protocol, extension string) string {
 
 	form := "%v/%v"
 	return fmt.Sprintf(form, c.ChannelProtocol, strings.TrimSpace(extension))
+}
+
+// CoreShowChannels list currently active channels.
+func CoreShowChannels(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionCoreShowChannels)
+	callback := NewAMICallbackService(ctx, s, c,
+		[]string{config.AmiListenerEventCoreShowChannel}, []string{config.AmiListenerEventCoreShowChannelsComplete})
+	return callback.SendSuperLevel()
+}
+
+// AbsoluteTimeout set absolute timeout.
+// Hangup a channel after a certain time. Acknowledges set time with Timeout Set message.
+func AbsoluteTimeout(ctx context.Context, s AMISocket, channel string, timeout int) (AMIResultRaw, error) {
+	_timeout := strconv.Itoa(timeout)
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionAbsoluteTimeout)
+	c.SetV(map[string]string{
+		config.AmiFieldChannel: channel,
+		config.AmiFieldTimeout: _timeout,
+	})
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
+}
+
+// Hangup hangups channel.
+func Hangup(ctx context.Context, s AMISocket, channel, cause string) (AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionHangup)
+	c.SetV(map[string]string{
+		config.AmiFieldChannel: channel,
+		config.AmiFieldCause:   cause,
+	})
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
+}
+
+// Originate originates a call.
+// Generates an outgoing call to a Extension/Context/Priority or Application/Data.
+func Originate(ctx context.Context, s AMISocket, originate AMIOriginateData) (AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionOriginate)
+	c.SetVCmd(originate)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
+}
+
+// ParkedCalls list parked calls.
+func ParkedCalls(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionParkedCalls)
+	callback := NewAMICallbackService(ctx, s, c,
+		[]string{config.AmiListenerEventParkedCall}, []string{config.AmiListenerEventParkedCallsComplete})
+	return callback.SendSuperLevel()
+}
+
+// Park parks a channel.
+func Park(ctx context.Context, s AMISocket, channel1, channel2 string, timeout int, parkinglot string) (AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionHangup)
+	c.SetV(map[string]interface{}{
+		config.AmiFieldChannel:    channel1,
+		config.AmiFieldChannel2:   channel2,
+		config.AmiFieldTimeout:    timeout,
+		config.AmiFieldParkinglot: parkinglot,
+	})
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
+}
+
+// Parkinglots get a list of parking lots.
+func Parkinglots(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionParkingLots)
+	callback := NewAMICallbackService(ctx, s, c,
+		[]string{config.AmiListenerEventParkedCall}, []string{config.AmiListenerEventParkinglotsComplete})
+	return callback.SendSuperLevel()
 }
