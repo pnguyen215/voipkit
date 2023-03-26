@@ -100,9 +100,11 @@ type AMISocket struct {
 type AMIResultRaw map[string]string
 type AMIResultRawLevel map[string][]string
 
+// AMICommand
+// Do not set tags json on field V
 type AMICommand struct {
 	Action string `ami:"Action" json:"action"`
-	ID     string `ami:"ActionID,omitempty" json:"action_id"`
+	ID     string `ami:"ActionID" json:"action_id"`
 	V      []interface{}
 }
 
@@ -127,4 +129,26 @@ type AMICallbackHandler struct {
 	Command        *AMICommand     `json:"-"`
 	AcceptedEvents []string        `json:"accepted_events,omitempty"`
 	IgnoreEvents   []string        `json:"ignored_events,omitempty"`
+}
+
+// AMIUpdateConfigAction holds the params for an action in UpdateConfig AMI command.
+//
+// example
+//
+//	actions := make([]ami.UpdateConfigAction, 0)
+//	actions = append(actions, ami.AMIUpdateConfigAction{
+//		Action:   "EmptyCat",
+//		Category: "test01",
+//	})
+//	actions = append(actions, ami.AMIUpdateConfigAction{
+//		Action:   "Append",
+//		Category: "test01",
+//		Var:      "type",
+//		Value:    "peer",
+//	})
+type AMIUpdateConfigAction struct {
+	Action   string `ami:"Action" json:"action"`
+	Category string `ami:"Category" json:"category"`
+	Var      string `ami:"Var,omitempty" json:"var,omitempty"`
+	Value    string `ami:"Value,omitempty" json:"value,omitempty"`
 }

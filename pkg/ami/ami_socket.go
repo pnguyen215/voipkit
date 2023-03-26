@@ -129,6 +129,11 @@ func (s *AMISocket) SetAllowTrace(value bool) *AMISocket {
 	return s
 }
 
+func (s *AMISocket) ResetUUID() *AMISocket {
+	s.SetUUID(GenUUIDShorten())
+	return s
+}
+
 func (s *AMISocket) Connected() bool {
 	return s.Conn != nil
 }

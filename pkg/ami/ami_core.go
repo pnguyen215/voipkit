@@ -12,6 +12,7 @@ func NewCore() *AMICore {
 	c := &AMICore{}
 	c.SetEvent(make(chan AMIResultRaw))
 	c.SetStop(make(chan struct{}))
+	c.SetSocket(NewAMISocket())
 	return c
 }
 
@@ -37,6 +38,12 @@ func (c *AMICore) SetStop(stop chan struct{}) *AMICore {
 
 func (c *AMICore) SetDictionary(dictionary *AMIDictionary) *AMICore {
 	c.Dictionary = dictionary
+	return c
+}
+
+func (c *AMICore) ResetUUID() *AMICore {
+	c.SetUUID(GenUUIDShorten())
+	c.Socket.SetUUID(c.UUID)
 	return c
 }
 
@@ -454,4 +461,63 @@ func (c *AMICore) ModuleCheck(ctx context.Context, module string) (AMIResultRaw,
 // Loads, unloads or reloads an Asterisk module in a running system.
 func (c *AMICore) ModuleLoad(ctx context.Context, module, loadType string) (AMIResultRaw, error) {
 	return ModuleLoad(ctx, *c.Socket, module, loadType)
+}
+
+// Reload Sends a reload event.
+func (c *AMICore) Reload(ctx context.Context, module string) (AMIResultRaw, error) {
+	return Reload(ctx, *c.Socket, module)
+}
+
+// ShowDialPlan shows dialplan contexts and extensions
+// Be aware that showing the full dialplan may take a lot of capacity.
+func (c *AMICore) ShowDialPlan(ctx context.Context, extension, context string) ([]AMIResultRaw, error) {
+	return ShowDialPlan(ctx, *c.Socket, extension, context)
+}
+
+// Filter dynamically add filters for the current manager session.
+func (c *AMICore) Filter(ctx context.Context, operation, filter string) (AMIResultRaw, error) {
+	return Filter(ctx, *c.Socket, operation, filter)
+}
+
+// DeviceStateList list the current known device states.
+func (c *AMICore) GetDeviceStateList(ctx context.Context) ([]AMIResultRaw, error) {
+	return DeviceStateList(ctx, *c.Socket)
+}
+
+// LoggerRotate reload and rotate the Asterisk logger.
+func (c *AMICore) LoggerRotate(ctx context.Context) (AMIResultRaw, error) {
+	return LoggerRotate(ctx, *c.Socket)
+}
+
+// UpdateConfig Updates a config file.
+// Dynamically updates an Asterisk configuration file.
+// Example:
+/*
+Action: UpdateConfig
+SrcFilename: voicemail2.conf
+DstFilename: voicemail2.conf
+Action-000000: Append
+Cat-000000: default
+Var-000000: 127
+Value-000000: >5555, Jason Bourne97, ***@noCia.gov.do
+Action-000001: Append
+Cat-000001: default
+Var-000001: 125
+Value-000001: >55555, Jason Bourne76, ***@noCia.gov.do
+Action-000002: Append
+Cat-000002: default
+Var-000002: 122
+Value-000002: >5555, Jason Bourne74, ***@noCia.gov.do
+Action-000003: Append
+Cat-000003: default
+Var-000003: 128
+Value-000003: >5555, Jason Bourne48, ***@noCia.gov.do
+Action-000004: Append
+Cat-000004: default
+Var-000004: 126
+Value-000004: >55555, Jason Bourne18, ***@noCia.gov.do
+ActionID: 495446608
+*/
+func (c *AMICore) UpdateConfig(ctx context.Context, sourceFilename, destinationFilename string, reload bool, actions ...AMIUpdateConfigAction) (AMIResultRaw, error) {
+	return UpdateConfig(ctx, *c.Socket, sourceFilename, destinationFilename, reload, actions...)
 }

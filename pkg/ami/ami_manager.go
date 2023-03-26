@@ -293,3 +293,103 @@ func ModuleLoad(ctx context.Context, s AMISocket, module, loadType string) (AMIR
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
+
+// Reload Sends a reload event.
+func Reload(ctx context.Context, s AMISocket, module string) (AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionReload)
+	c.SetV(map[string]string{
+		config.AmiFieldModule: module,
+	})
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
+}
+
+// ShowDialPlan shows dialplan contexts and extensions
+// Be aware that showing the full dialplan may take a lot of capacity.
+func ShowDialPlan(ctx context.Context, s AMISocket, extension, context string) ([]AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionShowDialPlan)
+	c.SetV(map[string]string{
+		config.AmiFieldExtension_: extension,
+		config.AmiFieldContext:    context,
+	})
+	callback := NewAMICallbackService(ctx, s, c,
+		[]string{config.AmiListenerEventListDialplan}, []string{config.AmiListenerEventShowDialPlanComplete})
+	return callback.SendSuperLevel()
+}
+
+// Filter dynamically add filters for the current manager session.
+func Filter(ctx context.Context, s AMISocket, operation, filter string) (AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionFilter)
+	c.SetV(map[string]string{
+		config.AmiFieldOperation: operation,
+		config.AmiFieldFilter:    filter,
+	})
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
+}
+
+// DeviceStateList list the current known device states.
+func DeviceStateList(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDeviceStateList)
+	callback := NewAMICallbackService(ctx, s, c,
+		[]string{config.AmiListenerEventDeviceStateChange}, []string{config.AmiListenerEventDeviceStateListComplete})
+	return callback.SendSuperLevel()
+}
+
+// LoggerRotate reload and rotate the Asterisk logger.
+func LoggerRotate(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionLoggerRotate)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
+}
+
+// UpdateConfig Updates a config file.
+// Dynamically updates an Asterisk configuration file.
+/*
+Action: UpdateConfig
+SrcFilename: voicemail2.conf
+DstFilename: voicemail2.conf
+Action-000000: Append
+Cat-000000: default
+Var-000000: 127
+Value-000000: >5555, Jason Bourne97, ***@noCia.gov.do
+Action-000001: Append
+Cat-000001: default
+Var-000001: 125
+Value-000001: >55555, Jason Bourne76, ***@noCia.gov.do
+Action-000002: Append
+Cat-000002: default
+Var-000002: 122
+Value-000002: >5555, Jason Bourne74, ***@noCia.gov.do
+Action-000003: Append
+Cat-000003: default
+Var-000003: 128
+Value-000003: >5555, Jason Bourne48, ***@noCia.gov.do
+Action-000004: Append
+Cat-000004: default
+Var-000004: 126
+Value-000004: >55555, Jason Bourne18, ***@noCia.gov.do
+ActionID: 495446608
+*/
+func UpdateConfig(ctx context.Context, s AMISocket, sourceFilename, destinationFilename string, reload bool, actions ...AMIUpdateConfigAction) (AMIResultRaw, error) {
+	options := make(map[string]string)
+	options[config.AmiFieldSourceFilename] = sourceFilename
+	options[config.AmiFieldDestinationFilename] = destinationFilename
+	if reload {
+		options[config.AmiFieldReload] = "yes"
+	}
+	for i, a := range actions {
+		uuid := fmt.Sprintf("%06d", i)
+		options[fmt.Sprintf("%s%s", config.AmiFieldActionPrefix, uuid)] = a.Action
+		options[fmt.Sprintf("%s%s", config.AmiFieldCategoryPrefix, uuid)] = a.Category
+		if a.Var != "" {
+			options[fmt.Sprintf("%s%s", config.AmiFieldVarPrefix, uuid)] = a.Var
+			options[fmt.Sprintf("%s%s", config.AmiFieldValuePrefix, uuid)] = a.Value
+		}
+	}
+
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionUpdateConfig)
+	c.SetVCmd(options)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
+}

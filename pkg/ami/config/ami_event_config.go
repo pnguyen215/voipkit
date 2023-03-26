@@ -196,4 +196,6 @@ const (
 	AmiListenerEventSIPpeerstatusComplete      = "SIPpeerstatusComplete"      //
 	AmiListenerEventRegistrationEntry          = "RegistrationEntry"          //
 	AmiListenerEventRegistrationsComplete      = "RegistrationsComplete"      //
+	AmiListenerEventListDialplan               = "ListDialplan"               //
+	AmiListenerEventShowDialPlanComplete       = "ShowDialPlanComplete"       //
 )
