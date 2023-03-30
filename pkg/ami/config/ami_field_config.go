@@ -39,4 +39,9 @@ const (
 	AmiFieldCause               = "Cause"
 	AmiFieldChannel2            = "Channel2"
 	AmiFieldParkinglot          = "Parkinglot"
+	AmiFieldDuration            = "Duration"
+	AmiFieldDigit               = "Digit"
+	AmiFieldVariables           = "Variables"
+	AmiFieldDirection           = "Direction"
+	AmiFieldState               = "State"
 )
