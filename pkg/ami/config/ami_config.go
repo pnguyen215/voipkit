@@ -452,3 +452,19 @@ const (
 const (
 	AmiMaxConcurrencyMillis = 60000 // millis
 )
+
+// AGIControl represents the control type to playback actions
+type AGIControl string
+
+const (
+	// Stop the playback operation
+	Stop AGIControl = "stop"
+	// Forward move the current position in the media forward.
+	Forward AGIControl = "forward"
+	// Reverse move the current position in the media backward.
+	Reverse AGIControl = "reverse"
+	// Pause pause/unpause the playback operation.
+	Pause AGIControl = "pause"
+	// Restart the playback operation.
+	Restart AGIControl = "restart"
+)

@@ -785,3 +785,27 @@ func (c *AMICore) LocalOptimizeAway(ctx context.Context, channel string) (AMIRes
 func (c *AMICore) MuteAudio(ctx context.Context, channel, direction string, state bool) (AMIResultRaw, error) {
 	return MuteAudio(ctx, *c.Socket, channel, direction, state)
 }
+
+// GetAgents
+// Agents lists agents and their status.
+func (c *AMICore) GetAgents(ctx context.Context) ([]AMIResultRaw, error) {
+	return Agents(ctx, *c.Socket)
+}
+
+// GetAgentLogoff
+// AgentLogoff sets an agent as no longer logged in.
+func (c *AMICore) GetAgentLogoff(ctx context.Context, agent string, soft bool) (AMIResultRaw, error) {
+	return AgentLogoff(ctx, *c.Socket, agent, soft)
+}
+
+// AGI
+// AGI add an AGI command to execute by Async AGI.
+func (c *AMICore) AGI(ctx context.Context, channel, agiCommand, agiCommandID string) (AMIResultRaw, error) {
+	return AGI(ctx, *c.Socket, channel, agiCommand, agiCommandID)
+}
+
+// ControlPlayback
+// ControlPlayback control the playback of a file being played to a channel.
+func (c *AMICore) ControlPlayback(ctx context.Context, channel string, control config.AGIControl) (AMIResultRaw, error) {
+	return ControlPlayback(ctx, *c.Socket, channel, control)
+}

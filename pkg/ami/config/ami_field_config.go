@@ -45,4 +45,9 @@ const (
 	AmiFieldDirection           = "Direction"
 	AmiFieldState               = "State"
 	AmiFieldValue               = "Value"
+	AmiFieldAgent               = "Agent"
+	AmiFieldSoft                = "Soft"
+	AmiFieldCommand             = "Command"
+	AmiFieldCommandID           = "CommandID"
+	AmiFieldControl             = "Control"
 )
