@@ -52,4 +52,6 @@ const (
 	AmiFieldControl             = "Control"
 	AmiFieldMailbox             = "Mailbox"
 	AmiFieldProvider            = "Provider"
+	AmiFieldOldMessages         = "OldMessages"
+	AmiFieldNewMessages         = "NewMessages"
 )

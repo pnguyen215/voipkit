@@ -833,3 +833,33 @@ func (c *AMICore) PresenceState(ctx context.Context, provider string) (AMIResult
 func (c *AMICore) PresenceStateList(ctx context.Context) ([]AMIResultRaw, error) {
 	return PresenceStateList(ctx, *c.Socket)
 }
+
+// MailboxCount
+// MailboxCount checks Mailbox Message Count.
+func (c *AMICore) MailboxCount(ctx context.Context, mailbox string) (AMIResultRaw, error) {
+	return MailboxCount(ctx, *c.Socket, mailbox)
+}
+
+// MailboxStatus
+// MailboxStatus checks Mailbox Message Count.
+func (c *AMICore) MailboxStatus(ctx context.Context, mailbox string) (AMIResultRaw, error) {
+	return MailboxStatus(ctx, *c.Socket, mailbox)
+}
+
+// MWIDelete
+// MWIDelete delete selected mailboxes.
+func (c *AMICore) MWIDelete(ctx context.Context, mailbox string) (AMIResultRaw, error) {
+	return MWIDelete(ctx, *c.Socket, mailbox)
+}
+
+// MWIGet
+// MWIGet get selected mailboxes with message counts.
+func (c *AMICore) MWIGet(ctx context.Context, mailbox string) (AMIResultRaw, error) {
+	return MWIGet(ctx, *c.Socket, mailbox)
+}
+
+// MWIUpdate
+// MWIUpdate update the mailbox message counts.
+func (c *AMICore) MWIUpdate(ctx context.Context, mailbox, oldMessages, newMessages string) (AMIResultRaw, error) {
+	return MWIUpdate(ctx, *c.Socket, mailbox, oldMessages, newMessages)
+}
