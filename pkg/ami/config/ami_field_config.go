@@ -50,4 +50,6 @@ const (
 	AmiFieldCommand             = "Command"
 	AmiFieldCommandID           = "CommandID"
 	AmiFieldControl             = "Control"
+	AmiFieldMailbox             = "Mailbox"
+	AmiFieldProvider            = "Provider"
 )

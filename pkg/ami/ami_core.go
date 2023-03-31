@@ -809,3 +809,27 @@ func (c *AMICore) AGI(ctx context.Context, channel, agiCommand, agiCommandID str
 func (c *AMICore) ControlPlayback(ctx context.Context, channel string, control config.AGIControl) (AMIResultRaw, error) {
 	return ControlPlayback(ctx, *c.Socket, channel, control)
 }
+
+// VoicemailRefresh
+// VoicemailRefresh tell asterisk to poll mailboxes for a change.
+func (c *AMICore) VoicemailRefresh(ctx context.Context, context, mailbox string) (AMIResultRaw, error) {
+	return VoicemailRefresh(ctx, *c.Socket, context, mailbox)
+}
+
+// VoicemailUsersList
+// VoicemailUsersList list all voicemail user information.
+func (c *AMICore) VoicemailUsersList(ctx context.Context) ([]AMIResultRaw, error) {
+	return VoicemailUsersList(ctx, *c.Socket)
+}
+
+// PresenceState
+// PresenceState check presence state.
+func (c *AMICore) PresenceState(ctx context.Context, provider string) (AMIResultRaw, error) {
+	return PresenceState(ctx, *c.Socket, provider)
+}
+
+// PresenceStateList
+// PresenceStateList list the current known presence states.
+func (c *AMICore) PresenceStateList(ctx context.Context) ([]AMIResultRaw, error) {
+	return PresenceStateList(ctx, *c.Socket)
+}

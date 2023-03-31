@@ -203,4 +203,6 @@ const (
 	AmiListenerEventQueueSummaryComplete       = "QueueSummaryComplete"       //
 	AmiListenerEventParkedCallsComplete        = "ParkedCallsComplete"        //
 	AmiListenerEventParkinglotsComplete        = "ParkinglotsComplete"        //
+	AmiListenerEventVoicemailUserEntry         = "VoicemailUserEntry"         //
+	AmiListenerEventVoicemailUserEntryComplete = "VoicemailUserEntryComplete" //
 )
