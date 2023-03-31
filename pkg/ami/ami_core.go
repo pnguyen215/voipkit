@@ -596,37 +596,37 @@ func (c *AMICore) QueueReset(ctx context.Context, queue string) (AMIResultRaw, e
 
 // QueueRemove
 // QueueRemove removes interface from queue.
-func (c *AMICore) QueueRemove(ctx context.Context, queue AMIQueueData) (AMIResultRaw, error) {
+func (c *AMICore) QueueRemove(ctx context.Context, queue AMIPayloadQueue) (AMIResultRaw, error) {
 	return QueueRemove(ctx, *c.Socket, queue)
 }
 
 // QueueReload
 // QueueReload reloads a queue, queues, or any sub-section of a queue or queues.
-func (c *AMICore) QueueReload(ctx context.Context, queue AMIQueueData) (AMIResultRaw, error) {
+func (c *AMICore) QueueReload(ctx context.Context, queue AMIPayloadQueue) (AMIResultRaw, error) {
 	return QueueReload(ctx, *c.Socket, queue)
 }
 
 // QueuePenalty
 // QueuePenalty sets the penalty for a queue member.
-func (c *AMICore) QueuePenalty(ctx context.Context, queue AMIQueueData) (AMIResultRaw, error) {
+func (c *AMICore) QueuePenalty(ctx context.Context, queue AMIPayloadQueue) (AMIResultRaw, error) {
 	return QueuePenalty(ctx, *c.Socket, queue)
 }
 
 // QueuePause
 // QueuePause makes a queue member temporarily unavailable.
-func (c *AMICore) QueuePause(ctx context.Context, queue AMIQueueData) (AMIResultRaw, error) {
+func (c *AMICore) QueuePause(ctx context.Context, queue AMIPayloadQueue) (AMIResultRaw, error) {
 	return QueuePause(ctx, *c.Socket, queue)
 }
 
 // QueueLog
 // QueueLog adds custom entry in queue_log.
-func (c *AMICore) QueueLog(ctx context.Context, queue AMIQueueData) (AMIResultRaw, error) {
+func (c *AMICore) QueueLog(ctx context.Context, queue AMIPayloadQueue) (AMIResultRaw, error) {
 	return QueueLog(ctx, *c.Socket, queue)
 }
 
 // QueueAdd
 // QueueAdd adds interface to queue.
-func (c *AMICore) QueueAdd(ctx context.Context, queue AMIQueueData) (AMIResultRaw, error) {
+func (c *AMICore) QueueAdd(ctx context.Context, queue AMIPayloadQueue) (AMIResultRaw, error) {
 	return QueueAdd(ctx, *c.Socket, queue)
 }
 
@@ -708,7 +708,7 @@ func (c *AMICore) Hangup(ctx context.Context, channel, cause string) (AMIResultR
 }
 
 // Originate
-func (c *AMICore) Originate(ctx context.Context, originate AMIOriginateData) (AMIResultRaw, error) {
+func (c *AMICore) Originate(ctx context.Context, originate AMIPayloadOriginate) (AMIResultRaw, error) {
 	return Originate(ctx, *c.Socket, originate)
 }
 
@@ -726,4 +726,62 @@ func (c *AMICore) Park(ctx context.Context, channel1, channel2 string, timeout i
 // Parkinglots
 func (c *AMICore) Parkinglots(ctx context.Context) ([]AMIResultRaw, error) {
 	return Parkinglots(ctx, *c.Socket)
+}
+
+// PlayDTMF
+// PlayDTMF plays DTMF signal on a specific channel.
+func (c *AMICore) PlayDTMF(ctx context.Context, channel, digit string, duration int) (AMIResultRaw, error) {
+	return PlayDTMF(ctx, *c.Socket, channel, digit, duration)
+}
+
+// Redirect
+// Redirect redirects (transfer) a call.
+func (c *AMICore) Redirect(ctx context.Context, call AMIPayloadCall) (AMIResultRaw, error) {
+	return Redirect(ctx, *c.Socket, call)
+}
+
+// SendText
+// SendText sends text message to channel.
+func (c *AMICore) SendText(ctx context.Context, channel, message string) (AMIResultRaw, error) {
+	return SendText(ctx, *c.Socket, channel, message)
+}
+
+// SetVar
+// SetVar sets a channel variable. Sets a global or local channel variable.
+// Note: If a channel name is not provided then the variable is global.
+func (c *AMICore) SetVar(ctx context.Context, channel, variable, value string) (AMIResultRaw, error) {
+	return SetVar(ctx, *c.Socket, channel, variable, value)
+}
+
+// GetStatus
+// Status lists channel status.
+// Will return the status information of each channel along with the value for the specified channel variables.
+func (c *AMICore) GetStatus(ctx context.Context, channel, variables string) (AMIResultRaw, error) {
+	return Status(ctx, *c.Socket, channel, variables)
+}
+
+// AOCMessage
+// AOCMessage generates an Advice of Charge message on a channel.
+func (c *AMICore) AOCMessage(ctx context.Context, aoc AMIPayloadAOC) (AMIResultRaw, error) {
+	return AOCMessage(ctx, *c.Socket, aoc)
+}
+
+// GetVar
+// GetVar get a channel variable.
+func (c *AMICore) GetVar(ctx context.Context, channel, variable string) (AMIResultRaw, error) {
+	return GetVar(ctx, *c.Socket, channel, variable)
+}
+
+// LocalOptimizeAway
+// LocalOptimizeAway optimize away a local channel when possible.
+// A local channel created with "/n" will not automatically optimize away.
+// Calling this command on the local channel will clear that flag and allow it to optimize away if it's bridged or when it becomes bridged.
+func (c *AMICore) LocalOptimizeAway(ctx context.Context, channel string) (AMIResultRaw, error) {
+	return LocalOptimizeAway(ctx, *c.Socket, channel)
+}
+
+// MuteAudio
+// MuteAudio mute an audio stream.
+func (c *AMICore) MuteAudio(ctx context.Context, channel, direction string, state bool) (AMIResultRaw, error) {
+	return MuteAudio(ctx, *c.Socket, channel, direction, state)
 }

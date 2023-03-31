@@ -44,4 +44,5 @@ const (
 	AmiFieldVariables           = "Variables"
 	AmiFieldDirection           = "Direction"
 	AmiFieldState               = "State"
+	AmiFieldValue               = "Value"
 )
