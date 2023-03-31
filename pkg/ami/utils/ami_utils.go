@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/base64"
 	"log"
 	"net"
 	"net/http"
@@ -229,4 +230,20 @@ func UnmarshalFromString(str string, v interface{}) error {
 
 func MarshalIndent(v interface{}, prefix, indent string) ([]byte, error) {
 	return _json.MarshalIndent(v, prefix, indent)
+}
+
+func Base64Encode(v interface{}) string {
+	d := ToJson(v)
+	return base64.StdEncoding.EncodeToString([]byte(d))
+}
+
+func Base64Decode(encoded string) string {
+	if encoded == "" {
+		return encoded
+	}
+	d, err := base64.StdEncoding.DecodeString(encoded)
+	if err != nil {
+		return ""
+	}
+	return string(d)
 }

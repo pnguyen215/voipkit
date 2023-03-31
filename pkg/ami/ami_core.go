@@ -863,3 +863,15 @@ func (c *AMICore) MWIGet(ctx context.Context, mailbox string) (AMIResultRaw, err
 func (c *AMICore) MWIUpdate(ctx context.Context, mailbox, oldMessages, newMessages string) (AMIResultRaw, error) {
 	return MWIUpdate(ctx, *c.Socket, mailbox, oldMessages, newMessages)
 }
+
+// MessageSend
+// MessageSend send an out of call message to an endpoint.
+func (c *AMICore) MessageSend(ctx context.Context, message AMIPayloadMessage) (AMIResultRaw, error) {
+	return MessageSend(ctx, *c.Socket, message)
+}
+
+// KSendSMS
+// KSendSMS sends a SMS using KHOMP device.
+func (c *AMICore) KSendSMS(ctx context.Context, payload AMIPayloadKhompSMS) (AMIResultRaw, error) {
+	return KSendSMS(ctx, *c.Socket, payload)
+}

@@ -302,3 +302,20 @@ type AMIPayloadMonitor struct {
 	Mix          bool   `ami:"Mix,omitempty"`
 	MixMonitorID string `ami:"MixMonitorID,omitempty"`
 }
+
+// AMIPayloadMessage holds the message data to message send command.
+type AMIPayloadMessage struct {
+	To         string `ami:"To"`
+	From       string `ami:"From"`
+	Body       string `ami:"Body"`
+	Base64Body string `ami:"Base64Body,omitempty"`
+	Variable   string `ami:"Variable"`
+}
+
+// AMIPayloadKhompSMS holds the Khomp SMS information.
+type AMIPayloadKhompSMS struct {
+	Device       string `ami:"Device"`
+	Destination  string `ami:"Destination"`
+	Confirmation bool   `ami:"Confirmation"`
+	Message      string `ami:"Message"`
+}

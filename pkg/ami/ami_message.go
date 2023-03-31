@@ -2,6 +2,7 @@ package ami
 
 import (
 	"bytes"
+	"context"
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
@@ -392,4 +393,42 @@ func FromJson(jsonString string) (*AMIMessage, error) {
 	}
 
 	return message, nil
+}
+
+// MessageSend send an out of call message to an endpoint.
+func MessageSend(ctx context.Context, s AMISocket, message AMIPayloadMessage) (AMIResultRaw, error) {
+	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMessageSend)
+	c.SetVCmd(message)
+	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	return callback.Send()
+}
+
+func NewAMIPayloadMessage() *AMIPayloadMessage {
+	a := &AMIPayloadMessage{}
+	return a
+}
+
+func (a *AMIPayloadMessage) SetTo(value string) *AMIPayloadMessage {
+	a.To = value
+	return a
+}
+
+func (a *AMIPayloadMessage) SetFrom(value string) *AMIPayloadMessage {
+	a.From = value
+	return a
+}
+
+func (a *AMIPayloadMessage) SetBody(value string) *AMIPayloadMessage {
+	a.Body = value
+	return a
+}
+
+func (a *AMIPayloadMessage) SetBase64Body(value interface{}) *AMIPayloadMessage {
+	a.Base64Body = utils.Base64Encode(value)
+	return a
+}
+
+func (a *AMIPayloadMessage) SetVariable(value string) *AMIPayloadMessage {
+	a.Variable = value
+	return a
 }

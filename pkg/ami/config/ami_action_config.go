@@ -1724,6 +1724,7 @@ const (
 			value of 0 to disable the timeout.
 		Parkinglot - The parking lot to use when parking the channel
 	*/
-	AmiActionPark    = "Park"
-	AmiActionDataGet = "DataGet"
+	AmiActionPark     = "Park"
+	AmiActionDataGet  = "DataGet"
+	AmiActionKSendSMS = "KSendSMS"
 )
