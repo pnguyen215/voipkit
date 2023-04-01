@@ -875,3 +875,27 @@ func (c *AMICore) MessageSend(ctx context.Context, message AMIPayloadMessage) (A
 func (c *AMICore) KSendSMS(ctx context.Context, payload AMIPayloadKhompSMS) (AMIResultRaw, error) {
 	return KSendSMS(ctx, *c.Socket, payload)
 }
+
+// IAXnetstats
+// IAXnetstats show IAX channels network statistics.
+func (c *AMICore) IAXnetstats(ctx context.Context) ([]AMIResultRaw, error) {
+	return IAXnetstats(ctx, *c.Socket)
+}
+
+// IAXpeerlist
+// IAXpeerlist show IAX channels network statistics.
+func (c *AMICore) IAXpeerlist(ctx context.Context) ([]AMIResultRaw, error) {
+	return IAXpeerlist(ctx, *c.Socket)
+}
+
+// IAXpeers
+// IAXpeers list IAX peers.
+func (c *AMICore) IAXpeers(ctx context.Context) ([]AMIResultRaw, error) {
+	return IAXpeers(ctx, *c.Socket)
+}
+
+// IAXregistry
+// IAXregistry show IAX registrations.
+func (c *AMICore) IAXregistry(ctx context.Context) ([]AMIResultRaw, error) {
+	return IAXregistry(ctx, *c.Socket)
+}

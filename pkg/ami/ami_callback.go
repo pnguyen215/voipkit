@@ -86,12 +86,14 @@ func (h *AMICallbackHandler) Send() (AMIResultRaw, error) {
 
 	var response AMIResultRaw
 	var err error
-	var total int64 = 0
+	var total time.Duration = 0
 
 	for i := 1; i <= h.Socket.MaxRetries; i++ {
-		_start := time.Now().UnixMilli()
+		// _start := time.Now().UnixMilli()
+		_start := time.Now()
 		response, err = h.Command.Send(h.Ctx, h.Socket, h.Command)
-		_end := time.Now().UnixMilli() - _start
+		// _end := time.Now().UnixMilli() - _start
+		_end := time.Since(_start)
 		total += _end
 		if _end == 0 || strings.EqualFold(response.GetVal(config.AmiJsonFieldStatus), config.AmiFullyBootedKey) {
 			continue
@@ -99,14 +101,14 @@ func (h *AMICallbackHandler) Send() (AMIResultRaw, error) {
 
 		if len(response) > 0 && err == nil {
 			if h.Socket.AllowTrace {
-				log.Printf("Send(). callback return for the %v time(s) and waste time = %v (milliseconds)", i, _end)
+				log.Printf("Send(). callback return for the %v time(s) and waste time = %v", i, _end)
 			}
 			break
 		}
 	}
 
 	if h.Socket.AllowTrace {
-		log.Printf("Send(). callback total waste time = %v (milliseconds)", total)
+		log.Printf("Send(). callback total waste time = %v", total)
 	}
 
 	return response, err
@@ -123,12 +125,15 @@ func (h *AMICallbackHandler) SendLevel() (AMIResultRawLevel, error) {
 
 	var response AMIResultRawLevel
 	var err error
-	var total int64 = 0
+	var total time.Duration = 0
 
 	for i := 1; i <= h.Socket.MaxRetries; i++ {
-		_start := time.Now().UnixMilli()
+		// _start := time.Now().UnixMilli()
+		_start := time.Now()
 		response, err = h.Command.SendLevel(h.Ctx, h.Socket, h.Command)
-		_end := time.Now().UnixMilli() - _start
+		// _end := time.Now().UnixMilli() - _start
+		_end := time.Since(_start)
+		// total += _end
 		total += _end
 		if _end == 0 || strings.EqualFold(response.GetVal(config.AmiJsonFieldStatus), config.AmiFullyBootedKey) {
 			continue
@@ -136,14 +141,14 @@ func (h *AMICallbackHandler) SendLevel() (AMIResultRawLevel, error) {
 
 		if len(response) > 0 && err == nil {
 			if h.Socket.AllowTrace {
-				log.Printf("SendLevel(). callback return for the %v time(s) and waste time = %v (milliseconds)", i, _end)
+				log.Printf("SendLevel(). callback return for the %v time(s) and waste time = %v", i, _end)
 			}
 			break
 		}
 	}
 
 	if h.Socket.AllowTrace {
-		log.Printf("SendLevel(). callback total waste time = %v (milliseconds)", total)
+		log.Printf("SendLevel(). callback total waste time = %v", total)
 	}
 
 	return response, err
@@ -160,12 +165,14 @@ func (h *AMICallbackHandler) SendSuperLevel() ([]AMIResultRaw, error) {
 
 	var response []AMIResultRaw
 	var err error
-	var total int64 = 0
+	var total time.Duration = 0
 
 	for i := 1; i <= h.Socket.MaxRetries; i++ {
-		_start := time.Now().UnixMilli()
+		// _start := time.Now().UnixMilli()
+		_start := time.Now()
 		response, err = h.Command.DoGetResult(h.Ctx, h.Socket, h.Command, h.AcceptedEvents, h.IgnoreEvents)
-		_end := time.Now().UnixMilli() - _start
+		// _end := time.Now().UnixMilli() - _start
+		_end := time.Since(_start)
 		total += _end
 		if _end == 0 {
 			continue
@@ -173,14 +180,14 @@ func (h *AMICallbackHandler) SendSuperLevel() ([]AMIResultRaw, error) {
 
 		if len(response) > 0 && err == nil {
 			if h.Socket.AllowTrace {
-				log.Printf("SendSuperLevel(). callback return for the %v time(s) and waste time = %v (milliseconds)", i, _end)
+				log.Printf("SendSuperLevel(). callback return for the %v time(s) and waste time = %v", i, _end)
 			}
 			break
 		}
 	}
 
 	if h.Socket.AllowTrace {
-		log.Printf("SendSuperLevel(). callback total waste time = %v (milliseconds)", total)
+		log.Printf("SendSuperLevel(). callback total waste time = %v", total)
 	}
 
 	return response, err
