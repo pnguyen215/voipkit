@@ -899,3 +899,15 @@ func (c *AMICore) IAXpeers(ctx context.Context) ([]AMIResultRaw, error) {
 func (c *AMICore) IAXregistry(ctx context.Context) ([]AMIResultRaw, error) {
 	return IAXregistry(ctx, *c.Socket)
 }
+
+// AddDialplanExtension
+// AddDialplanExtension add an extension to the dialplan.
+func (c *AMICore) AddDialplanExtension(ctx context.Context, extension AMIPayloadExtension) (AMIResultRaw, error) {
+	return AddDialplanExtension(ctx, *c.Socket, extension)
+}
+
+// RemoveDialplanExtension
+// RemoveDialplanExtension remove an extension from the dialplan.
+func (c *AMICore) RemoveDialplanExtension(ctx context.Context, extension AMIPayloadExtension) (AMIResultRaw, error) {
+	return RemoveDialplanExtension(ctx, *c.Socket, extension)
+}

@@ -319,3 +319,13 @@ type AMIPayloadKhompSMS struct {
 	Confirmation bool   `ami:"Confirmation"`
 	Message      string `ami:"Message"`
 }
+
+// AMIPayloadExtension holds the extension data to dialplan.
+type AMIPayloadExtension struct {
+	Context         string `ami:"Context"`
+	Extension       string `ami:"Extension"`
+	Priority        string `ami:"Priority,omitempty"`
+	Application     string `ami:"Application,omitempty"`
+	ApplicationData string `ami:"ApplicationData,omitempty"`
+	Replace         string `ami:"Replace,omitempty"`
+}

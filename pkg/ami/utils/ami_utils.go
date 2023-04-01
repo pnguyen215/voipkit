@@ -99,6 +99,23 @@ func ToJson(data interface{}) string {
 	return string(result)
 }
 
+func ToJsonPretty(data interface{}) string {
+	s, ok := data.(string)
+
+	if ok {
+		return s
+	}
+
+	result, err := MarshalIndent(data, "", "    ")
+
+	if err != nil {
+		log.Printf(err.Error())
+		return ""
+	}
+
+	return string(result)
+}
+
 func TakeKeyFromValue(collection map[string]string, value string) string {
 	if len(collection) <= 0 {
 		return value
