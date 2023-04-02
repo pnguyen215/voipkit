@@ -152,6 +152,8 @@ func (d *AMIDictionary) GetDictionaries() *[]AMIEventDictionary {
 			"TimeZone":              "timezone",
 			"VMContext":             "vm_context",
 			"VolumeGain":            "volume_gain",
+			"BridgePriority":        "bridge_priority",
+			"BridgeSuspended":       "bridge_suspended",
 		},
 	})
 

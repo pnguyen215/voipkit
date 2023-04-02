@@ -911,3 +911,57 @@ func (c *AMICore) AddDialplanExtension(ctx context.Context, extension AMIPayload
 func (c *AMICore) RemoveDialplanExtension(ctx context.Context, extension AMIPayloadExtension) (AMIResultRaw, error) {
 	return RemoveDialplanExtension(ctx, *c.Socket, extension)
 }
+
+// Bridge
+// Bridge bridges two channels already in the PBX.
+func (c *AMICore) Bridge(ctx context.Context, channel1, channel2 string, tone string) (AMIResultRaw, error) {
+	return Bridge(ctx, *c.Socket, channel1, channel2, tone)
+}
+
+// BlindTransfer
+// BlindTransfer blind transfer channel(s) to the given destination.
+func (c *AMICore) BlindTransfer(ctx context.Context, channel, context, extension string) (AMIResultRaw, error) {
+	return BlindTransfer(ctx, *c.Socket, channel, context, extension)
+}
+
+// BridgeDestroy
+// BridgeDestroy destroy a bridge.
+func (c *AMICore) BridgeDestroy(ctx context.Context, bridgeUniqueId string) (AMIResultRaw, error) {
+	return BridgeDestroy(ctx, *c.Socket, bridgeUniqueId)
+}
+
+// BridgeInfo
+// BridgeInfo get information about a bridge.
+func (c *AMICore) BridgeInfo(ctx context.Context, bridgeUniqueId string) (AMIResultRaw, error) {
+	return BridgeInfo(ctx, *c.Socket, bridgeUniqueId)
+}
+
+// BridgeKick
+// BridgeKick kick a channel from a bridge.
+func (c *AMICore) BridgeKick(ctx context.Context, bridgeUniqueId, channel string) (AMIResultRaw, error) {
+	return BridgeKick(ctx, *c.Socket, bridgeUniqueId, channel)
+}
+
+// BridgeList
+// BridgeList get a list of bridges in the system.
+func (c *AMICore) BridgeList(ctx context.Context, bridgeType string) (AMIResultRaw, error) {
+	return BridgeList(ctx, *c.Socket, bridgeType)
+}
+
+// BridgeTechnologyList
+// BridgeTechnologyList list available bridging technologies and their statuses.
+func (c *AMICore) BridgeTechnologyList(ctx context.Context) ([]AMIResultRaw, error) {
+	return BridgeTechnologyList(ctx, *c.Socket)
+}
+
+// BridgeTechnologySuspend
+// BridgeTechnologySuspend suspend a bridging technology.
+func (c *AMICore) BridgeTechnologySuspend(ctx context.Context, bridgeTechnology string) (AMIResultRaw, error) {
+	return BridgeTechnologySuspend(ctx, *c.Socket, bridgeTechnology)
+}
+
+// BridgeTechnologyUnsuspend
+// BridgeTechnologyUnsuspend unsuspend a bridging technology.
+func (c *AMICore) BridgeTechnologyUnsuspend(ctx context.Context, bridgeTechnology string) (AMIResultRaw, error) {
+	return BridgeTechnologyUnsuspend(ctx, *c.Socket, bridgeTechnology)
+}

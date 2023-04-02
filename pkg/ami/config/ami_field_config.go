@@ -54,4 +54,9 @@ const (
 	AmiFieldProvider            = "Provider"
 	AmiFieldOldMessages         = "OldMessages"
 	AmiFieldNewMessages         = "NewMessages"
+	AmiFieldTone                = "Tone"
+	AmiFieldBridgeUniqueId      = "BridgeUniqueid"
+	AmiFieldChannel1            = "Channel1"
+	AmiFieldBridgeType          = "BridgeType"
+	AmiFieldBridgeTechnology    = "BridgeTechnology"
 )
