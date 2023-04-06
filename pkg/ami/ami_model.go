@@ -329,3 +329,9 @@ type AMIPayloadExtension struct {
 	ApplicationData string `ami:"ApplicationData,omitempty"`
 	Replace         string `ami:"Replace,omitempty"`
 }
+
+type AMIPayloadDb struct {
+	Family string `ami:"Family"`
+	Key    string `ami:"Key"`
+	Value  string `ami:"Val,omitempty"`
+}
