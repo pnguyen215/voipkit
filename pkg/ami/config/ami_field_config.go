@@ -59,4 +59,7 @@ const (
 	AmiFieldChannel1            = "Channel1"
 	AmiFieldBridgeType          = "BridgeType"
 	AmiFieldBridgeTechnology    = "BridgeTechnology"
+	AmiFieldFile                = "File"
+	AmiFieldSpan                = "Span"
+	AmiFieldLevel               = "Level"
 )

@@ -989,3 +989,27 @@ func (c *AMICore) DBPut(ctx context.Context, family, key, value string) (AMIResu
 func (c *AMICore) DBGet(ctx context.Context, family, key string) ([]AMIResultRaw, error) {
 	return DBGet(ctx, *c.Socket, family, key)
 }
+
+// PRIDebugFileSet
+// PRIDebugFileSet set the file used for PRI debug message output.
+func (c *AMICore) PRIDebugFileSet(ctx context.Context, filename string) (AMIResultRaw, error) {
+	return PRIDebugFileSet(ctx, *c.Socket, filename)
+}
+
+// PRIDebugFileUnset
+// PRIDebugFileUnset disables file output for PRI debug messages.
+func (c *AMICore) PRIDebugFileUnset(ctx context.Context) (AMIResultRaw, error) {
+	return PRIDebugFileUnset(ctx, *c.Socket)
+}
+
+// PRIDebugSet
+// PRIDebugSet set PRI debug levels for a span.
+func (c *AMICore) PRIDebugSet(ctx context.Context, span, level string) (AMIResultRaw, error) {
+	return PRIDebugSet(ctx, *c.Socket, span, level)
+}
+
+// PRIShowSpans
+// PRIShowSpans show status of PRI spans.
+func (c *AMICore) PRIShowSpans(ctx context.Context, span string) ([]AMIResultRaw, error) {
+	return PRIShowSpans(ctx, *c.Socket, span)
+}
