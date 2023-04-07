@@ -1045,3 +1045,28 @@ func (c *AMICore) SKINNYShowDevice(ctx context.Context, device string) (AMIResul
 func (c *AMICore) SKINNYShowline(ctx context.Context, line string) (AMIResultRaw, error) {
 	return SKINNYShowline(ctx, *c.Socket, line)
 }
+
+// MeetMeList
+// MeetMeList lists all users in a particular MeetMe conference.
+// Will follow as separate events, followed by a final event called MeetmeListComplete.
+func (c *AMICore) MeetMeList(ctx context.Context, conference string) ([]AMIResultRaw, error) {
+	return MeetMeList(ctx, *c.Socket, conference)
+}
+
+// MeetMeMute
+// MeetMeMute mute a Meetme user.
+func (c *AMICore) MeetMeMute(ctx context.Context, meetme, userNumber string) (AMIResultRaw, error) {
+	return MeetMeMute(ctx, *c.Socket, meetme, userNumber)
+}
+
+// MeetMeUnMute
+// MeetMeUnMute unmute a Meetme user.
+func (c *AMICore) MeetMeUnMute(ctx context.Context, meetme, userNumber string) (AMIResultRaw, error) {
+	return MeetMeUnMute(ctx, *c.Socket, meetme, userNumber)
+}
+
+// MeetMeListRooms
+// MeetMeListRooms list active conferences.
+func (c *AMICore) MeetMeListRooms(ctx context.Context) ([]AMIResultRaw, error) {
+	return MeetMeListRooms(ctx, *c.Socket)
+}

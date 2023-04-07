@@ -213,4 +213,7 @@ const (
 	AmiListenerEventDeviceListComplete           = "DevicelistComplete"           //
 	AmiListenerEventLineEntry                    = "LineEntry"                    //
 	AmiListenerEventLineListComplete             = "LinelistComplete"             //
+	AmiListenerEventMeetMeEntry                  = "MeetmeEntry"                  //
+	AmiListenerEventMeetMeListComplete           = "MeetmeListComplete"           //
+	AmiListenerEventMeetMeListRoomsComplete      = "MeetmeListRoomsComplete"      //
 )

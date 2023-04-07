@@ -64,4 +64,6 @@ const (
 	AmiFieldLevel               = "Level"
 	AmiFieldDevice              = "Device"
 	AmiFieldLine                = "Line"
+	AmiFieldMeetMe              = "Meetme"
+	AmiFieldUserNumber          = "Usernum"
 )
