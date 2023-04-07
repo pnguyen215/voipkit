@@ -207,4 +207,5 @@ const (
 	AmiListenerEventVoicemailUserEntryComplete   = "VoicemailUserEntryComplete"   //
 	AmiListenerEventBridgeTechnologyListComplete = "BridgeTechnologyListComplete" //
 	AmiListenerEventBridgeTechnologyListItem     = "BridgeTechnologyListItem"     //
+	AmiListenerEventDBGetComplete                = "DBGetComplete"                //
 )

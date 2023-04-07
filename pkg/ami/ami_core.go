@@ -965,3 +965,27 @@ func (c *AMICore) BridgeTechnologySuspend(ctx context.Context, bridgeTechnology 
 func (c *AMICore) BridgeTechnologyUnsuspend(ctx context.Context, bridgeTechnology string) (AMIResultRaw, error) {
 	return BridgeTechnologyUnsuspend(ctx, *c.Socket, bridgeTechnology)
 }
+
+// DBDel
+// DBDel Delete DB entry.
+func (c *AMICore) DBDel(ctx context.Context, family, key string) (AMIResultRaw, error) {
+	return DBDel(ctx, *c.Socket, family, key)
+}
+
+// DBDelTree
+// DBDelTree delete DB tree.
+func (c *AMICore) DBDelTree(ctx context.Context, family, key string) (AMIResultRaw, error) {
+	return DBDelTree(ctx, *c.Socket, family, key)
+}
+
+// DBPut
+// DBPut puts DB entry.
+func (c *AMICore) DBPut(ctx context.Context, family, key, value string) (AMIResultRaw, error) {
+	return DBPut(ctx, *c.Socket, family, key, value)
+}
+
+// DBGet
+// DBGet gets DB Entry.
+func (c *AMICore) DBGet(ctx context.Context, family, key string) ([]AMIResultRaw, error) {
+	return DBGet(ctx, *c.Socket, family, key)
+}
