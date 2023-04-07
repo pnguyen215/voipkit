@@ -209,4 +209,8 @@ const (
 	AmiListenerEventBridgeTechnologyListItem     = "BridgeTechnologyListItem"     //
 	AmiListenerEventDBGetComplete                = "DBGetComplete"                //
 	AmiListenerEventPRIShowSpansComplete         = "PRIShowSpansComplete"         //
+	AmiListenerEventDeviceEntry                  = "DeviceEntry"                  //
+	AmiListenerEventDeviceListComplete           = "DevicelistComplete"           //
+	AmiListenerEventLineEntry                    = "LineEntry"                    //
+	AmiListenerEventLineListComplete             = "LinelistComplete"             //
 )

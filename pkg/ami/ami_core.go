@@ -1013,3 +1013,35 @@ func (c *AMICore) PRIDebugSet(ctx context.Context, span, level string) (AMIResul
 func (c *AMICore) PRIShowSpans(ctx context.Context, span string) ([]AMIResultRaw, error) {
 	return PRIShowSpans(ctx, *c.Socket, span)
 }
+
+// SKINNYDevices
+// SKINNYDevices lists SKINNY devices (text format).
+// Lists Skinny devices in text format with details on current status.
+// Devicelist will follow as separate events,
+// followed by a final event called DevicelistComplete.
+func (c *AMICore) SKINNYDevices(ctx context.Context) ([]AMIResultRaw, error) {
+	return SKINNYDevices(ctx, *c.Socket)
+}
+
+// SKINNYLines
+// SKINNYLines lists SKINNY lines (text format).
+// Lists Skinny lines in text format with details on current status.
+// Linelist will follow as separate events,
+// followed by a final event called LinelistComplete.
+func (c *AMICore) SKINNYLines(ctx context.Context) ([]AMIResultRaw, error) {
+	return SKINNYLines(ctx, *c.Socket)
+}
+
+// SKINNYShowDevice
+// SKINNYShowDevice show SKINNY device (text format).
+// Show one SKINNY device with details on current status.
+func (c *AMICore) SKINNYShowDevice(ctx context.Context, device string) (AMIResultRaw, error) {
+	return SKINNYShowDevice(ctx, *c.Socket, device)
+}
+
+// SKINNYShowline
+// SKINNYShowline shows SKINNY line (text format).
+// Show one SKINNY line with details on current status.
+func (c *AMICore) SKINNYShowline(ctx context.Context, line string) (AMIResultRaw, error) {
+	return SKINNYShowline(ctx, *c.Socket, line)
+}

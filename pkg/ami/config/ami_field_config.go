@@ -62,4 +62,6 @@ const (
 	AmiFieldFile                = "File"
 	AmiFieldSpan                = "Span"
 	AmiFieldLevel               = "Level"
+	AmiFieldDevice              = "Device"
+	AmiFieldLine                = "Line"
 )
