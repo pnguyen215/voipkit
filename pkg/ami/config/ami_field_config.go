@@ -71,4 +71,6 @@ const (
 	AmiFieldUri                 = "URI"
 	AmiFieldRegistration        = "Registration"
 	AmiFieldSessionNumber       = "SessionNumber"
+	AmiFieldDAHDIChannel        = "DAHDIChannel"
+	AmiFieldNumber              = "Number"
 )

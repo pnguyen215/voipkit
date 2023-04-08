@@ -1243,3 +1243,46 @@ func (c *AMICore) Atxfer(ctx context.Context, channel, extension, context string
 func (c *AMICore) CancelAtxfer(ctx context.Context, channel string) (AMIResultRaw, error) {
 	return CancelAtxfer(ctx, *c.Socket, channel)
 }
+
+// DAHDIDialOffhook
+// DAHDIDialOffhook dials over DAHDI channel while offhook.
+// Generate DTMF control frames to the bridged peer.
+func (c *AMICore) DAHDIDialOffhook(ctx context.Context, channel, number string) (AMIResultRaw, error) {
+	return DAHDIDialOffhook(ctx, *c.Socket, channel, number)
+}
+
+// DAHDIDNDoff
+// DAHDIDNDoff toggles DAHDI channel Do Not Disturb status OFF.
+func (c *AMICore) DAHDIDNDoff(ctx context.Context, channel string) (AMIResultRaw, error) {
+	return DAHDIDNDoff(ctx, *c.Socket, channel)
+}
+
+// DAHDIDNDon
+// DAHDIDNDon toggles DAHDI channel Do Not Disturb status ON.
+func (c *AMICore) DAHDIDNDon(ctx context.Context, channel string) (AMIResultRaw, error) {
+	return DAHDIDNDon(ctx, *c.Socket, channel)
+}
+
+// DAHDIHangup
+// DAHDIHangup hangups DAHDI Channel.
+func (c *AMICore) DAHDIHangup(ctx context.Context, channel string) (AMIResultRaw, error) {
+	return DAHDIHangup(ctx, *c.Socket, channel)
+}
+
+// DAHDIRestart
+// DAHDIRestart fully Restart DAHDI channels (terminates calls).
+func (c *AMICore) DAHDIRestart(ctx context.Context) (AMIResultRaw, error) {
+	return DAHDIRestart(ctx, *c.Socket)
+}
+
+// DAHDIShowChannels
+// DAHDIShowChannels show status of DAHDI channels.
+func (c *AMICore) DAHDIShowChannels(ctx context.Context, channel string) ([]AMIResultRaw, error) {
+	return DAHDIShowChannels(ctx, *c.Socket, channel)
+}
+
+// DAHDITransfer
+// DAHDITransfer transfers DAHDI Channel.
+func (c *AMICore) DAHDITransfer(ctx context.Context, channel string) (AMIResultRaw, error) {
+	return DAHDITransfer(ctx, *c.Socket, channel)
+}

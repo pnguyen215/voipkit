@@ -227,4 +227,6 @@ const (
 	AmiListenerEventOutboundSubscriptionDetail         = "OutboundSubscriptionDetail"         //
 	AmiListenerEventOutboundSubscriptionDetailComplete = "OutboundSubscriptionDetailComplete" //
 	AmiListenerEventContactStatusDetailComplete        = "ContactStatusDetailComplete"        //
+	AmiListenerEventDAHDIShowChannels                  = "DAHDIShowChannels"                  //
+	AmiListenerEventDAHDIShowChannelsComplete          = "DAHDIShowChannelsComplete"          //
 )
