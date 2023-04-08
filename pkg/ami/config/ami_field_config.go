@@ -66,4 +66,5 @@ const (
 	AmiFieldLine                = "Line"
 	AmiFieldMeetMe              = "Meetme"
 	AmiFieldUserNumber          = "Usernum"
+	AmiFieldOptions             = "options"
 )

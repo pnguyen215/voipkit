@@ -297,10 +297,10 @@ type AMIPayloadMonitor struct {
 	Channel      string `ami:"Channel"`
 	Direction    string `ami:"Direction,omitempty"`
 	State        string `ami:"State,omitempty"`
-	File         string `ami:"File, omitempty"`
+	File         string `ami:"File,omitempty"`
 	Format       string `ami:"Format,omitempty"`
 	Mix          bool   `ami:"Mix,omitempty"`
-	MixMonitorID string `ami:"MixMonitorID,omitempty"`
+	MixMonitorId string `ami:"MixMonitorID,omitempty"`
 }
 
 // AMIPayloadMessage holds the message data to message send command.

@@ -1070,3 +1070,75 @@ func (c *AMICore) MeetMeUnMute(ctx context.Context, meetme, userNumber string) (
 func (c *AMICore) MeetMeListRooms(ctx context.Context) ([]AMIResultRaw, error) {
 	return MeetMeListRooms(ctx, *c.Socket)
 }
+
+// Monitor
+// Monitor monitors a channel.
+// This action may be used to record the audio on a specified channel.
+func (c *AMICore) Monitor(ctx context.Context, payload AMIPayloadMonitor) (AMIResultRaw, error) {
+	return Monitor(ctx, *c.Socket, payload)
+}
+
+// MonitorWith
+func (c *AMICore) MonitorWith(ctx context.Context, channel, file, format string, mix bool) (AMIResultRaw, error) {
+	return MonitorWith(ctx, *c.Socket, channel, file, format, mix)
+}
+
+// ChangeMonitor
+// ChangeMonitor changes monitoring filename of a channel.
+// This action may be used to change the file started by a previous 'Monitor' action.
+func (c *AMICore) ChangeMonitor(ctx context.Context, payload AMIPayloadMonitor) (AMIResultRaw, error) {
+	return ChangeMonitor(ctx, *c.Socket, payload)
+}
+
+// ChangeMonitorWith
+// ChangeMonitor changes monitoring filename of a channel.
+// This action may be used to change the file started by a previous 'Monitor' action.
+func (c *AMICore) ChangeMonitorWith(ctx context.Context, channel, file string) (AMIResultRaw, error) {
+	return ChangeMonitorWith(ctx, *c.Socket, channel, file)
+}
+
+// MixMonitor
+// MixMonitor record a call and mix the audio during the recording.
+func (c *AMICore) MixMonitor(ctx context.Context, payload AMIPayloadMonitor) (AMIResultRaw, error) {
+	return MixMonitor(ctx, *c.Socket, payload)
+}
+
+// MixMonitorWith
+// MixMonitor record a call and mix the audio during the recording.
+func (c *AMICore) MixMonitorWith(ctx context.Context, channel, file, options, command string) (AMIResultRaw, error) {
+	return MixMonitorWith(ctx, *c.Socket, channel, file, options, command)
+}
+
+// MixMonitorMute
+// MixMonitorMute Mute / unMute a Mixmonitor recording.
+// This action may be used to mute a MixMonitor recording.
+func (c *AMICore) MixMonitorMute(ctx context.Context, channel, direction string, state bool) (AMIResultRaw, error) {
+	return MixMonitorMute(ctx, *c.Socket, channel, direction, state)
+}
+
+// PauseMonitor
+// PauseMonitor pauses monitoring of a channel.
+// This action may be used to temporarily stop the recording of a channel.
+func (c *AMICore) PauseMonitor(ctx context.Context, channel string) (AMIResultRaw, error) {
+	return PauseMonitor(ctx, *c.Socket, channel)
+}
+
+// UnpauseMonitor
+// UnpauseMonitor unpause monitoring of a channel.
+// This action may be used to re-enable recording of a channel after calling PauseMonitor.
+func (c *AMICore) UnpauseMonitor(ctx context.Context, channel string) (AMIResultRaw, error) {
+	return UnpauseMonitor(ctx, *c.Socket, channel)
+}
+
+// StopMonitor
+// StopMonitor stops monitoring a channel.
+// This action may be used to end a previously started 'Monitor' action.
+func (c *AMICore) StopMonitor(ctx context.Context, channel string) (AMIResultRaw, error) {
+	return StopMonitor(ctx, *c.Socket, channel)
+}
+
+// StopMixMonitor
+// StopMixMonitor stop recording a call through MixMonitor, and free the recording's file handle.
+func (c *AMICore) StopMixMonitor(ctx context.Context, channel, mixMonitorId string) (AMIResultRaw, error) {
+	return StopMixMonitor(ctx, *c.Socket, channel, mixMonitorId)
+}
