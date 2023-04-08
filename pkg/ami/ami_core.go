@@ -1231,3 +1231,15 @@ func (c *AMICore) FAXSessions(ctx context.Context) ([]AMIResultRaw, error) {
 func (c *AMICore) FAXStats(ctx context.Context) (AMIResultRaw, error) {
 	return FAXStats(ctx, *c.Socket)
 }
+
+// Atxfer
+// Atxfer attended transfer.
+func (c *AMICore) Atxfer(ctx context.Context, channel, extension, context string) (AMIResultRaw, error) {
+	return Atxfer(ctx, *c.Socket, channel, extension, context)
+}
+
+// CancelAtxfer
+// CancelAtxfer cancel an attended transfer.
+func (c *AMICore) CancelAtxfer(ctx context.Context, channel string) (AMIResultRaw, error) {
+	return CancelAtxfer(ctx, *c.Socket, channel)
+}
