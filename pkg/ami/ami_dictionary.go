@@ -154,6 +154,12 @@ func (d *AMIDictionary) GetDictionaries() *[]AMIEventDictionary {
 			"VolumeGain":            "volume_gain",
 			"BridgePriority":        "bridge_priority",
 			"BridgeSuspended":       "bridge_suspended",
+			"CompletedFAXes":        "completed_faxes",
+			"CurrentSessions":       "current_sessions",
+			"FailedFAXes":           "failed_faxes",
+			"ReceiveAttempts":       "received_attempts",
+			"ReservedSessions":      "reserved_sessions",
+			"TransmitAttempts":      "transmit_attempts",
 		},
 	})
 

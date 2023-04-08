@@ -1213,3 +1213,21 @@ func (c *AMICore) PJSIPShowSubscriptionsInbound(ctx context.Context) ([]AMIResul
 func (c *AMICore) PJSIPShowSubscriptionsOutbound(ctx context.Context) ([]AMIResultRaw, error) {
 	return PJSIPShowSubscriptionsOutbound(ctx, *c.Socket)
 }
+
+// FAXSession
+// FAXSession responds with a detailed description of a single FAX session.
+func (c *AMICore) FAXSession(ctx context.Context, sessionNumber string) (AMIResultRaw, error) {
+	return FAXSession(ctx, *c.Socket, sessionNumber)
+}
+
+// FAXSessions
+// FAXSessions list active FAX sessions.
+func (c *AMICore) FAXSessions(ctx context.Context) ([]AMIResultRaw, error) {
+	return FAXSessions(ctx, *c.Socket)
+}
+
+// FAXStats
+// FAXStats responds with fax statistics.
+func (c *AMICore) FAXStats(ctx context.Context) (AMIResultRaw, error) {
+	return FAXStats(ctx, *c.Socket)
+}

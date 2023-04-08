@@ -70,4 +70,5 @@ const (
 	AmiFieldEndpoint            = "Endpoint"
 	AmiFieldUri                 = "URI"
 	AmiFieldRegistration        = "Registration"
+	AmiFieldSessionNumber       = "SessionNumber"
 )
