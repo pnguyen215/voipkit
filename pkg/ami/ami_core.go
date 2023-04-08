@@ -1142,3 +1142,74 @@ func (c *AMICore) StopMonitor(ctx context.Context, channel string) (AMIResultRaw
 func (c *AMICore) StopMixMonitor(ctx context.Context, channel, mixMonitorId string) (AMIResultRaw, error) {
 	return StopMixMonitor(ctx, *c.Socket, channel, mixMonitorId)
 }
+
+// PJSIPNotify
+// PJSIPNotify send NOTIFY to either an endpoint, an arbitrary URI, or inside a SIP dialog.
+func (c *AMICore) PJSIPNotify(ctx context.Context, endpoint, uri, variable string) (AMIResultRaw, error) {
+	return PJSIPNotify(ctx, *c.Socket, endpoint, uri, variable)
+}
+
+// PJSIPQualify
+// PJSIPQualify qualify a chan_pjsip endpoint.
+func (c *AMICore) PJSIPQualify(ctx context.Context, endpoint string) (AMIResultRaw, error) {
+	return PJSIPQualify(ctx, *c.Socket, endpoint)
+}
+
+// PJSIPRegister
+// PJSIPRegister register an outbound registration.
+func (c *AMICore) PJSIPRegister(ctx context.Context, registration string) (AMIResultRaw, error) {
+	return PJSIPRegister(ctx, *c.Socket, registration)
+}
+
+// PJSIPUnregister
+// PJSIPUnregister unregister an outbound registration.
+func (c *AMICore) PJSIPUnregister(ctx context.Context, registration string) (AMIResultRaw, error) {
+	return PJSIPUnregister(ctx, *c.Socket, registration)
+}
+
+// PJSIPShowEndpoint
+// PJSIPShowEndpoint detail listing of an endpoint and its objects.
+func (c *AMICore) PJSIPShowEndpoint(ctx context.Context, endpoint string) ([]AMIResultRaw, error) {
+	return PJSIPShowEndpoint(ctx, *c.Socket, endpoint)
+}
+
+// PJSIPShowEndpoints
+// PJSIPShowEndpoints list pjsip endpoints.
+func (c *AMICore) PJSIPShowEndpoints(ctx context.Context) ([]AMIResultRaw, error) {
+	return PJSIPShowEndpoints(ctx, *c.Socket)
+}
+
+// PJSIPShowRegistrationInboundContactStatuses
+func (c *AMICore) PJSIPShowRegistrationInboundContactStatuses(ctx context.Context) ([]AMIResultRaw, error) {
+	return PJSIPShowRegistrationInboundContactStatuses(ctx, *c.Socket)
+}
+
+// PJSIPShowRegistrationsInbound
+// PJSIPShowRegistrationsInbound lists PJSIP inbound registrations.
+func (c *AMICore) PJSIPShowRegistrationsInbound(ctx context.Context) ([]AMIResultRaw, error) {
+	return PJSIPShowRegistrationsInbound(ctx, *c.Socket)
+}
+
+// PJSIPShowRegistrationsOutbound
+// PJSIPShowRegistrationsOutbound lists PJSIP outbound registrations.
+func (c *AMICore) PJSIPShowRegistrationsOutbound(ctx context.Context) ([]AMIResultRaw, error) {
+	return PJSIPShowRegistrationsOutbound(ctx, *c.Socket)
+}
+
+// PJSIPShowResourceLists
+// PJSIPShowResourceLists displays settings for configured resource lists.
+func (c *AMICore) PJSIPShowResourceLists(ctx context.Context) ([]AMIResultRaw, error) {
+	return PJSIPShowResourceLists(ctx, *c.Socket)
+}
+
+// PJSIPShowSubscriptionsInbound
+// PJSIPShowSubscriptionsInbound list of inbound subscriptions.
+func (c *AMICore) PJSIPShowSubscriptionsInbound(ctx context.Context) ([]AMIResultRaw, error) {
+	return PJSIPShowSubscriptionsInbound(ctx, *c.Socket)
+}
+
+// PJSIPShowSubscriptionsOutbound
+// PJSIPShowSubscriptionsOutbound list of outbound subscriptions.
+func (c *AMICore) PJSIPShowSubscriptionsOutbound(ctx context.Context) ([]AMIResultRaw, error) {
+	return PJSIPShowSubscriptionsOutbound(ctx, *c.Socket)
+}

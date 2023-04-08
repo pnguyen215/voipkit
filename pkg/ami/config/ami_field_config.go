@@ -67,4 +67,7 @@ const (
 	AmiFieldMeetMe              = "Meetme"
 	AmiFieldUserNumber          = "Usernum"
 	AmiFieldOptions             = "options"
+	AmiFieldEndpoint            = "Endpoint"
+	AmiFieldUri                 = "URI"
+	AmiFieldRegistration        = "Registration"
 )
