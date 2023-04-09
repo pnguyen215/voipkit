@@ -229,4 +229,7 @@ const (
 	AmiListenerEventContactStatusDetailComplete        = "ContactStatusDetailComplete"        //
 	AmiListenerEventDAHDIShowChannels                  = "DAHDIShowChannels"                  //
 	AmiListenerEventDAHDIShowChannelsComplete          = "DAHDIShowChannelsComplete"          //
+	AmiListenerEventConfbridgeListComplete             = "ConfbridgeListComplete"             //
+	AmiListenerEventConfbridgeListRooms                = "ConfbridgeListRooms"                //
+	AmiListenerEventConfbridgeListRoomsComplete        = "ConfbridgeListRoomsComplete"        //
 )

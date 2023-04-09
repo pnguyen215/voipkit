@@ -237,6 +237,20 @@ func (s AMIResultRaw) GetValOrPref(key, pref string) string {
 	return _v
 }
 
+func (s AMIResultRaw) GetValOrPrefers(key string, pref ...string) string {
+	if len(pref) == 0 {
+		return s.GetValOrPref(key, "")
+	}
+	_v := ""
+	for _, v := range pref {
+		_v = s.GetValOrPref(key, v)
+		if len(_v) > 0 {
+			break
+		}
+	}
+	return _v
+}
+
 func (s AMIResultRawLevel) GetVal(key string) string {
 	if s == nil {
 		return ""
@@ -282,6 +296,20 @@ func (s AMIResultRawLevel) GetValOrPref(key, pref string) string {
 
 	if len(_v) == 0 {
 		return s.GetVal(pref)
+	}
+	return _v
+}
+
+func (s AMIResultRawLevel) GetValOrPrefers(key string, pref ...string) string {
+	if len(pref) == 0 {
+		return s.GetValOrPref(key, "")
+	}
+	_v := ""
+	for _, v := range pref {
+		_v = s.GetValOrPref(key, v)
+		if len(_v) > 0 {
+			break
+		}
 	}
 	return _v
 }

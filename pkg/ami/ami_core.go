@@ -1286,3 +1286,63 @@ func (c *AMICore) DAHDIShowChannels(ctx context.Context, channel string) ([]AMIR
 func (c *AMICore) DAHDITransfer(ctx context.Context, channel string) (AMIResultRaw, error) {
 	return DAHDITransfer(ctx, *c.Socket, channel)
 }
+
+// ConfbridgeList
+// ConfbridgeList lists all users in a particular ConfBridge conference.
+func (c *AMICore) ConfbridgeList(ctx context.Context, conference string) ([]AMIResultRaw, error) {
+	return ConfbridgeList(ctx, *c.Socket, conference)
+}
+
+// ConfbridgeListRooms
+// ConfbridgeListRooms lists data about all active conferences.
+func (c *AMICore) ConfbridgeListRooms(ctx context.Context) ([]AMIResultRaw, error) {
+	return ConfbridgeListRooms(ctx, *c.Socket)
+}
+
+// ConfbridgeMute
+// ConfbridgeMute mutes a specified user in a specified conference.
+func (c *AMICore) ConfbridgeMute(ctx context.Context, conference string, channel string) (AMIResultRaw, error) {
+	return ConfbridgeMute(ctx, *c.Socket, conference, channel)
+}
+
+// ConfbridgeUnmute
+// ConfbridgeUnmute unmute a specified user in a specified conference.
+func (c *AMICore) ConfbridgeUnmute(ctx context.Context, conference string, channel string) (AMIResultRaw, error) {
+	return ConfbridgeUnmute(ctx, *c.Socket, conference, channel)
+}
+
+// ConfbridgeKick
+// ConfbridgeKick removes a specified user from a specified conference.
+func (c *AMICore) ConfbridgeKick(ctx context.Context, conference string, channel string) (AMIResultRaw, error) {
+	return ConfbridgeKick(ctx, *c.Socket, conference, channel)
+}
+
+// ConfbridgeLock
+// ConfbridgeLock locks a specified conference.
+func (c *AMICore) ConfbridgeLock(ctx context.Context, conference string, channel string) (AMIResultRaw, error) {
+	return ConfbridgeLock(ctx, *c.Socket, conference, channel)
+}
+
+// ConfbridgeUnlock
+// ConfbridgeUnlock unlocks a specified conference.
+func (c *AMICore) ConfbridgeUnlock(ctx context.Context, conference string, channel string) (AMIResultRaw, error) {
+	return ConfbridgeUnlock(ctx, *c.Socket, config.AmiErrorLoginFailed, channel)
+}
+
+// ConfbridgeSetSingleVideoSrc
+// ConfbridgeSetSingleVideoSrc sets a conference user as the single video source distributed to all other video-capable participants.
+func (c *AMICore) ConfbridgeSetSingleVideoSrc(ctx context.Context, conference string, channel string) (AMIResultRaw, error) {
+	return ConfbridgeSetSingleVideoSrc(ctx, *c.Socket, conference, channel)
+}
+
+// ConfbridgeStartRecord
+// ConfbridgeStartRecord starts a recording in the context of given conference and creates a file with the name specified by recordFile
+func (c *AMICore) ConfbridgeStartRecord(ctx context.Context, conference string, recordFile string) (AMIResultRaw, error) {
+	return ConfbridgeStartRecord(ctx, *c.Socket, conference, recordFile)
+}
+
+// ConfbridgeStopRecord
+// ConfbridgeStopRecord stops a recording pertaining to the given conference
+func (c *AMICore) ConfbridgeStopRecord(ctx context.Context, conference string) (AMIResultRaw, error) {
+	return ConfbridgeStopRecord(ctx, *c.Socket, conference)
+}

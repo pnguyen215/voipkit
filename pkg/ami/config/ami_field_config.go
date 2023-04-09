@@ -73,4 +73,6 @@ const (
 	AmiFieldSessionNumber       = "SessionNumber"
 	AmiFieldDAHDIChannel        = "DAHDIChannel"
 	AmiFieldNumber              = "Number"
+	AmiFieldConference          = "Conference"
+	AmiFieldRecordFile          = "RecordFile"
 )
