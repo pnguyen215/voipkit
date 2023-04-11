@@ -140,6 +140,25 @@ func (k *AMIMessage) AddField(key, value string) {
 	k.Header.Add(key, value)
 }
 
+// SetField
+// Reset value for key associated specified
+func (k *AMIMessage) SetField(key, value string) {
+	k.Mutex.Lock()
+	defer k.Mutex.Unlock()
+	k.Header.Set(key, value)
+}
+
+// SetFields
+func (k *AMIMessage) SetFields(fields map[string]string) {
+	if len(fields) == 0 {
+		return
+	}
+
+	for _k, v := range fields {
+		k.SetField(_k, v)
+	}
+}
+
 // Added collection pair header as form key:value
 func (k *AMIMessage) AddFields(fields map[string]string) {
 	if len(fields) <= 0 {
