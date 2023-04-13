@@ -160,6 +160,7 @@ func (d *AMIDictionary) GetDictionaries() *[]AMIEventDictionary {
 			"ReceiveAttempts":       "received_attempts",
 			"ReservedSessions":      "reserved_sessions",
 			"TransmitAttempts":      "transmit_attempts",
+			"Data":                  "data",
 		},
 	})
 

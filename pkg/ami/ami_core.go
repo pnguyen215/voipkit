@@ -712,6 +712,10 @@ func (c *AMICore) Originate(ctx context.Context, originate AMIPayloadOriginate) 
 	return Originate(ctx, *c.Socket, originate)
 }
 
+func (c *AMICore) MakeCall(ctx context.Context, originate AMIPayloadOriginate) (AMIResultRaw, error) {
+	return c.Originate(ctx, originate)
+}
+
 // ParkedCalls
 func (c *AMICore) ParkedCalls(ctx context.Context) ([]AMIResultRaw, error) {
 	return ParkedCalls(ctx, *c.Socket)
@@ -1345,4 +1349,14 @@ func (c *AMICore) ConfbridgeStartRecord(ctx context.Context, conference string, 
 // ConfbridgeStopRecord stops a recording pertaining to the given conference
 func (c *AMICore) ConfbridgeStopRecord(ctx context.Context, conference string) (AMIResultRaw, error) {
 	return ConfbridgeStopRecord(ctx, *c.Socket, conference)
+}
+
+// MakeOutboundCall
+func (c *AMICore) MakeOutboundCall(ctx context.Context, d AMIOriginateDirection) (AMIResultRaw, bool, error) {
+	return MakeOutboundCall(ctx, *c.Socket, d)
+}
+
+// MakeInternalCall
+func (c *AMICore) MakeInternalCall(ctx context.Context, d AMIOriginateDirection) (AMIResultRaw, bool, error) {
+	return MakeInternalCall(ctx, *c.Socket, d)
 }

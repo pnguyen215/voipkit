@@ -69,22 +69,6 @@ type AMIChannel struct {
 	Extension        string `json:"extension"`
 }
 
-type AMIOriginateCall struct {
-	Channel   string `json:"channel" binding:"required"`
-	Context   string `json:"context" binding:"required"`
-	Extension string `json:"extension" binding:"required"`
-	Priority  int    `json:"priority"`
-	Timeout   int    `json:"timeout"`
-	Variable  string `json:"variable"`
-}
-
-type AMICall struct {
-	AMIOriginateCall
-	NoTarget        string `json:"no_target" binding:"required"`        // like customer phone number or no. extension internal from all routes
-	ChannelProtocol string `json:"channel_protocol" binding:"required"` // protocols include: SIP, H323, IAX...
-	NoExtension     int    `json:"no_extension" binding:"required"`     // like current user using no. extension
-}
-
 type AMISocket struct {
 	Conn                 net.Conn       `json:"-"`
 	Incoming             chan string    `json:"-"`
@@ -336,4 +320,12 @@ type AMIPayloadDb struct {
 	Family string `ami:"Family"`
 	Key    string `ami:"Key"`
 	Value  string `ami:"Val,omitempty"`
+}
+
+type AMIOriginateDirection struct {
+	Telephone       string `json:"telephone" binding:"required"`        // like customer phone number or no. extension internal from all routes
+	ChannelProtocol string `json:"channel_protocol" binding:"required"` // protocols include: SIP, H323, IAX...
+	Extension       int    `json:"extension" binding:"required"`        // like current user using no. extension
+	AllowDebug      bool   `json:"allow_debug"`
+	Timeout         int    `json:"timeout"`
 }

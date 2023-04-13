@@ -468,3 +468,15 @@ const (
 	// Restart the playback operation.
 	Restart AGIControl = "restart"
 )
+
+const (
+	AmiOutboundDirection = "outbound"
+	AmiInboundDirection  = "inbound"
+)
+
+var (
+	AmiCallDirection map[string]bool = map[string]bool{
+		AmiOutboundDirection: true,
+		AmiInboundDirection:  true,
+	}
+)
