@@ -17,6 +17,10 @@ const (
 	AmiJsonFieldDestChannel = "destination_channel"
 	AmiJsonFieldExten       = "exten"
 	AmiJsonFieldContext     = "context"
+	AmiJsonFieldPeer        = "peer"
+	AmiJsonFieldChannelType = "channel_type"
+	AmiJsonFieldPeerStatus  = "peer_status"
+	AmiJsonFieldTime        = "time"
 )
 
 var (

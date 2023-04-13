@@ -2,6 +2,7 @@ package ami
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
 )
@@ -39,6 +40,29 @@ func SIPPeerStatus(ctx context.Context, s AMISocket, peer string) ([]AMIResultRa
 	callback := NewAMICallbackService(ctx, s, c, []string{config.AmiListenerEventPeerStatus},
 		[]string{config.AmiListenerEventSIPpeerstatusComplete})
 	return callback.SendSuperLevel()
+}
+
+// SIPPeerStatusShort
+func SIPPeerStatusShort(ctx context.Context, s AMISocket, peer string) (AMIResultRaw, error) {
+	peers, err := SIPPeerStatus(ctx, s, peer)
+	if err != nil {
+		return AMIResultRaw{}, err
+	}
+	if len(peers) == 0 {
+		return AMIResultRaw{}, nil
+	}
+	return peers[0], nil
+}
+
+func HasSIPPeerStatus(ctx context.Context, s AMISocket, peer string) (bool, error) {
+	sip, err := SIPPeerStatusShort(ctx, s, peer)
+	if err != nil {
+		return false, err
+	}
+	if sip.LenValue() == 0 {
+		return false, fmt.Errorf("Peer %v not found", peer)
+	}
+	return true, nil
 }
 
 // SIPShowRegistry shows SIP registrations (text format).

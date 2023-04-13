@@ -275,18 +275,3 @@ func (c *AMI) OnEvent(name string) <-chan *AMIMessage {
 func (c *AMI) OnEvents(keys ...string) <-chan *AMIMessage {
 	return c.Subs.Subscribes(keys...)
 }
-
-// RunAction run action core on asterisk server
-func (c *AMI) RunAction(action string, timeout int) (*AMIResponse, error) {
-	return NewRevokeAction(action, timeout).RunAction(c)
-}
-
-// RunActionDict
-func (c *AMI) RunActionDict(action string, timeout int, dictionaries map[string]string) (*AMIResponse, error) {
-	return NewRevokeAction(action, timeout).RunActionDict(c, dictionaries)
-}
-
-// RunActionScriptDict
-func (c *AMI) RunActionScriptDict(action string, timeout int, script, dictionaries map[string]string) (*AMIResponse, error) {
-	return NewRevokeAction(action, timeout).RunActionScriptDict(c, script, dictionaries)
-}

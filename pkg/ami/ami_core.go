@@ -314,14 +314,12 @@ func (c *AMICore) GetSIPPeersStatus(ctx context.Context) ([]AMIResultRaw, error)
 }
 */
 func (c *AMICore) GetSIPPeerStatus(ctx context.Context, peer string) (AMIResultRaw, error) {
-	peers, err := SIPPeerStatus(ctx, *c.Socket, peer)
-	if err != nil {
-		return AMIResultRaw{}, err
-	}
-	if len(peers) == 0 {
-		return AMIResultRaw{}, nil
-	}
-	return peers[0], nil
+	return SIPPeerStatusShort(ctx, *c.Socket, peer)
+}
+
+// HasSIPPeerStatus
+func (c *AMICore) HasSIPPeerStatus(ctx context.Context, peer string) (bool, error) {
+	return HasSIPPeerStatus(ctx, *c.Socket, peer)
 }
 
 // GetSIPShowRegistry

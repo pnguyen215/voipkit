@@ -323,9 +323,10 @@ type AMIPayloadDb struct {
 }
 
 type AMIOriginateDirection struct {
-	Telephone       string `json:"telephone" binding:"required"`        // like customer phone number or no. extension internal from all routes
-	ChannelProtocol string `json:"channel_protocol" binding:"required"` // protocols include: SIP, H323, IAX...
-	Extension       int    `json:"extension" binding:"required"`        // like current user using no. extension
-	AllowDebug      bool   `json:"allow_debug"`
-	Timeout         int    `json:"timeout"`
+	Telephone         string `json:"telephone" binding:"required"`        // like customer phone number or no. extension internal from all routes
+	ChannelProtocol   string `json:"channel_protocol" binding:"required"` // protocols include: SIP, H323, IAX...
+	Extension         int    `json:"extension" binding:"required"`        // like current user using no. extension
+	AllowDebug        bool   `json:"allow_debug"`                         // allow to trace log
+	Timeout           int    `json:"timeout"`                             // set timeout while calling
+	AllowSysValidator bool   `json:"allow_sys_validator"`                 // allow validate the extension and channel
 }

@@ -17,6 +17,7 @@ func NewAMIPayloadOriginate() *AMIPayloadOriginate {
 
 func NewAMIOriginateDirection() *AMIOriginateDirection {
 	o := &AMIOriginateDirection{}
+	o.SetAllowSysValidator(true)
 	return o
 }
 
@@ -162,6 +163,11 @@ func (o *AMIOriginateDirection) SetTimeout(value int) *AMIOriginateDirection {
 	return o
 }
 
+func (o *AMIOriginateDirection) SetAllowSysValidator(value bool) *AMIOriginateDirection {
+	o.AllowSysValidator = value
+	return o
+}
+
 func (o *AMIOriginateDirection) Json() string {
 	return utils.ToJson(o)
 }
@@ -186,12 +192,24 @@ func MakeOutboundCall(ctx context.Context, s AMISocket, d AMIOriginateDirection)
 		SetAsync(true).
 		SetContext(config.AmiContextOutbound).
 		SetExtension(strings.TrimSpace(d.Telephone)).
-		SetPriority(1).SetChannel(channel.JoinChannelWith(channel.ChannelProtocol, fmt.Sprintf("%v", d.Extension)))
+		SetPriority(1).
+		SetChannel(channel.JoinChannelWith(channel.ChannelProtocol, fmt.Sprintf("%v", d.Extension)))
 
 	if d.Timeout >= config.AmiMinTimeoutInMsForCall && d.Timeout <= config.AmiMaxTimeoutInMsForCall {
 		o.SetTimeout(d.Timeout)
 	} else {
 		o.SetTimeout(30000) // as default
+	}
+
+	if d.AllowSysValidator {
+		peer, err := SIPPeerStatusShort(ctx, s, fmt.Sprintf("%v", d.Extension))
+		if err != nil {
+			return nil, false, err
+		}
+		if peer.LenValue() == 0 {
+			return nil, false, fmt.Errorf("Peer %v not found", d.Extension)
+		}
+		o.SetChannel(peer.GetVal(config.AmiJsonFieldPeer))
 	}
 
 	if d.AllowDebug {
@@ -218,12 +236,24 @@ func MakeInternalCall(ctx context.Context, s AMISocket, d AMIOriginateDirection)
 		SetAsync(true).
 		SetContext(config.AmiContextFromInternal).
 		SetExtension(strings.TrimSpace(d.Telephone)).
-		SetPriority(1).SetChannel(channel.JoinChannelWith(channel.ChannelProtocol, fmt.Sprintf("%v", d.Extension)))
+		SetPriority(1).
+		SetChannel(channel.JoinChannelWith(channel.ChannelProtocol, fmt.Sprintf("%v", d.Extension)))
 
 	if d.Timeout >= config.AmiMinTimeoutInMsForCall && d.Timeout <= config.AmiMaxTimeoutInMsForCall {
 		o.SetTimeout(d.Timeout)
 	} else {
 		o.SetTimeout(30000) // as default
+	}
+
+	if d.AllowSysValidator {
+		peer, err := SIPPeerStatusShort(ctx, s, fmt.Sprintf("%v", d.Extension))
+		if err != nil {
+			return nil, false, err
+		}
+		if peer.LenValue() == 0 {
+			return nil, false, fmt.Errorf("Peer %v not found", d.Extension)
+		}
+		o.SetChannel(peer.GetVal(config.AmiJsonFieldPeer))
 	}
 
 	if d.AllowDebug {
