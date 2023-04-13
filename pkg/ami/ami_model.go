@@ -36,6 +36,7 @@ type AMIMessage struct {
 }
 
 type AMIEvent struct {
+	DateTimeLayout string `json:"date_time_layout,omitempty"`
 }
 
 type AMIDictionary struct {

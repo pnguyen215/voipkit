@@ -55,6 +55,7 @@ func (c *AMIAction) RevokeAction(a *AMI, d *AMIDictionary, e *AMIMessage, deadlo
 	for {
 		select {
 		case message := <-all:
+			message.SetDateTimeLayout(e.DateTimeLayout)
 			message.AddFieldDateReceivedAt()
 			if message.IsResponse() {
 				response.Event = message
