@@ -24,14 +24,15 @@ type AMI struct {
 }
 
 type AMIPubSubQueue struct {
-	Message MessageChannel
-	Mutex   sync.RWMutex
-	Off     bool
+	Message MessageChannel `json:"-"`
+	Mutex   sync.RWMutex   `json:"-"`
+	Off     bool           `json:"off"`
 }
 
 type AMIMessage struct {
-	Header textproto.MIMEHeader
-	Mutex  sync.RWMutex
+	Header         textproto.MIMEHeader `json:"header,omitempty"`
+	Mutex          sync.RWMutex         `json:"-"`
+	DateTimeLayout string               `json:"date_time_layout,omitempty"`
 }
 
 type AMIEvent struct {
@@ -55,10 +56,11 @@ type AMIAction struct {
 }
 
 type AMIResponse struct {
-	Event        *AMIMessage `json:"message,omitempty"`
+	Event        *AMIMessage `json:"-"`
 	IsSuccess    bool        `json:"success"`
 	RawJson      string      `json:"raw_json,omitempty"`
 	ErrorMessage string      `json:"error_message,omitempty"`
+	Raw          interface{} `json:"raw,omitempty"`
 }
 
 type AMIChannel struct {
