@@ -480,3 +480,69 @@ var (
 		AmiInboundDirection:  true,
 	}
 )
+
+const (
+	AmiExtensionRemoved     = -2     // Extension removed
+	AmiExtensionDeactivated = -1     // Extension hint removed
+	AmiExtensionNotInUse    = 0      // No device In-Use or Busy or Idle
+	AmiExtensionInUse       = 1 << 0 // One or more devices In-Use
+	AmiExtensionBusy        = 1 << 1 // All devices Busy
+	AmiExtensionUnavailable = 1 << 2 // All devices Unavailable or Unregistered
+	AmiExtensionRinging     = 1 << 3 // All devices Ringing
+	AmiExtensionOnHold      = 1 << 4 // All devices On-Hold
+)
+
+var (
+	AmiExtensionStatusCodes map[int]string = map[int]string{
+		AmiExtensionDeactivated: "Extension not found",
+		AmiExtensionNotInUse:    "Idle",
+		AmiExtensionInUse:       "In Use",
+		AmiExtensionBusy:        "Busy",
+		AmiExtensionUnavailable: "Unavailable",
+		AmiExtensionRinging:     "Ringing",
+		AmiExtensionOnHold:      "On Hold",
+	}
+)
+
+// Device States
+// The order of these states may not change because they are included
+// in Asterisk events which may be transmitted across the network to other servers.
+const (
+	AmiDeviceStateUnknown     = 0 // Device is valid but channel didn't know state
+	AmiDeviceStateNotInUse    = 1 // Device is not used
+	AmiDeviceStateInUse       = 2 // Device is in use
+	AmiDeviceStateBusy        = 3 // Device is busy
+	AmiDeviceStateInvalid     = 4 // Device is invalid
+	AmiDeviceStateUnavailable = 5 // Device is unavailable
+	AmiDeviceStateRinging     = 6 // Device is ringing
+	AmiDeviceStateRingInUse   = 7 // Device is ringing *and* in use
+	AmiDeviceStateOnHold      = 8 // Device is on hold
+	AmiDeviceStateTotal       = 9 // Total num of device states, used for testing
+)
+
+const (
+	AmiDeviceStateUnknownString     = "UNKNOWN"
+	AmiDeviceStateNotInUseString    = "NOT_INUSE"
+	AmiDeviceStateInUseString       = "INUSE"
+	AmiDeviceStateBusyString        = "BUSY"
+	AmiDeviceStateInvalidString     = "INVALID"
+	AmiDeviceStateUnavailableString = "UNAVAILABLE"
+	AmiDeviceStateRingingString     = "RINGING"
+	AmiDeviceStateRingInUseString   = "RINGINUSE"
+	AmiDeviceStateOnHoldString      = "ONHOLD"
+)
+
+// Device state strings for printing
+var (
+	AmiDeviceStatesString map[string]string = map[string]string{
+		AmiDeviceStateUnknownString:     "Unknown",     // Valid, but unknown state
+		AmiDeviceStateNotInUseString:    "Not in use",  // Not used
+		AmiDeviceStateInUseString:       "In use",      // In use
+		AmiDeviceStateBusyString:        "Busy",        // Busy
+		AmiDeviceStateInvalidString:     "Invalid",     // Invalid - not known to Asterisk
+		AmiDeviceStateUnavailableString: "Unavailable", // Unavailable (not registered)
+		AmiDeviceStateRingingString:     "Ringing",     // Ring, ring, ring
+		AmiDeviceStateRingInUseString:   "Ring+Inuse",  // Ring and in use
+		AmiDeviceStateOnHoldString:      "On Hold",     // On Hold
+	}
+)
