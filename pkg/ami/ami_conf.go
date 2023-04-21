@@ -58,3 +58,23 @@ func (e *AMIConf) ConvDeviceStateToExtensionState(deviceState int) int {
 	}
 	return config.AmiExtensionNotInUse
 }
+
+func (e *AMIConf) ConvChannelStateToDeviceState(channelState int) int {
+	switch channelState {
+	case config.AmiChannelStateDown:
+		return config.AmiDeviceStateNotInUse
+	case config.AmiChannelStateReserved,
+		config.AmiChannelStateOffHook,
+		config.AmiChannelStateDialing,
+		config.AmiChannelStateRing,
+		config.AmiChannelStateUp,
+		config.AmiChannelStateDialingOffHook:
+		return config.AmiDeviceStateInUse
+	case config.AmiChannelStateRinging,
+		config.AmiChannelStatePreRing:
+		return config.AmiDeviceStateRinging
+	case config.AmiChannelStateBusy:
+		return config.AmiDeviceStateBusy
+	}
+	return config.AmiDeviceStateNotInUse
+}

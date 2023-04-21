@@ -492,18 +492,6 @@ const (
 	AmiExtensionOnHold      = 1 << 4 // All devices On-Hold
 )
 
-var (
-	AmiExtensionStatusCodes map[int]string = map[int]string{
-		AmiExtensionDeactivated: "Extension not found",
-		AmiExtensionNotInUse:    "Idle",
-		AmiExtensionInUse:       "In Use",
-		AmiExtensionBusy:        "Busy",
-		AmiExtensionUnavailable: "Unavailable",
-		AmiExtensionRinging:     "Ringing",
-		AmiExtensionOnHold:      "On Hold",
-	}
-)
-
 // Device States
 // The order of these states may not change because they are included
 // in Asterisk events which may be transmitted across the network to other servers.
@@ -532,8 +520,31 @@ const (
 	AmiDeviceStateOnHoldString      = "ONHOLD"
 )
 
-// Device state strings for printing
+const (
+	AmiChannelStateDown           = 0       // Channel is down and available
+	AmiChannelStateReserved       = 1       // Channel is down, but reserved
+	AmiChannelStateOffHook        = 2       // Channel is off hook
+	AmiChannelStateDialing        = 3       // Digits (or equivalent) have been dialed
+	AmiChannelStateRing           = 4       // Line is ringing
+	AmiChannelStateRinging        = 5       // Remote end is ringing
+	AmiChannelStateUp             = 6       // Line is up
+	AmiChannelStateBusy           = 7       // Line is busy
+	AmiChannelStateDialingOffHook = 8       // Digits (or equivalent) have been dialed while offhook
+	AmiChannelStatePreRing        = 9       // Channel has detected an incoming call and is waiting for ring
+	AmiChannelStateMute           = 1 << 16 // Do not transmit voice data
+)
+
+// Device state, extension state strings for printing
 var (
+	AmiExtensionStatusCodes map[int]string = map[int]string{
+		AmiExtensionDeactivated: "Extension not found",
+		AmiExtensionNotInUse:    "Idle",
+		AmiExtensionInUse:       "In Use",
+		AmiExtensionBusy:        "Busy",
+		AmiExtensionUnavailable: "Unavailable",
+		AmiExtensionRinging:     "Ringing",
+		AmiExtensionOnHold:      "On Hold",
+	}
 	AmiDeviceStatesString map[string]string = map[string]string{
 		AmiDeviceStateUnknownString:     "Unknown",     // Valid, but unknown state
 		AmiDeviceStateNotInUseString:    "Not in use",  // Not used
@@ -544,5 +555,29 @@ var (
 		AmiDeviceStateRingingString:     "Ringing",     // Ring, ring, ring
 		AmiDeviceStateRingInUseString:   "Ring+Inuse",  // Ring and in use
 		AmiDeviceStateOnHoldString:      "On Hold",     // On Hold
+	}
+	AmiDeviceStatesText map[int]string = map[int]string{
+		AmiDeviceStateUnknown:     AmiDeviceStatesString[AmiDeviceStateUnknownString],
+		AmiDeviceStateNotInUse:    AmiDeviceStatesString[AmiDeviceStateNotInUseString],
+		AmiDeviceStateInUse:       AmiDeviceStatesString[AmiDeviceStateInUseString],
+		AmiDeviceStateBusy:        AmiDeviceStatesString[AmiDeviceStateBusyString],
+		AmiDeviceStateInvalid:     AmiDeviceStatesString[AmiDeviceStateInvalidString],
+		AmiDeviceStateUnavailable: AmiDeviceStatesString[AmiDeviceStateUnavailableString],
+		AmiDeviceStateRinging:     AmiDeviceStatesString[AmiDeviceStateRingingString],
+		AmiDeviceStateRingInUse:   AmiDeviceStatesString[AmiDeviceStateRingInUseString],
+		AmiDeviceStateOnHold:      AmiDeviceStatesString[AmiDeviceStateOnHoldString],
+	}
+	AmiChannelStatesText map[int]string = map[int]string{
+		AmiChannelStateDown:           "down",
+		AmiChannelStateReserved:       "reserved",
+		AmiChannelStateOffHook:        "off-hook",
+		AmiChannelStateDialing:        "dialing",
+		AmiChannelStateRing:           "ring",
+		AmiChannelStateRinging:        "ringing",
+		AmiChannelStateUp:             "up",
+		AmiChannelStateBusy:           "busy",
+		AmiChannelStateDialingOffHook: "dialing-off-hook",
+		AmiChannelStatePreRing:        "pre-ring",
+		AmiChannelStateMute:           "mute",
 	}
 )
