@@ -331,3 +331,11 @@ type AMIOriginateDirection struct {
 	Timeout           int    `json:"timeout"`                             // set timeout while calling
 	AllowSysValidator bool   `json:"allow_sys_validator"`                 // allow validate the extension and channel
 }
+
+type AMIExtensionStatesConf struct {
+	ExtensionState int    `json:"extension_state"`
+	Text           string `json:"text"`
+}
+
+type AMIConf struct {
+}
