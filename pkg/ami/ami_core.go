@@ -666,8 +666,8 @@ func (c *AMICore) ExtensionState(ctx context.Context, exten, context string) (AM
 	return ExtensionState(ctx, *c.Socket, exten, context)
 }
 
-// GetExtensionStates
-func (c *AMICore) GetExtensionStates(ctx context.Context) ([]AMIResultRaw, error) {
+// ExtensionStates
+func (c *AMICore) ExtensionStates(ctx context.Context) ([]AMIResultRaw, error) {
 	var extensions []AMIResultRaw
 	response, err := ExtensionStateList(ctx, *c.Socket)
 	switch {

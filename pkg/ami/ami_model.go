@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/textproto"
 	"sync"
+	"time"
 )
 
 type PubChannel chan *AMIMessage
@@ -338,4 +339,42 @@ type AMIExtensionStatesConf struct {
 }
 
 type AMIConf struct {
+}
+
+type AMIBase struct {
+	ActionId string `json:"action_id,omitempty"`
+	Response string `json:"response,omitempty"`
+	Message  string `json:"message,omitempty"`
+}
+
+type AMIExtensionStatus struct {
+	AMIBase
+	Context    string `json:"context"`
+	Extension  string `json:"extension"`
+	Hint       string `json:"hint"`
+	Status     int    `json:"status"`
+	StatusText string `json:"status_text"`
+}
+
+type AMIExtensionGuard struct {
+	AllowExtensionNumeric bool     `json:"allow_extension_numeric"`
+	Context               []string `json:"ctx"`
+	StatusesText          []string `json:"statuses_text"`
+}
+
+type AMIPeerStatus struct {
+	AMIBase
+	ChannelType    string    `json:"channel_type"`
+	Event          string    `json:"event"`
+	Peer           string    `json:"peer"`
+	PeerStatus     string    `json:"peer_status"`
+	Privilege      string    `json:"privilege,omitempty"`
+	TimeInMs       int       `json:"time_ms,omitempty"`
+	PrePublishedAt string    `json:"pre_published_at"`
+	PublishedAt    time.Time `json:"published_at"`
+}
+
+type AMIPeerStatusGuard struct {
+	DateTimeLayout string `json:"date_time_layout"`
+	Timezone       string `json:"timezone"`
 }

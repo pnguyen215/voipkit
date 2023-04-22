@@ -7,6 +7,14 @@ import (
 )
 
 const (
+	DateTimeFormatYYYYMMDDTHHMMSS = "2006-01-02T15:04:05"
+	DateTimeFormatYYYYMMDDHHMMSS  = "2006-01-02 15:04:05"
+	DateTimeFormatYYYYMMDD        = "2006-01-02"
+	DateTimeFormatYYYYMM          = "2006-01"
+	DefaultTimezoneAsia           = "Asia/Ho_Chi_Minh"
+)
+
+const (
 	AmiActionKey      = "Action"
 	AmiEventKey       = "Event"
 	AmiResponseKey    = "Response"

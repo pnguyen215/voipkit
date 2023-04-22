@@ -21,6 +21,9 @@ const (
 	AmiJsonFieldChannelType = "channel_type"
 	AmiJsonFieldPeerStatus  = "peer_status"
 	AmiJsonFieldTime        = "time"
+	AmiJsonFieldHint        = "hint"
+	AmiJsonFieldStatusText  = "status_text"
+	AmiJsonFieldPublishedAt = "published_at"
 )
 
 var (

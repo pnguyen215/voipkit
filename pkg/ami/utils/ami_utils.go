@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
@@ -263,4 +264,46 @@ func Base64Decode(encoded string) string {
 		return ""
 	}
 	return string(d)
+}
+
+func TrimAllSpace(s string) string {
+	return strings.Join(strings.Fields(s), " ")
+}
+
+func IsSpace(str string) bool {
+	for _, c := range str {
+		if !unicode.IsSpace(c) {
+			return false
+		}
+	}
+	return true
+}
+
+func IsEmptyAbsolute(str string) bool {
+	return len(str) == 0 || str == "" || strings.TrimSpace(str) == ""
+}
+
+func IsLetter(s string) bool {
+	for _, r := range s {
+		if !unicode.IsLetter(r) {
+			return false
+		}
+	}
+	return true
+}
+
+// AddTimezone
+func AddTimezone(at time.Time, timezone string) (time.Time, error) {
+	loc, err := time.LoadLocation(timezone)
+	now := at.In(loc)
+	return now, err
+}
+
+// SetTimezone
+func SetTimezone(at time.Time, timezone string) time.Time {
+	t, err := AddTimezone(at, timezone)
+	if err != nil {
+		return at
+	}
+	return t
 }

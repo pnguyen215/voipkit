@@ -1,6 +1,12 @@
 package ami
 
-import "github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
+import (
+	"strconv"
+	"time"
+
+	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
+	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
+)
 
 var (
 	AmiExtensionStatesString []AMIExtensionStatesConf = []AMIExtensionStatesConf{
@@ -22,6 +28,28 @@ func NewAMIExtensionStatesConf() *AMIExtensionStatesConf {
 
 func NewAMIConf() *AMIConf {
 	e := &AMIConf{}
+	return e
+}
+
+func NewAMIExtensionStatus() *AMIExtensionStatus {
+	e := &AMIExtensionStatus{}
+	return e
+}
+
+func NewAMIExtensionGuard() *AMIExtensionGuard {
+	e := &AMIExtensionGuard{}
+	return e
+}
+
+func NewAMIPeerStatus() *AMIPeerStatus {
+	e := &AMIPeerStatus{}
+	return e
+}
+
+func NewAMIPeerStatusGuard() *AMIPeerStatusGuard {
+	e := &AMIPeerStatusGuard{}
+	e.SetDateTimeLayout(config.DateTimeFormatYYYYMMDDHHMMSS)
+	e.SetTimezone(config.DefaultTimezoneAsia)
 	return e
 }
 
@@ -77,4 +105,145 @@ func (e *AMIConf) ConvChannelStateToDeviceState(channelState int) int {
 		return config.AmiDeviceStateBusy
 	}
 	return config.AmiDeviceStateNotInUse
+}
+
+func (e *AMIExtensionStatus) SetActionId(value string) *AMIExtensionStatus {
+	e.ActionId = value
+	return e
+}
+
+func (e *AMIExtensionStatus) SetResponse(value string) *AMIExtensionStatus {
+	e.Response = utils.TrimAllSpace(value)
+	return e
+}
+
+func (e *AMIExtensionStatus) SetMessage(value string) *AMIExtensionStatus {
+	e.Message = utils.TrimAllSpace(value)
+	return e
+}
+
+func (e *AMIExtensionStatus) SetContext(value string) *AMIExtensionStatus {
+	e.Context = utils.TrimAllSpace(value)
+	return e
+}
+
+func (e *AMIExtensionStatus) SetExtension(value string) *AMIExtensionStatus {
+	e.Extension = utils.TrimAllSpace(value)
+	return e
+}
+
+func (e *AMIExtensionStatus) SetHint(value string) *AMIExtensionStatus {
+	e.Hint = utils.TrimAllSpace(value)
+	return e
+}
+
+func (e *AMIExtensionStatus) SetStatus(value string) *AMIExtensionStatus {
+	status, _ := strconv.Atoi(value)
+	e.Status = status
+	return e
+}
+
+func (e *AMIExtensionStatus) SetStatusInt(value int) *AMIExtensionStatus {
+	e.Status = value
+	return e
+}
+
+func (e *AMIExtensionStatus) SetStatusText(value string) *AMIExtensionStatus {
+	e.StatusText = utils.TrimAllSpace(value)
+	return e
+}
+
+func (e *AMIExtensionGuard) SetAllowExtensionNumeric(value bool) *AMIExtensionGuard {
+	e.AllowExtensionNumeric = value
+	return e
+}
+
+func (e *AMIExtensionGuard) SetContexts(value []string) *AMIExtensionGuard {
+	e.Context = value
+	return e
+}
+
+func (e *AMIExtensionGuard) SetContext(value string) *AMIExtensionGuard {
+	e.SetContexts([]string{value})
+	return e
+}
+
+func (e *AMIExtensionGuard) AppendContext(value ...string) *AMIExtensionGuard {
+	e.Context = append(e.Context, value...)
+	return e
+}
+
+func (e *AMIExtensionGuard) SetStatusesText(values []string) *AMIExtensionGuard {
+	e.StatusesText = values
+	return e
+}
+
+func (e *AMIExtensionGuard) AppendStatusText(values ...string) *AMIExtensionGuard {
+	e.StatusesText = append(e.StatusesText, values...)
+	return e
+}
+
+func (e *AMIPeerStatus) SetActionId(value string) *AMIPeerStatus {
+	e.ActionId = value
+	return e
+}
+
+func (e *AMIPeerStatus) SetChannelType(value string) *AMIPeerStatus {
+	e.ChannelType = utils.TrimAllSpace(value)
+	return e
+}
+
+func (e *AMIPeerStatus) SetEvent(value string) *AMIPeerStatus {
+	e.Event = utils.TrimAllSpace(value)
+	return e
+}
+
+func (e *AMIPeerStatus) SetPeer(value string) *AMIPeerStatus {
+	e.Peer = utils.TrimAllSpace(value)
+	return e
+}
+
+func (e *AMIPeerStatus) SetPeerStatus(value string) *AMIPeerStatus {
+	e.PeerStatus = utils.TrimAllSpace(value)
+	return e
+}
+
+func (e *AMIPeerStatus) SetPrivilege(value string) *AMIPeerStatus {
+	e.Privilege = utils.TrimAllSpace(value)
+	return e
+}
+
+func (e *AMIPeerStatus) SetTimeInMs(value string) *AMIPeerStatus {
+	v, err := strconv.Atoi(value)
+	if err == nil {
+		e.SetTimeInMsInt(v)
+	}
+	return e
+}
+
+func (e *AMIPeerStatus) SetTimeInMsInt(value int) *AMIPeerStatus {
+	if value >= 0 {
+		e.TimeInMs = value
+	}
+	return e
+}
+
+func (e *AMIPeerStatus) SetPrePublishedAt(value string) *AMIPeerStatus {
+	e.PrePublishedAt = utils.TrimAllSpace(value)
+	return e
+}
+
+func (e *AMIPeerStatus) SetPublishedAt(value time.Time) *AMIPeerStatus {
+	e.PublishedAt = value
+	return e
+}
+
+func (e *AMIPeerStatusGuard) SetDateTimeLayout(value string) *AMIPeerStatusGuard {
+	e.DateTimeLayout = utils.TrimAllSpace(value)
+	return e
+}
+
+func (e *AMIPeerStatusGuard) SetTimezone(value string) *AMIPeerStatusGuard {
+	e.Timezone = utils.TrimAllSpace(value)
+	return e
 }
