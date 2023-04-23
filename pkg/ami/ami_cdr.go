@@ -199,27 +199,85 @@ func (r *AMICdr) Json() string {
 	return utils.ToJson(r)
 }
 
+func (r *AMICdr) IsCdrNoAnswer() bool {
+	_, ok := config.AmiCdrDispositionText[r.Disposition]
+	if !ok {
+		return false
+	}
+	return r.Disposition == config.AmiCdrDispositionNoAnswer
+}
+
+func (r *AMICdr) IsCdrFailed() bool {
+	_, ok := config.AmiCdrDispositionText[r.Disposition]
+	if !ok {
+		return false
+	}
+	return r.Disposition == config.AmiCdrDispositionFailed
+}
+
+func (r *AMICdr) IsCdrBusy() bool {
+	_, ok := config.AmiCdrDispositionText[r.Disposition]
+	if !ok {
+		return ok
+	}
+	return r.Disposition == config.AmiCdrDispositionBusy
+}
+
+func (r *AMICdr) IsCdrAnswered() bool {
+	_, ok := config.AmiCdrDispositionText[r.Disposition]
+	if !ok {
+		return ok
+	}
+	return r.Disposition == config.AmiCdrDispositionAnswered
+}
+
+func (r *AMICdr) IsCdrCongestion() bool {
+	_, ok := config.AmiCdrDispositionText[r.Disposition]
+	if !ok {
+		return ok
+	}
+	return r.Disposition == config.AmiCdrDispositionCongestion
+}
+
+func (r *AMICdr) IsCdrFlagOmit() bool {
+	return r.AmaFlags == config.AmiAmaFlagOmit
+}
+
+func (r *AMICdr) IsCdrFlagBilling() bool {
+	return r.AmaFlags == config.AmiAmaFlagBilling
+}
+
+func (r *AMICdr) IsCdrFlagDocumentation() bool {
+	return r.AmaFlags == config.AmiAmaFlagDocumentation
+}
+
 func ParseCdr(e *AMIMessage, d *AMIDictionary) *AMICdr {
+	if d == nil {
+		d = NewDictionary()
+	}
+	if !d.AllowForceTranslate {
+		d.SetAllowForceTranslate(true)
+	}
 	r := NewAMICdr().
-		SetAccountCode(e.FieldByDictionary(d, config.AmiJsonFieldAccountCode)).
-		SetAmaFlag(e.FieldByDictionary(d, config.AmiJsonFieldAmaFlags)).
-		SetAnswerTimeWith(e.FieldByDictionary(d, config.AmiJsonFieldAnswerTime)).
-		SetBillableSecondWith(e.FieldByDictionary(d, config.AmiJsonFieldBillableSeconds)).
-		SetCallerId(e.FieldByDictionary(d, config.AmiJsonFieldCallerId)).
-		SetChannel(e.FieldByDictionary(d, config.AmiJsonFieldChannel)).
-		SetDateReceivedAtWith(e.DateTimeLayout, e.FieldByDictionary(d, config.AmiJsonFieldDateReceivedAt)).
-		SetDestination(e.FieldByDictionary(d, config.AmiJsonFieldDestination)).
-		SetDestinationChannel(e.FieldByDictionary(d, config.AmiJsonFieldDestinationChannel)).
-		SetDestinationContext(e.FieldByDictionary(d, config.AmiJsonFieldDestinationContext)).
-		SetDisposition(e.FieldByDictionary(d, config.AmiJsonFieldDisposition)).
-		SetDurationWith(e.FieldByDictionary(d, config.AmiJsonFieldDuration)).
-		SetEndTimeWith(e.FieldByDictionary(d, config.AmiJsonFieldEndTime)).
-		SetLastApplication(e.FieldByDictionary(d, config.AmiJsonFieldLastApplication)).
-		SetLastData(e.FieldByDictionary(d, config.AmiJsonFieldLastData)).
-		SetPrivilege(e.FieldByDictionary(d, config.AmiJsonFieldPrivilege)).
-		SetSource(e.FieldByDictionary(d, config.AmiJsonFieldSource)).
-		SetStartTimeWith(e.FieldByDictionary(d, config.AmiJsonFieldStartTime)).
-		SetUniqueId(e.FieldByDictionary(d, config.AmiJsonFieldUniqueId)).
-		SetUserField(e.FieldByDictionary(d, config.AmiJsonFieldUserField))
+		SetAccountCode(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldAccountCode, "AccountCode")).
+		SetAmaFlag(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldAmaFlags, "AmaFlags")).
+		SetAnswerTimeWith(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldAnswerTime, "AnswerTime")).
+		SetBillableSecondWith(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldBillableSeconds, "BillableSeconds")).
+		SetCallerId(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldCallerId, "CallerID")).
+		SetChannel(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldChannel, "Channel")).
+		SetDateReceivedAtWith(e.DateTimeLayout, e.FieldDictionaryOrRefer(d, config.AmiJsonFieldDateReceivedAt, "DateReceivedAt")).
+		SetDestination(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldDestination, "Destination")).
+		SetDestinationChannel(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldDestinationChannel, "DestinationChannel")).
+		SetDestinationContext(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldDestinationContext, "DestinationContext")).
+		SetDisposition(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldDisposition, "Disposition")).
+		SetDurationWith(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldDuration, "Duration")).
+		SetEndTimeWith(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldEndTime, "EndTime")).
+		SetLastApplication(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldLastApplication, "LastApplication")).
+		SetLastData(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldLastData, "LastData")).
+		SetPrivilege(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldPrivilege, "Privilege")).
+		SetSource(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldSource, "Source")).
+		SetStartTimeWith(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldStartTime, "StartTime")).
+		SetUniqueId(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldUniqueId, "UniqueID")).
+		SetUserField(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldUserField, "UserField"))
 	return r
 }

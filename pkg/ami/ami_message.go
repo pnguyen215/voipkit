@@ -86,7 +86,7 @@ func (k *AMIMessage) FieldByDictionary(d *AMIDictionary, key string) string {
 func (k *AMIMessage) FieldDictionaryOrRefer(d *AMIDictionary, key, ref string) string {
 	value := k.FieldByDictionary(d, key)
 
-	if value != "" || len(value) > 0 {
+	if value != "" && len(value) > 0 && !utils.IsEmptyAbsolute(value) {
 		return value
 	}
 
