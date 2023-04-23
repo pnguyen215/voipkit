@@ -34,10 +34,14 @@ type AMIMessage struct {
 	Header         textproto.MIMEHeader `json:"header,omitempty"`
 	Mutex          sync.RWMutex         `json:"-"`
 	DateTimeLayout string               `json:"date_time_layout,omitempty"`
+	PhonePrefix    []string             `json:"phone_prefix,omitempty"`
+	Region         string               `json:"region,omitempty"`
 }
 
 type AMIEvent struct {
-	DateTimeLayout string `json:"date_time_layout,omitempty"`
+	DateTimeLayout string   `json:"date_time_layout,omitempty"`
+	PhonePrefix    []string `json:"phone_prefix,omitempty"`
+	Region         string   `json:"region,omitempty"`
 }
 
 type AMIDictionary struct {
@@ -427,4 +431,11 @@ type AMICdr struct {
 	UserField      string    `json:"user_field,omitempty"`
 	DateReceivedAt time.Time `json:"date_received_at"`
 	Privilege      string    `json:"privilege,omitempty"`
+	// Type of call direction
+	// `inbound`
+	// `outbound`
+	Direction     string `json:"direction"`
+	FlowCall      string `json:"flow_call"`
+	TypeDirection string `json:"type_direction"`
+	UserExtension string `json:"user_exten,omitempty"`
 }

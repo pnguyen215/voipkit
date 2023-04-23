@@ -5,16 +5,33 @@ import (
 	"strings"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
+	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 func NewEventListener() *AMIEvent {
 	e := &AMIEvent{}
 	e.SnapChargingEvent()
+	e.SetRegion("VN")
 	return e
 }
 
 func (m *AMIEvent) SetDateTimeLayout(value string) *AMIEvent {
 	m.DateTimeLayout = value
+	return m
+}
+
+func (m *AMIEvent) SetPhonePrefix(value []string) *AMIEvent {
+	m.PhonePrefix = value
+	return m
+}
+
+func (m *AMIEvent) AppendPhonePrefix(values ...string) *AMIEvent {
+	m.PhonePrefix = append(m.PhonePrefix, values...)
+	return m
+}
+
+func (m *AMIEvent) SetRegion(value string) *AMIEvent {
+	m.Region = utils.TrimAllSpace(value)
 	return m
 }
 
@@ -27,6 +44,8 @@ func (e *AMIEvent) OpenFullEvents(c *AMI) {
 		select {
 		case message := <-all:
 			message.SetDateTimeLayout(e.DateTimeLayout)
+			message.SetPhonePrefix(e.PhonePrefix)
+			message.SetRegion(e.Region)
 			message.AddFieldDateReceivedAt()
 			log.Printf("ami event: '%s' received = %s", message.Field(strings.ToLower(config.AmiEventKey)), message.Json())
 		case err := <-c.Error():
@@ -45,6 +64,8 @@ func (e *AMIEvent) OpenFullEventsTranslator(c *AMI, d *AMIDictionary) {
 		select {
 		case message := <-all:
 			message.SetDateTimeLayout(e.DateTimeLayout)
+			message.SetPhonePrefix(e.PhonePrefix)
+			message.SetRegion(e.Region)
 			message.AddFieldDateReceivedAt()
 			log.Printf("ami event: '%s' received = %s", message.Field(strings.ToLower(config.AmiEventKey)), message.JsonTranslator(d))
 		case err := <-c.Error():
@@ -63,6 +84,8 @@ func (e *AMIEvent) OpenFullEventsCallbackTranslator(c *AMI, d *AMIDictionary, ca
 		select {
 		case message := <-all:
 			message.SetDateTimeLayout(e.DateTimeLayout)
+			message.SetPhonePrefix(e.PhonePrefix)
+			message.SetRegion(e.Region)
 			message.AddFieldDateReceivedAt()
 			callback(message, message.JsonTranslator(d), nil)
 		case err := <-c.Error():
@@ -82,6 +105,8 @@ func (e *AMIEvent) OpenEvent(c *AMI, name string) {
 		select {
 		case message := <-event:
 			message.SetDateTimeLayout(e.DateTimeLayout)
+			message.SetPhonePrefix(e.PhonePrefix)
+			message.SetRegion(e.Region)
 			message.AddFieldDateReceivedAt()
 			log.Printf("ami event: '%s' received = %s", name, message.Json())
 		case err := <-c.Error():
@@ -100,6 +125,8 @@ func (e *AMIEvent) OpenEventTranslator(c *AMI, d *AMIDictionary, name string) {
 		select {
 		case message := <-event:
 			message.SetDateTimeLayout(e.DateTimeLayout)
+			message.SetPhonePrefix(e.PhonePrefix)
+			message.SetRegion(e.Region)
 			message.AddFieldDateReceivedAt()
 			log.Printf("ami event: '%s' received = %s", name, message.JsonTranslator(d))
 		case err := <-c.Error():
@@ -118,6 +145,8 @@ func (e *AMIEvent) OpenEventCallbackTranslator(c *AMI, d *AMIDictionary, name st
 		select {
 		case message := <-event:
 			message.SetDateTimeLayout(e.DateTimeLayout)
+			message.SetPhonePrefix(e.PhonePrefix)
+			message.SetRegion(e.Region)
 			message.AddFieldDateReceivedAt()
 			callback(message, message.JsonTranslator(d), nil)
 		case err := <-c.Error():
@@ -137,6 +166,8 @@ func (e *AMIEvent) OpenEvents(c *AMI, keys ...string) {
 		select {
 		case message := <-event:
 			message.SetDateTimeLayout(e.DateTimeLayout)
+			message.SetPhonePrefix(e.PhonePrefix)
+			message.SetRegion(e.Region)
 			message.AddFieldDateReceivedAt()
 			log.Printf("ami event(s): '%s' received = %s", keys, message.Json())
 		case err := <-c.Error():
@@ -155,6 +186,8 @@ func (e *AMIEvent) OpenEventsTranslator(c *AMI, d *AMIDictionary, keys ...string
 		select {
 		case message := <-event:
 			message.SetDateTimeLayout(e.DateTimeLayout)
+			message.SetPhonePrefix(e.PhonePrefix)
+			message.SetRegion(e.Region)
 			message.AddFieldDateReceivedAt()
 			log.Printf("ami event(s): '%s' received = %s", keys, message.JsonTranslator(d))
 		case err := <-c.Error():
@@ -173,6 +206,8 @@ func (e *AMIEvent) OpenEventsCallbackTranslator(c *AMI, d *AMIDictionary, callba
 		select {
 		case message := <-event:
 			message.SetDateTimeLayout(e.DateTimeLayout)
+			message.SetPhonePrefix(e.PhonePrefix)
+			message.SetRegion(e.Region)
 			message.AddFieldDateReceivedAt()
 			callback(message, message.JsonTranslator(d), nil)
 		case err := <-c.Error():

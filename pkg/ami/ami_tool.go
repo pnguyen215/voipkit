@@ -10,9 +10,11 @@ import (
 	"net/textproto"
 	"os"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 
+	"github.com/nyaruka/phonenumbers"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/fatal"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
@@ -420,4 +422,27 @@ func TransformKeyLevel(response AMIResultRawLevel, d *AMIDictionary) AMIResultRa
 	}
 	response = nil
 	return _m
+}
+
+func IsPhoneNumber(phone string) bool {
+	if utils.IsEmptyAbsolute(phone) {
+		return false
+	}
+	matcher := regexp.MustCompile(`^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$`)
+	return matcher.MatchString(phone)
+}
+
+func IsPhoneNumberAbsolute(phone string, region string) bool {
+	if utils.IsEmptyAbsolute(phone) {
+		return false
+	}
+
+	p, err := phonenumbers.Parse(phone, region)
+	if err != nil {
+		log.Printf(err.Error())
+		return false
+	}
+	v := phonenumbers.IsValidNumber(p)
+	l := phonenumbers.IsPossibleNumber(p)
+	return v && l && IsPhoneNumber(phone)
 }

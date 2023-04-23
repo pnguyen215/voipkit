@@ -480,6 +480,13 @@ const (
 const (
 	AmiOutboundDirection = "outbound"
 	AmiInboundDirection  = "inbound"
+	AmiUnknownDirection  = "Unknown"
+)
+
+const (
+	AmiTypeOutboundNormalDirection = "outbound_normal"
+	AmiTypeInboundDialDirection    = "inbound_dial"  // from application on user local machine
+	AmiTypeInboundQueueDirection   = "inbound_queue" // from queue, not real user
 )
 
 var (
@@ -618,4 +625,9 @@ const (
 	AmiAmaFlagOmit          = "OMIT"          // This CDR should be ignored.
 	AmiAmaFlagBilling       = "BILLING"       // This CDR contains valid billing data.
 	AmiAmaFlagDocumentation = "DOCUMENTATION" // This CDR is for documentation purposes.
+)
+
+const (
+	AmiLastApplicationDial  = "Dial"
+	AmiLastApplicationQueue = "Queue"
 )

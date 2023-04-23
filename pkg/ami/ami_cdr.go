@@ -1,7 +1,9 @@
 package ami
 
 import (
+	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
@@ -195,6 +197,26 @@ func (r *AMICdr) SetPrivilege(value string) *AMICdr {
 	return r
 }
 
+func (r *AMICdr) SetDirection(value string) *AMICdr {
+	r.Direction = utils.TrimAllSpace(value)
+	return r
+}
+
+func (r *AMICdr) SetFlowCall(value string) *AMICdr {
+	r.FlowCall = value
+	return r
+}
+
+func (r *AMICdr) SetTypeDirection(value string) *AMICdr {
+	r.TypeDirection = utils.TrimAllSpace(value)
+	return r
+}
+
+func (r *AMICdr) SetUserExten(value string) *AMICdr {
+	r.UserExtension = utils.TrimAllSpace(value)
+	return r
+}
+
 func (r *AMICdr) Json() string {
 	return utils.ToJson(r)
 }
@@ -251,6 +273,26 @@ func (r *AMICdr) IsCdrFlagDocumentation() bool {
 	return r.AmaFlags == config.AmiAmaFlagDocumentation
 }
 
+func (r *AMICdr) IsCdrInbound() bool {
+	return strings.EqualFold(r.Direction, config.AmiInboundDirection)
+}
+
+func (r *AMICdr) IsCdrOutbound() bool {
+	return strings.EqualFold(r.Direction, config.AmiOutboundDirection)
+}
+
+func (r *AMICdr) IsCdrInboundDial() bool {
+	return strings.EqualFold(r.TypeDirection, config.AmiTypeInboundDialDirection)
+}
+
+func (r *AMICdr) IsCdrInboundQueue() bool {
+	return strings.EqualFold(r.TypeDirection, config.AmiTypeInboundQueueDirection)
+}
+
+func (r *AMICdr) IsCdrOutboundNormal() bool {
+	return strings.EqualFold(r.TypeDirection, config.AmiTypeOutboundNormalDirection)
+}
+
 func ParseCdr(e *AMIMessage, d *AMIDictionary) *AMICdr {
 	if d == nil {
 		d = NewDictionary()
@@ -279,5 +321,31 @@ func ParseCdr(e *AMIMessage, d *AMIDictionary) *AMICdr {
 		SetStartTimeWith(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldStartTime, "StartTime")).
 		SetUniqueId(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldUniqueId, "UniqueID")).
 		SetUserField(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldUserField, "UserField"))
+
+	// detect outbound, inbound
+	// if the field destination is phone number, so mark this cdr belong to outbound, otherwise mark as inbound
+	form := "flow_call_from_'%v'_to_'%v'"
+	phone := utils.RemovePrefix(r.Destination, e.PhonePrefix...)
+	if IsPhoneNumberAbsolute(phone, e.Region) {
+		flow := fmt.Sprintf(form, r.Channel, phone)
+		r.SetFlowCall(flow)
+		r.SetDirection(config.AmiOutboundDirection)
+		r.SetTypeDirection(config.AmiTypeOutboundNormalDirection)
+		r.SetUserExten(strings.Split(r.Channel, "-")[0])
+	} else {
+		valid := strings.EqualFold(r.LastApplication, config.AmiLastApplicationDial)
+		if valid { // from dial
+			flow := fmt.Sprintf(form, r.Source, r.DestinationChannel)
+			r.SetFlowCall(flow)
+			r.SetTypeDirection(config.AmiTypeInboundDialDirection)
+			r.SetUserExten(strings.Split(r.DestinationChannel, "-")[0])
+		} else { // from queue
+			flow := fmt.Sprintf(form, r.Source, r.Channel)
+			r.SetFlowCall(flow)
+			r.SetTypeDirection(config.AmiTypeInboundQueueDirection)
+			r.SetUserExten(strings.Split(r.Channel, "-")[0])
+		}
+		r.SetDirection(config.AmiInboundDirection)
+	}
 	return r
 }

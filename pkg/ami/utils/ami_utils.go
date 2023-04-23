@@ -307,3 +307,16 @@ func SetTimezone(at time.Time, timezone string) time.Time {
 	}
 	return t
 }
+
+func RemovePrefix(str string, prefix ...string) string {
+	if IsEmptyAbsolute(str) {
+		return str
+	}
+	if len(prefix) == 0 {
+		return str
+	}
+	for _, v := range prefix {
+		str = strings.TrimPrefix(str, v)
+	}
+	return str
+}

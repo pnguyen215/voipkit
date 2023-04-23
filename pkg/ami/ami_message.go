@@ -32,6 +32,21 @@ func (m *AMIMessage) SetDateTimeLayout(value string) *AMIMessage {
 	return m
 }
 
+func (m *AMIMessage) SetPhonePrefix(value []string) *AMIMessage {
+	m.PhonePrefix = value
+	return m
+}
+
+func (m *AMIMessage) AppendPhonePrefix(values ...string) *AMIMessage {
+	m.PhonePrefix = append(m.PhonePrefix, values...)
+	return m
+}
+
+func (m *AMIMessage) SetRegion(value string) *AMIMessage {
+	m.Region = utils.TrimAllSpace(value)
+	return m
+}
+
 func ofMessage(header textproto.MIMEHeader) *AMIMessage {
 	m := &AMIMessage{}
 	m.Header = header
