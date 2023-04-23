@@ -378,3 +378,53 @@ type AMIPeerStatusGuard struct {
 	DateTimeLayout string `json:"date_time_layout"`
 	Timezone       string `json:"timezone"`
 }
+
+type AMICdr struct {
+	Event string `json:"event"`
+	// The account code of the Party A channel.
+	AccountCode string `json:"account_code,omitempty"`
+	// The Caller ID number associated with the Party A in the CDR.
+	Source string `json:"source,omitempty"`
+	// The dialplan extension the Party A was executing.
+	Destination string `json:"destination,omitempty"`
+	// The dialplan context the Party A was executing.
+	DestinationContext string `json:"destination_context,omitempty"`
+	// The Caller ID name associated with the Party A in the CDR.
+	CallerId string `json:"caller_id,omitempty"`
+	// The channel name of the Party A.
+	Channel string `json:"channel"`
+	// The channel name of the Party B.
+	DestinationChannel string `json:"destination_channel,omitempty"`
+	// The last dialplan application the Party A executed.
+	LastApplication string `json:"last_application,omitempty"`
+	// The parameters passed to the last dialplan application the Party A executed.
+	LastData string `json:"last_data,omitempty"`
+	// The time the CDR was created.
+	StartTime time.Time `json:"start_time"`
+	// The earliest of either the time when Party A answered, or the start time of this CDR.
+	AnswerTime time.Time `json:"answer_time,omitempty"`
+	// The time when the CDR was finished. This occurs when the Party A hangs up or when the bridge between Party A and Party B is broken.
+	EndTime time.Time `json:"end_time"`
+	// The time, in seconds, of EndTime - StartTime.
+	Duration int `json:"duration"`
+	// The time, in seconds, of AnswerTime - StartTime.
+	BillableSeconds int `json:"billable_seconds,omitempty"`
+	// The final known disposition of the CDR.
+	// 	NO ANSWER - The channel was not answered. This is the default disposition.
+	//	FAILED - The channel attempted to dial but the call failed.
+	//	BUSY - The channel attempted to dial but the remote party was busy.
+	//	ANSWERED - The channel was answered. The hang up cause will no longer impact the disposition of the CDR.
+	//	CONGESTION - The channel attempted to dial but the remote party was congested.
+	Disposition string `json:"disposition"`
+	// A flag that informs a billing system how to treat the CDR.
+	//	OMIT - This CDR should be ignored.
+	//	BILLING - This CDR contains valid billing data.
+	//	DOCUMENTATION - This CDR is for documentation purposes.
+	AmaFlags string `json:"ama_flags,omitempty"`
+	// A unique identifier for the Party A channel.
+	UniqueId string `json:"unique_id"`
+	// A user defined field set on the channels. If set on both the Party A and Party B channel, the user-fields of both are concatenated and separated by a ;.
+	UserField      string    `json:"user_field,omitempty"`
+	DateReceivedAt time.Time `json:"date_received_at"`
+	Privilege      string    `json:"privilege,omitempty"`
+}

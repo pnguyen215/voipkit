@@ -542,7 +542,7 @@ const (
 	AmiChannelStateMute           = 1 << 16 // Do not transmit voice data
 )
 
-// Device state, extension state strings for printing
+// Device state, extension state and cdr strings for printing
 var (
 	AmiExtensionStatusCodes map[int]string = map[int]string{
 		AmiExtensionDeactivated: "Extension not found",
@@ -588,4 +588,34 @@ var (
 		AmiChannelStatePreRing:        "pre-ring",
 		AmiChannelStateMute:           "mute",
 	}
+	AmiCdrDispositionText map[string]bool = map[string]bool{
+		AmiCdrDispositionNoAnswer:   true,
+		AmiCdrDispositionFailed:     true,
+		AmiCdrDispositionBusy:       true,
+		AmiCdrDispositionAnswered:   true,
+		AmiCdrDispositionCongestion: true,
+	}
+)
+
+const (
+	AmiPeerStatusUnknown      = "Unknown"
+	AmiPeerStatusRegistered   = "Registered"
+	AmiPeerStatusUnregistered = "Unregistered"
+	AmiPeerStatusRejected     = "Rejected"
+	AmiPeerStatusLagged       = "Lagged"
+	AmiPeerStatusReachable    = "Reachable"
+)
+
+const (
+	AmiCdrDispositionNoAnswer   = "NO ANSWER"  // The channel was not answered. This is the default disposition.
+	AmiCdrDispositionFailed     = "FAILED"     // The channel attempted to dial but the call failed.
+	AmiCdrDispositionBusy       = "BUSY"       // The channel attempted to dial but the remote party was busy.
+	AmiCdrDispositionAnswered   = "ANSWERED"   // The channel was answered. The hang up cause will no longer impact the disposition of the CDR.
+	AmiCdrDispositionCongestion = "CONGESTION" // The channel attempted to dial but the remote party was congested.
+)
+
+const (
+	AmiAmaFlagOmit          = "OMIT"          // This CDR should be ignored.
+	AmiAmaFlagBilling       = "BILLING"       // This CDR contains valid billing data.
+	AmiAmaFlagDocumentation = "DOCUMENTATION" // This CDR is for documentation purposes.
 )
