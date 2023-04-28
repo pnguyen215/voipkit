@@ -439,3 +439,11 @@ type AMICdr struct {
 	TypeDirection string `json:"type_direction"`
 	UserExtension string `json:"user_exten,omitempty"`
 }
+
+type AMIPayloadChanspy struct {
+	Join            string `json:"join" binding:"required"`
+	SourceExten     string `json:"source_extension" binding:"required"`
+	CurrentExten    string `json:"current_extension" binding:"required"`
+	ChannelProtocol string `json:"channel_protocol" binding:"required"` // protocols include: SIP, H323, IAX...
+	AllowDebug      bool   `json:"allow_debug"`                         // allow to trace log
+}

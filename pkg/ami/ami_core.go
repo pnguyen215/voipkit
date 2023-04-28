@@ -1358,3 +1358,8 @@ func (c *AMICore) MakeOutboundCall(ctx context.Context, d AMIOriginateDirection)
 func (c *AMICore) MakeInternalCall(ctx context.Context, d AMIOriginateDirection) (AMIResultRaw, bool, error) {
 	return MakeInternalCall(ctx, *c.Socket, d)
 }
+
+// Chanspy
+func (c *AMICore) Chanspy(ctx context.Context, ch AMIPayloadChanspy) (AMIResultRawLevel, error) {
+	return Chanspy(ctx, *c.Socket, ch)
+}

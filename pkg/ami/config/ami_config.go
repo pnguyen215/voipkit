@@ -358,7 +358,9 @@ const (
 const (
 	AmiErrorFieldRequired           string = "%v is required"
 	AmiErrorInvalidProtocol         string = "Invalid protocol"
+	AmiErrorInvalidChanspy          string = "Invalid chanspy join"
 	AmiErrorProtocolMessage         string = "Protocol must have values: %v"
+	AmiErrorChanspyMessage          string = "Chanspy only supported values: %v"
 	AmiErrorConsumeEvent            string = "Ami can not consume event, reason failed: %v"
 	AmiErrorUsernameRequired        string = "(Ami Authentication). username was missing"
 	AmiErrorPasswordRequired        string = "(Ami Authentication). password was missing"
@@ -630,4 +632,18 @@ const (
 const (
 	AmiLastApplicationDial  = "Dial"
 	AmiLastApplicationQueue = "Queue"
+)
+
+const (
+	AmiChanspySpy     = "spy"
+	AmiChanspyBarge   = "barge"
+	AmiChanspyWhisper = "whisper"
+)
+
+var (
+	AmiChanspy map[string]bool = map[string]bool{
+		AmiChanspySpy:     true,
+		AmiChanspyBarge:   true,
+		AmiChanspyWhisper: true,
+	}
 )
