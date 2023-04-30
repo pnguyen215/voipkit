@@ -62,6 +62,41 @@ func (c *AMIChannel) ValidSIPDefault(extension string) bool {
 	return c.Valid(config.AmiDigitExtensionRegexDefault, extension)
 }
 
+func (c *AMIChannel) ValidWith(channelProtocol string, regex string, digitsExten []interface{}, extension string) bool {
+	if len(digitsExten) == 0 {
+		return false
+	}
+	if utils.IsEmptyAbsolute(extension) {
+		return false
+	}
+	if utils.IsEmptyAbsolute(regex) {
+		return false
+	}
+	c.SetChannelProtocol(channelProtocol)
+	var has bool = false
+
+	for _, v := range digitsExten {
+		_regex := fmt.Sprintf(regex, v)
+		valid := c.Valid(_regex, extension)
+		if valid {
+			has = valid
+			break
+		}
+	}
+	return has
+}
+
+// ValidSIPDefaultWith
+// Example:
+/*
+	v := ami.NewChannel().ValidSIPDefaultWith([]interface{}{4, 5, 6}, "SIP/8103")
+	log.Printf("outgoing: %v", v)
+*/
+func (c *AMIChannel) ValidSIPDefaultWith(digitsExten []interface{}, extension string) bool {
+	c.SetChannelProtocol(config.AmiSIPChannelProtocol)
+	return c.ValidWith(c.ChannelProtocol, config.AmiDigitExtensionRegexWithDigits, digitsExten, extension)
+}
+
 // JoinHostChannel
 // Example: protocol is SIP
 // Ip is 127.0.0.1
