@@ -489,6 +489,7 @@ const (
 	AmiTypeOutboundNormalDirection = "outbound_normal"
 	AmiTypeInboundDialDirection    = "inbound_dial"  // from application on user local machine
 	AmiTypeInboundQueueDirection   = "inbound_queue" // from queue, not real user
+	AmiTypeChanSpyDirection        = "chan_spy"      //
 )
 
 var (
@@ -630,8 +631,9 @@ const (
 )
 
 const (
-	AmiLastApplicationDial  = "Dial"
-	AmiLastApplicationQueue = "Queue"
+	AmiLastApplicationDial    = "Dial"
+	AmiLastApplicationQueue   = "Queue"
+	AmiLastApplicationChanSpy = "ChanSpy"
 )
 
 const (
