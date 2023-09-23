@@ -101,7 +101,7 @@ func (c *AmiRestify) request(method, path string, queryParams map[string]string,
 	}
 	request.Header = c.h
 	if c.debug {
-		log.Printf("AmiCurl sending %s request to %s", method, u.String())
+		log.Printf("Restify sending %s request to %s", method, u.String())
 	}
 	response, err := c.c.Do(request)
 	if err != nil {
