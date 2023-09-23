@@ -77,12 +77,12 @@ func (c *AMI) ReadPrompt(parentCtx context.Context, timeout time.Duration) error
 
 	select {
 	case <-ctx.Done():
-		return config.ErrorAsteriskConnTimeout
+		return ErrorAsteriskConnTimeout
 	case err := <-fail:
-		return config.ErrorAsteriskNetwork.AMIError(err.Error())
+		return ErrorAsteriskNetwork.AMIError(err.Error())
 	case promptLine := <-prompt:
 		if !strings.HasPrefix(promptLine, config.AmiCallManagerKey) {
-			return config.ErrorAsteriskInvalidPrompt.AMIError(promptLine)
+			return ErrorAsteriskInvalidPrompt.AMIError(promptLine)
 		}
 	}
 
@@ -93,8 +93,8 @@ func (c *AMI) Read() (*AMIMessage, error) {
 	headers, err := c.Reader.ReadMIMEHeader()
 
 	if err != nil {
-		if err.Error() == config.ErrorEOF || err.Error() == config.ErrorIO {
-			return nil, config.ErrorAsteriskNetwork
+		if err.Error() == ErrorEOF || err.Error() == ErrorIO {
+			return nil, ErrorAsteriskNetwork
 		}
 		return nil, err
 	}
@@ -156,12 +156,12 @@ func (c *AMI) Login(parentContext context.Context, timeout time.Duration, userna
 
 	select {
 	case <-ctx.Done():
-		return config.ErrorAsteriskConnTimeout.AMIError(config.ErrorLoginFailed)
+		return ErrorAsteriskConnTimeout.AMIError(ErrorLoginFailed)
 	case err := <-fail:
-		return config.ErrorAsteriskNetwork.AMIError(err.Error())
+		return ErrorAsteriskNetwork.AMIError(err.Error())
 	case msg := <-chMessage:
 		if !msg.IsSuccess() {
-			return config.ErrorAsteriskLogin
+			return ErrorAsteriskLogin
 		} else {
 			// add callback value
 			c.Raw = msg
@@ -211,7 +211,7 @@ func (c *AMI) SetReader(ctx context.Context) {
 				}
 
 				if err != nil {
-					if err == config.ErrorAsteriskNetwork {
+					if err == ErrorAsteriskNetwork {
 						c.EmitError(err)
 						return
 					}

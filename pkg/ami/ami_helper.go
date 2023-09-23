@@ -16,7 +16,6 @@ import (
 
 	"github.com/nyaruka/phonenumbers"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/fatal"
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
@@ -54,15 +53,15 @@ func OpenDial(ip string, port int) (net.Conn, error) {
 func OpenDialWith(network, ip string, port int) (net.Conn, error) {
 
 	if !config.AmiNetworkKeys[network] {
-		return nil, fatal.AMIErrorNew("AMI: Invalid network")
+		return nil, AMIErrorNew("AMI: Invalid network")
 	}
 
 	if ip == "" {
-		return nil, fatal.AMIErrorNew("AMI: IP must be not empty")
+		return nil, AMIErrorNew("AMI: IP must be not empty")
 	}
 
 	if port <= 0 {
-		return nil, fatal.AMIErrorNew("AMI: Port must be positive number")
+		return nil, AMIErrorNew("AMI: Port must be positive number")
 	}
 
 	host, _port, _ := utils.IPDecode(ip)
