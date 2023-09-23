@@ -11,15 +11,14 @@ import (
 	"strings"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 func NewAMISocket() *AMISocket {
 	s := &AMISocket{
-		Incoming:   make(chan string, 32),
-		Shutdown:   make(chan struct{}),
-		Errors:     make(chan error),
-		AllowTrace: false,
+		Incoming:  make(chan string, 32),
+		Shutdown:  make(chan struct{}),
+		Errors:    make(chan error),
+		DebugMode: false,
 	}
 	d := NewDictionary()
 	d.SetAllowForceTranslate(true)
@@ -55,7 +54,7 @@ func (s *AMISocket) SetMaxConcurrencyMillis(value int64) *AMISocket {
 }
 
 func (s *AMISocket) Json() string {
-	return utils.ToJson(s)
+	return JsonString(s)
 }
 
 // NewSocket provides a new socket client, connecting to a tcp server.
@@ -124,8 +123,8 @@ func (s *AMISocket) SetUsedDictionary(value bool) *AMISocket {
 	return s
 }
 
-func (s *AMISocket) SetAllowTrace(value bool) *AMISocket {
-	s.AllowTrace = value
+func (s *AMISocket) SetDebugMode(value bool) *AMISocket {
+	s.DebugMode = value
 	return s
 }
 
@@ -150,7 +149,7 @@ func (s *AMISocket) Close(ctx context.Context) error {
 // Send the message to socket using fprintf format
 func (s *AMISocket) Send(message string) error {
 	v, err := fmt.Fprintf(s.Conn, message)
-	if s.AllowTrace {
+	if s.DebugMode {
 		log.Printf("[>] Ami command, the number of byte(s) written = %v (byte)\n%v", v, message)
 	}
 	return err
@@ -217,7 +216,7 @@ func (s AMIResultRaw) Values() []string {
 			continue
 		}
 		v := s.GetVal(k)
-		if !utils.Contains(result, v) {
+		if !Contains(result, v) {
 			result = append(result, v)
 		}
 	}
@@ -267,7 +266,7 @@ func (s AMIResultRawLevel) GetVal(key string) string {
 	if len(v) == 1 {
 		return v[0]
 	}
-	return utils.ToJson(v)
+	return JsonString(v)
 }
 
 func (s AMIResultRawLevel) Values() []string {
@@ -280,7 +279,7 @@ func (s AMIResultRawLevel) Values() []string {
 			continue
 		}
 		v := s.GetVal(k)
-		if !utils.Contains(result, v) {
+		if !Contains(result, v) {
 			result = append(result, v)
 		}
 	}

@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 func NewAMIPayloadExtension() *AMIPayloadExtension {
@@ -43,7 +42,7 @@ func (e *AMIPayloadExtension) SetReplace(value string) *AMIPayloadExtension {
 }
 
 func (e *AMIPayloadExtension) SetApplicationDataWith(v interface{}) *AMIPayloadExtension {
-	e.SetApplicationData(utils.ToJson(v))
+	e.SetApplicationData(JsonString(v))
 	return e
 }
 

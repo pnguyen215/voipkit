@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 type AMICallbackService interface {
@@ -72,7 +71,7 @@ func (a *AMICallbackHandler) AppendIgnoredEvents(values ...string) *AMICallbackH
 }
 
 func (a *AMICallbackHandler) Json() string {
-	return utils.ToJson(a)
+	return JsonString(a)
 }
 
 func (h *AMICallbackHandler) Send() (AMIResultRaw, error) {
@@ -100,14 +99,14 @@ func (h *AMICallbackHandler) Send() (AMIResultRaw, error) {
 		}
 
 		if len(response) > 0 && err == nil {
-			if h.Socket.AllowTrace {
+			if h.Socket.DebugMode {
 				log.Printf("Send(). callback return for the %v time(s) and waste time = %v", i, _end)
 			}
 			break
 		}
 	}
 
-	if h.Socket.AllowTrace {
+	if h.Socket.DebugMode {
 		log.Printf("Send(). callback total waste time = %v", total)
 	}
 
@@ -140,14 +139,14 @@ func (h *AMICallbackHandler) SendLevel() (AMIResultRawLevel, error) {
 		}
 
 		if len(response) > 0 && err == nil {
-			if h.Socket.AllowTrace {
+			if h.Socket.DebugMode {
 				log.Printf("SendLevel(). callback return for the %v time(s) and waste time = %v", i, _end)
 			}
 			break
 		}
 	}
 
-	if h.Socket.AllowTrace {
+	if h.Socket.DebugMode {
 		log.Printf("SendLevel(). callback total waste time = %v", total)
 	}
 
@@ -179,14 +178,14 @@ func (h *AMICallbackHandler) SendSuperLevel() ([]AMIResultRaw, error) {
 		}
 
 		if len(response) > 0 && err == nil {
-			if h.Socket.AllowTrace {
+			if h.Socket.DebugMode {
 				log.Printf("SendSuperLevel(). callback return for the %v time(s) and waste time = %v", i, _end)
 			}
 			break
 		}
 	}
 
-	if h.Socket.AllowTrace {
+	if h.Socket.DebugMode {
 		log.Printf("SendSuperLevel(). callback total waste time = %v", total)
 	}
 

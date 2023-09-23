@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 func NewActionWith(name string) *AMIMessage {
@@ -43,7 +42,7 @@ func (m *AMIMessage) AppendPhonePrefix(values ...string) *AMIMessage {
 }
 
 func (m *AMIMessage) SetRegion(value string) *AMIMessage {
-	m.Region = utils.TrimAllSpace(value)
+	m.Region = TrimStringSpaces(value)
 	return m
 }
 
@@ -60,7 +59,7 @@ func ofMessageWithDictionary(d *AMIDictionary, header textproto.MIMEHeader) *AMI
 		p := make(textproto.MIMEHeader)
 		for k, v := range header {
 			p.Add(d.TranslateField(k), header.Get(k))
-			log.Printf("(AMI). header renew with key = %v and value = %v", k, utils.ToJson(v))
+			log.Printf("(AMI). header renew with key = %v and value = %v", k, JsonString(v))
 		}
 		m.Header = p
 	} else {
@@ -101,7 +100,7 @@ func (k *AMIMessage) FieldByDictionary(d *AMIDictionary, key string) string {
 func (k *AMIMessage) FieldDictionaryOrRefer(d *AMIDictionary, key, ref string) string {
 	value := k.FieldByDictionary(d, key)
 
-	if value != "" && len(value) > 0 && !utils.IsEmptyAbsolute(value) {
+	if value != "" && len(value) > 0 && !IsStringEmpty(value) {
 		return value
 	}
 
@@ -324,7 +323,7 @@ func (k *AMIMessage) VarWith(key string, vars []string) (string, bool) {
 	}
 
 	for _, value := range vars {
-		e, v := utils.VarsSplit(value)
+		e, v := VarsSplit(value)
 		if e == key || strings.EqualFold(e, key) {
 			return v, true
 		}
@@ -368,7 +367,7 @@ func (k *AMIMessage) ProduceMessageWithDictionaries(lowercaseField bool, transla
 		if len(value) == 1 {
 			data[field] = value[0]
 		} else {
-			data[field] = utils.VarsMap(value)
+			data[field] = VarsMap(value)
 		}
 	}
 
@@ -388,7 +387,7 @@ func (k *AMIMessage) ProduceMessagePure() map[string]interface{} {
 		if len(value) == 1 {
 			data[field] = value[0]
 		} else {
-			data[field] = utils.VarsMap(value)
+			data[field] = VarsMap(value)
 		}
 	}
 
@@ -397,17 +396,17 @@ func (k *AMIMessage) ProduceMessagePure() map[string]interface{} {
 
 // Return AMI message as Json string
 func (k *AMIMessage) Json() string {
-	return utils.ToJson(k.ProduceMessage())
+	return JsonString(k.ProduceMessage())
 }
 
 // Return AMI message as Json string
 func (k *AMIMessage) JsonTranslator(d *AMIDictionary) string {
-	return utils.ToJson(k.ProduceMessageTranslator(d))
+	return JsonString(k.ProduceMessageTranslator(d))
 }
 
 // Return AMI message as Json pure string
 func (k *AMIMessage) JsonPure() string {
-	return utils.ToJson(k.ProduceMessagePure())
+	return JsonString(k.ProduceMessagePure())
 }
 
 // Create AMI message from json string
@@ -467,7 +466,7 @@ func (a *AMIPayloadMessage) SetBody(value string) *AMIPayloadMessage {
 }
 
 func (a *AMIPayloadMessage) SetBase64Body(value interface{}) *AMIPayloadMessage {
-	a.Base64Body = utils.Base64Encode(value)
+	a.Base64Body = Base64Encode(value)
 	return a
 }
 

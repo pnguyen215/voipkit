@@ -2,7 +2,6 @@ package ami
 
 import (
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 var chargingEvents *map[string]string = &map[string]string{}
@@ -16,20 +15,20 @@ func (e *AMIEvent) SnapChargingEvent() *map[string]string {
 
 	_merged := make(map[string]string)
 
-	_merged = utils.MergeMaps(_merged, e.SwapCharging(config.AmiClassCommands))
-	_merged = utils.MergeMaps(_merged, e.SwapCharging(config.AmiClassSecurities))
-	_merged = utils.MergeMaps(_merged, e.SwapCharging(config.AmiClassCalls))
-	_merged = utils.MergeMaps(_merged, e.SwapCharging(config.AmiClassSystems))
-	_merged = utils.MergeMaps(_merged, e.SwapCharging(config.AmiClassUsers))
-	_merged = utils.MergeMaps(_merged, e.SwapCharging(config.AmiClassDialPlans))
-	_merged = utils.MergeMaps(_merged, e.SwapCharging(config.AmiClassAgents))
-	_merged = utils.MergeMaps(_merged, e.SwapCharging(config.AmiClassAgis))
-	_merged = utils.MergeMaps(_merged, e.SwapCharging(config.AmiClassAocs))
-	_merged = utils.MergeMaps(_merged, e.SwapCharging(config.AmiClassCallDetailRecords))
-	_merged = utils.MergeMaps(_merged, e.SwapCharging(config.AmiClassChannelEventLoggings))
-	_merged = utils.MergeMaps(_merged, e.SwapCharging(config.AmiClasses))
-	_merged = utils.MergeMaps(_merged, e.SwapCharging(config.AmiClassReports))
-	_merged = utils.MergeMaps(_merged, e.SwapCharging(config.AmiClassDualToneMultiFrequencies))
+	_merged = MergeMaps(_merged, e.SwapCharging(config.AmiClassCommands))
+	_merged = MergeMaps(_merged, e.SwapCharging(config.AmiClassSecurities))
+	_merged = MergeMaps(_merged, e.SwapCharging(config.AmiClassCalls))
+	_merged = MergeMaps(_merged, e.SwapCharging(config.AmiClassSystems))
+	_merged = MergeMaps(_merged, e.SwapCharging(config.AmiClassUsers))
+	_merged = MergeMaps(_merged, e.SwapCharging(config.AmiClassDialPlans))
+	_merged = MergeMaps(_merged, e.SwapCharging(config.AmiClassAgents))
+	_merged = MergeMaps(_merged, e.SwapCharging(config.AmiClassAgis))
+	_merged = MergeMaps(_merged, e.SwapCharging(config.AmiClassAocs))
+	_merged = MergeMaps(_merged, e.SwapCharging(config.AmiClassCallDetailRecords))
+	_merged = MergeMaps(_merged, e.SwapCharging(config.AmiClassChannelEventLoggings))
+	_merged = MergeMaps(_merged, e.SwapCharging(config.AmiClasses))
+	_merged = MergeMaps(_merged, e.SwapCharging(config.AmiClassReports))
+	_merged = MergeMaps(_merged, e.SwapCharging(config.AmiClassDualToneMultiFrequencies))
 
 	chargingEvents = &_merged
 	return chargingEvents
@@ -37,7 +36,7 @@ func (e *AMIEvent) SnapChargingEvent() *map[string]string {
 
 // SnapChargingEventWith
 func (e *AMIEvent) SnapChargingEventWith(ls map[string][]string) *map[string]string {
-	chargingEvents := utils.MergeMaps(*chargingEvents, e.SwapCharging(ls))
+	chargingEvents := MergeMaps(*chargingEvents, e.SwapCharging(ls))
 	return &chargingEvents
 }
 

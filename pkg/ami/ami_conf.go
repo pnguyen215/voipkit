@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 var (
@@ -113,27 +112,27 @@ func (e *AMIExtensionStatus) SetActionId(value string) *AMIExtensionStatus {
 }
 
 func (e *AMIExtensionStatus) SetResponse(value string) *AMIExtensionStatus {
-	e.Response = utils.TrimAllSpace(value)
+	e.Response = TrimStringSpaces(value)
 	return e
 }
 
 func (e *AMIExtensionStatus) SetMessage(value string) *AMIExtensionStatus {
-	e.Message = utils.TrimAllSpace(value)
+	e.Message = TrimStringSpaces(value)
 	return e
 }
 
 func (e *AMIExtensionStatus) SetContext(value string) *AMIExtensionStatus {
-	e.Context = utils.TrimAllSpace(value)
+	e.Context = TrimStringSpaces(value)
 	return e
 }
 
 func (e *AMIExtensionStatus) SetExtension(value string) *AMIExtensionStatus {
-	e.Extension = utils.TrimAllSpace(value)
+	e.Extension = TrimStringSpaces(value)
 	return e
 }
 
 func (e *AMIExtensionStatus) SetHint(value string) *AMIExtensionStatus {
-	e.Hint = utils.TrimAllSpace(value)
+	e.Hint = TrimStringSpaces(value)
 	return e
 }
 
@@ -149,7 +148,7 @@ func (e *AMIExtensionStatus) SetStatusInt(value int) *AMIExtensionStatus {
 }
 
 func (e *AMIExtensionStatus) SetStatusText(value string) *AMIExtensionStatus {
-	e.StatusText = utils.TrimAllSpace(value)
+	e.StatusText = TrimStringSpaces(value)
 	return e
 }
 
@@ -189,27 +188,27 @@ func (e *AMIPeerStatus) SetActionId(value string) *AMIPeerStatus {
 }
 
 func (e *AMIPeerStatus) SetChannelType(value string) *AMIPeerStatus {
-	e.ChannelType = utils.TrimAllSpace(value)
+	e.ChannelType = TrimStringSpaces(value)
 	return e
 }
 
 func (e *AMIPeerStatus) SetEvent(value string) *AMIPeerStatus {
-	e.Event = utils.TrimAllSpace(value)
+	e.Event = TrimStringSpaces(value)
 	return e
 }
 
 func (e *AMIPeerStatus) SetPeer(value string) *AMIPeerStatus {
-	e.Peer = utils.TrimAllSpace(value)
+	e.Peer = TrimStringSpaces(value)
 	return e
 }
 
 func (e *AMIPeerStatus) SetPeerStatus(value string) *AMIPeerStatus {
-	e.PeerStatus = utils.TrimAllSpace(value)
+	e.PeerStatus = TrimStringSpaces(value)
 	return e
 }
 
 func (e *AMIPeerStatus) SetPrivilege(value string) *AMIPeerStatus {
-	e.Privilege = utils.TrimAllSpace(value)
+	e.Privilege = TrimStringSpaces(value)
 	return e
 }
 
@@ -229,7 +228,7 @@ func (e *AMIPeerStatus) SetTimeInMsInt(value int) *AMIPeerStatus {
 }
 
 func (e *AMIPeerStatus) SetPrePublishedAt(value string) *AMIPeerStatus {
-	e.PrePublishedAt = utils.TrimAllSpace(value)
+	e.PrePublishedAt = TrimStringSpaces(value)
 	return e
 }
 
@@ -239,11 +238,11 @@ func (e *AMIPeerStatus) SetPublishedAt(value time.Time) *AMIPeerStatus {
 }
 
 func (e *AMIPeerStatusGuard) SetDateTimeLayout(value string) *AMIPeerStatusGuard {
-	e.DateTimeLayout = utils.TrimAllSpace(value)
+	e.DateTimeLayout = TrimStringSpaces(value)
 	return e
 }
 
 func (e *AMIPeerStatusGuard) SetTimezone(value string) *AMIPeerStatusGuard {
-	e.Timezone = utils.TrimAllSpace(value)
+	e.Timezone = TrimStringSpaces(value)
 	return e
 }

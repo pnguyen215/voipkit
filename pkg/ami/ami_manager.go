@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 func NewAuth() *AMIAuth {
@@ -116,7 +115,7 @@ func Logoff(ctx context.Context, s AMISocket) error {
 	if err != nil {
 		return err
 	}
-	log.Printf("Logoff, response = %v", utils.ToJson(response))
+	log.Printf("Logoff, response = %v", JsonString(response))
 	return err
 }
 
@@ -141,7 +140,7 @@ func Ping(ctx context.Context, s AMISocket) error {
 		return err
 	}
 
-	log.Printf("Ping, response = %v", utils.ToJson(response))
+	log.Printf("Ping, response = %v", JsonString(response))
 	return err
 }
 

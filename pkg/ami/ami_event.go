@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 func NewEventListener() *AMIEvent {
@@ -31,7 +30,7 @@ func (m *AMIEvent) AppendPhonePrefix(values ...string) *AMIEvent {
 }
 
 func (m *AMIEvent) SetRegion(value string) *AMIEvent {
-	m.Region = utils.TrimAllSpace(value)
+	m.Region = TrimStringSpaces(value)
 	return m
 }
 

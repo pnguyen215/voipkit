@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 func NewAMICdr() *AMICdr {
@@ -19,27 +18,27 @@ func NewAMICdr() *AMICdr {
 }
 
 func (r *AMICdr) SetEvent(value string) *AMICdr {
-	r.Event = utils.TrimAllSpace(value)
+	r.Event = TrimStringSpaces(value)
 	return r
 }
 
 func (r *AMICdr) SetAccountCode(value string) *AMICdr {
-	r.AccountCode = utils.TrimAllSpace(value)
+	r.AccountCode = TrimStringSpaces(value)
 	return r
 }
 
 func (r *AMICdr) SetSource(value string) *AMICdr {
-	r.Source = utils.TrimAllSpace(value)
+	r.Source = TrimStringSpaces(value)
 	return r
 }
 
 func (r *AMICdr) SetDestination(value string) *AMICdr {
-	r.Destination = utils.TrimAllSpace(value)
+	r.Destination = TrimStringSpaces(value)
 	return r
 }
 
 func (r *AMICdr) SetDestinationContext(value string) *AMICdr {
-	r.DestinationContext = utils.TrimAllSpace(value)
+	r.DestinationContext = TrimStringSpaces(value)
 	return r
 }
 
@@ -49,22 +48,22 @@ func (r *AMICdr) SetCallerId(value string) *AMICdr {
 }
 
 func (r *AMICdr) SetChannel(value string) *AMICdr {
-	r.Channel = utils.TrimAllSpace(value)
+	r.Channel = TrimStringSpaces(value)
 	return r
 }
 
 func (r *AMICdr) SetDestinationChannel(value string) *AMICdr {
-	r.DestinationChannel = utils.TrimAllSpace(value)
+	r.DestinationChannel = TrimStringSpaces(value)
 	return r
 }
 
 func (r *AMICdr) SetLastApplication(value string) *AMICdr {
-	r.LastApplication = utils.TrimAllSpace(value)
+	r.LastApplication = TrimStringSpaces(value)
 	return r
 }
 
 func (r *AMICdr) SetLastData(value string) *AMICdr {
-	r.LastData = utils.TrimAllSpace(value)
+	r.LastData = TrimStringSpaces(value)
 	return r
 }
 
@@ -162,12 +161,12 @@ func (r *AMICdr) SetBillableSecondWith(value string) *AMICdr {
 }
 
 func (r *AMICdr) SetDisposition(value string) *AMICdr {
-	r.Disposition = utils.TrimAllSpace(value)
+	r.Disposition = TrimStringSpaces(value)
 	return r
 }
 
 func (r *AMICdr) SetAmaFlag(value string) *AMICdr {
-	r.AmaFlags = utils.TrimAllSpace(value)
+	r.AmaFlags = TrimStringSpaces(value)
 	return r
 }
 
@@ -200,7 +199,7 @@ func (r *AMICdr) SetPrivilege(value string) *AMICdr {
 }
 
 func (r *AMICdr) SetDirection(value string) *AMICdr {
-	r.Direction = utils.TrimAllSpace(value)
+	r.Direction = TrimStringSpaces(value)
 	return r
 }
 
@@ -210,22 +209,22 @@ func (r *AMICdr) SetFlowCall(value string) *AMICdr {
 }
 
 func (r *AMICdr) SetTypeDirection(value string) *AMICdr {
-	r.TypeDirection = utils.TrimAllSpace(value)
+	r.TypeDirection = TrimStringSpaces(value)
 	return r
 }
 
 func (r *AMICdr) SetUserExten(value string) *AMICdr {
-	r.UserExtension = utils.TrimAllSpace(value)
+	r.UserExtension = TrimStringSpaces(value)
 	return r
 }
 
 func (r *AMICdr) SetPhoneNumber(value string) *AMICdr {
-	r.PhoneNumber = utils.TrimAllSpace(value)
+	r.PhoneNumber = TrimStringSpaces(value)
 	return r
 }
 
 func (r *AMICdr) SetExtenSplitterSymbol(value string) *AMICdr {
-	r.ExtenSplitterSymbol = utils.TrimAllSpace(value)
+	r.ExtenSplitterSymbol = TrimStringSpaces(value)
 	return r
 }
 
@@ -235,7 +234,7 @@ func (r *AMICdr) SetPlaybackUrl(value string) *AMICdr {
 }
 
 func (r *AMICdr) Json() string {
-	return utils.ToJson(r)
+	return JsonString(r)
 }
 
 func (r *AMICdr) IsCdrNoAnswer() bool {
@@ -346,8 +345,8 @@ func ParseCdr(e *AMIMessage, d *AMIDictionary) *AMICdr {
 	// detect outbound, inbound
 	// if the field destination is phone number, so mark this cdr belong to outbound, otherwise mark as inbound
 	form := "flow_call_from_'%v'_to_'%v'"
-	phone := utils.RemovePrefix(r.Destination, e.PhonePrefix...)
-	if IsPhoneNumberAbsolute(phone, e.Region) {
+	phone := RemoveStringPrefix(r.Destination, e.PhonePrefix...)
+	if IsPhoneNumberWith(phone, e.Region) {
 		flow := fmt.Sprintf(form, r.Channel, phone)
 		r.SetFlowCall(flow)
 		r.SetDirection(config.AmiOutboundDirection)
@@ -386,7 +385,7 @@ func ParseCdr(e *AMIMessage, d *AMIDictionary) *AMICdr {
 			r.SetPhoneNumber(r.Source)
 		}
 		if !inCase {
-			log.Printf("ParseCdr, CDR exception case = %v", utils.ToJson(r))
+			log.Printf("ParseCdr, CDR exception case = %v", JsonString(r))
 		}
 	}
 	return r

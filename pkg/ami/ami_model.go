@@ -85,7 +85,7 @@ type AMISocket struct {
 	IsUsedDictionary     bool           `json:"is_used_dictionary"`
 	Retry                bool           `json:"retry"`
 	MaxRetries           int            `json:"max_retries"`
-	AllowTrace           bool           `json:"allow_trace"`
+	DebugMode            bool           `json:"debug_mode"`
 	MaxConcurrencyMillis int64          `json:"max_concurrency_millis"`
 }
 

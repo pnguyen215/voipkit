@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 func NewAMIPayloadOriginate() *AMIPayloadOriginate {
@@ -60,7 +59,7 @@ func (o *AMIPayloadOriginate) SetData(value string) *AMIPayloadOriginate {
 }
 
 func (o *AMIPayloadOriginate) SetDataWith(value interface{}) *AMIPayloadOriginate {
-	o.SetData(utils.ToJson(value))
+	o.SetData(JsonString(value))
 	return o
 }
 
@@ -131,7 +130,7 @@ func (o *AMIPayloadOriginate) SetOtherChannelId(value string) *AMIPayloadOrigina
 }
 
 func (o *AMIPayloadOriginate) Json() string {
-	return utils.ToJson(o)
+	return JsonString(o)
 }
 
 func (o *AMIOriginateDirection) SetTelephone(value string) *AMIOriginateDirection {
@@ -169,7 +168,7 @@ func (o *AMIOriginateDirection) SetAllowSysValidator(value bool) *AMIOriginateDi
 }
 
 func (o *AMIOriginateDirection) Json() string {
-	return utils.ToJson(o)
+	return JsonString(o)
 }
 
 // MakeCall

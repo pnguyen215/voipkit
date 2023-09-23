@@ -3,8 +3,6 @@ package ami
 import (
 	"fmt"
 	"strings"
-
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 func NewAMIUpdateConfigAction() *AMIUpdateConfigAction {
@@ -47,7 +45,7 @@ func (a *AMIUpdateConfigAction) SetVarsMap(delimiter string, variables map[strin
 	}
 	_vars := make([]string, len(variables))
 	for k, v := range variables {
-		str := fmt.Sprintf("%s=%v", k, utils.ToJson(v))
+		str := fmt.Sprintf("%s=%v", k, JsonString(v))
 		_vars = append(_vars, str)
 	}
 	a.SetVars(delimiter, _vars...)

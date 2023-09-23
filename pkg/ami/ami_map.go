@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 func (c *AMICore) ExtensionStatesMap(ctx context.Context, guard *AMIExtensionGuard) (response []AMIExtensionStatus, err error) {
@@ -28,13 +27,13 @@ func (c *AMICore) ExtensionStatesMap(ctx context.Context, guard *AMIExtensionGua
 		}
 
 		if len(guard.Context) > 0 {
-			if !utils.Contains(guard.Context, v.GetVal(config.AmiJsonFieldContext)) {
+			if !Contains(guard.Context, v.GetVal(config.AmiJsonFieldContext)) {
 				continue
 			}
 		}
 
 		if len(guard.StatusesText) > 0 {
-			if !utils.Contains(guard.StatusesText, v.GetVal(config.AmiJsonFieldStatusText)) {
+			if !Contains(guard.StatusesText, v.GetVal(config.AmiJsonFieldStatusText)) {
 				continue
 			}
 		}
@@ -109,13 +108,13 @@ func (c *AMICore) convRaw2PeerStatus(v AMIResultRaw, g *AMIPeerStatusGuard) *AMI
 		SetPeerStatus(v.GetVal(config.AmiJsonFieldPeerStatus)).
 		SetPrivilege(v.GetVal(config.AmiJsonFieldPrivilege)).
 		SetTimeInMs(v.GetVal(config.AmiJsonFieldTime)).
-		SetPublishedAt(utils.SetTimezone(time.Now(), g.Timezone))
+		SetPublishedAt(AdjustTimezone(time.Now(), g.Timezone))
 
 	if e.TimeInMs > 0 {
 		e.SetPublishedAt(e.PublishedAt.Add(-time.Millisecond * time.Duration(e.TimeInMs)))
 	}
 
-	if utils.IsEmptyAbsolute(g.DateTimeLayout) {
+	if IsStringEmpty(g.DateTimeLayout) {
 		e.SetPrePublishedAt(e.PublishedAt.Format(config.DateTimeFormatYYYYMMDDHHMMSS))
 	} else {
 		e.SetPrePublishedAt(e.PublishedAt.Format(g.DateTimeLayout))

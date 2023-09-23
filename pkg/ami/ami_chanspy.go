@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 func NewAMIPayloadChanspy() *AMIPayloadChanspy {
@@ -18,20 +17,20 @@ func NewAMIPayloadChanspy() *AMIPayloadChanspy {
 func (s *AMIPayloadChanspy) SetJoin(value string) *AMIPayloadChanspy {
 	ok := config.AmiChanspy[value]
 	if !ok {
-		msg := fmt.Sprintf(config.AmiErrorChanspyMessage, strings.Join(utils.Keys(config.AmiChanspy), ","))
+		msg := fmt.Sprintf(config.AmiErrorChanspyMessage, strings.Join(GetKeys(config.AmiChanspy), ","))
 		log.Panic(config.AmiErrorInvalidChanspy, "\n", msg)
 	}
-	s.Join = utils.TrimAllSpace(value)
+	s.Join = TrimStringSpaces(value)
 	return s
 }
 
 func (s *AMIPayloadChanspy) SetSourceExten(value string) *AMIPayloadChanspy {
-	s.SourceExten = utils.TrimAllSpace(value)
+	s.SourceExten = TrimStringSpaces(value)
 	return s
 }
 
 func (s *AMIPayloadChanspy) SetCurrentExten(value string) *AMIPayloadChanspy {
-	s.CurrentExten = utils.TrimAllSpace(value)
+	s.CurrentExten = TrimStringSpaces(value)
 	return s
 }
 
@@ -47,10 +46,10 @@ func (s *AMIPayloadChanspy) SetAllowDebug(value bool) *AMIPayloadChanspy {
 }
 
 func (s *AMIPayloadChanspy) CommandChanspy(channelExten string) string {
-	if utils.IsEmptyAbsolute(s.Join) {
+	if IsStringEmpty(s.Join) {
 		return ""
 	}
-	if utils.IsEmptyAbsolute(channelExten) {
+	if IsStringEmpty(channelExten) {
 		return ""
 	}
 	if strings.EqualFold(s.Join, config.AmiChanspySpy) {
@@ -69,13 +68,13 @@ func (s *AMIPayloadChanspy) CommandChanspy(channelExten string) string {
 func Chanspy(ctx context.Context, s AMISocket, ch AMIPayloadChanspy) (AMIResultRawLevel, error) {
 	ok := config.AmiChanspy[ch.Join]
 	if !ok {
-		msg := fmt.Sprintf(config.AmiErrorChanspyMessage, strings.Join(utils.Keys(config.AmiChanspy), ","))
+		msg := fmt.Sprintf(config.AmiErrorChanspyMessage, strings.Join(GetKeys(config.AmiChanspy), ","))
 		log.Panic(config.AmiErrorInvalidChanspy, "\n", msg)
 	}
-	if utils.IsEmptyAbsolute(ch.SourceExten) {
+	if IsStringEmpty(ch.SourceExten) {
 		return AMIResultRawLevel{}, fmt.Errorf("Source exten is required")
 	}
-	if utils.IsEmptyAbsolute(ch.CurrentExten) {
+	if IsStringEmpty(ch.CurrentExten) {
 		return AMIResultRawLevel{}, fmt.Errorf("Current exten is required")
 	}
 	sourceValid, err := HasSIPPeerStatus(ctx, s, ch.SourceExten)

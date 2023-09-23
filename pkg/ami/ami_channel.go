@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 func NewChannel() *AMIChannel {
@@ -18,7 +17,7 @@ func NewChannel() *AMIChannel {
 
 func (c *AMIChannel) SetChannelProtocol(protocol string) *AMIChannel {
 	if ok := config.AmiChannelProtocols[protocol]; !ok {
-		msg := fmt.Sprintf(config.AmiErrorProtocolMessage, strings.Join(utils.Keys(config.AmiChannelProtocols), ","))
+		msg := fmt.Sprintf(config.AmiErrorProtocolMessage, strings.Join(GetKeys(config.AmiChannelProtocols), ","))
 		log.Panic(config.AmiErrorInvalidProtocol, "\n", msg)
 	}
 	c.ChannelProtocol = protocol
@@ -66,10 +65,10 @@ func (c *AMIChannel) ValidWith(channelProtocol string, regex string, digitsExten
 	if len(digitsExten) == 0 {
 		return false
 	}
-	if utils.IsEmptyAbsolute(extension) {
+	if IsStringEmpty(extension) {
 		return false
 	}
-	if utils.IsEmptyAbsolute(regex) {
+	if IsStringEmpty(regex) {
 		return false
 	}
 	c.SetChannelProtocol(channelProtocol)
@@ -103,7 +102,7 @@ func (c *AMIChannel) ValidSIPDefaultWith(digitsExten []interface{}, extension st
 // Return as form sip@127.0.0.1
 func (c *AMIChannel) JoinHostChannel(protocol, ip string) string {
 	c.SetChannelProtocol(protocol)
-	host, _, _ := utils.IPDecode(ip)
+	host, _, _ := DecodeIp(ip)
 	form := "%v@%v"
 
 	if len(host) > 0 {

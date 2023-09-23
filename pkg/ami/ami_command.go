@@ -106,7 +106,7 @@ func (a *AMICommand) DoGetResult(ctx context.Context, s AMISocket, c *AMICommand
 		_response := raw.GetVal(strings.ToLower(config.AmiResponseKey))
 
 		if len(acceptedEvents) == 0 {
-			if s.AllowTrace {
+			if s.DebugMode {
 				log.Printf(config.AmiErrorMissingSocketEvent, _event, _response)
 			}
 			break
@@ -114,7 +114,7 @@ func (a *AMICommand) DoGetResult(ctx context.Context, s AMISocket, c *AMICommand
 
 		if len(ignoreEvents) > 0 {
 			if slices.Contains(ignoreEvents, _event) || (_response != "" && !strings.EqualFold(_response, config.AmiStatusSuccessKey)) {
-				if s.AllowTrace {
+				if s.DebugMode {
 					log.Printf(config.AmiErrorBreakSocketIgnoredEvent, _event)
 				}
 				break
@@ -145,7 +145,7 @@ func (a *AMICommand) Read(ctx context.Context, socket AMISocket) (AMIResultRaw, 
 
 		if socket.MaxConcurrencyMillis > 0 {
 			if concurrency >= socket.MaxConcurrencyMillis {
-				if socket.AllowTrace {
+				if socket.DebugMode {
 					log.Printf("Read(). max over concurrency = %v (millis), the concurrency allowed = %v (millis)",
 						concurrency, socket.MaxConcurrencyMillis)
 				}
@@ -176,7 +176,7 @@ func (a *AMICommand) ReadLevel(ctx context.Context, socket AMISocket) (AMIResult
 
 		if socket.MaxConcurrencyMillis > 0 {
 			if concurrency >= socket.MaxConcurrencyMillis {
-				if socket.AllowTrace {
+				if socket.DebugMode {
 					log.Printf("ReadLevel(). max over concurrency = %v (millis), the concurrency allowed = %v (millis)",
 						concurrency, socket.MaxConcurrencyMillis)
 				}

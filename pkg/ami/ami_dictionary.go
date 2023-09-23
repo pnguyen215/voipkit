@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/utils"
 )
 
 var overlapDictionaries *[]AMIEventDictionary = &[]AMIEventDictionary{}
@@ -269,7 +268,7 @@ func (d *AMIDictionary) TranslateField(field string) string {
 		return strings.ToLower(value)
 	} else {
 		if d.AllowForceTranslate {
-			value = utils.TakeValueFromKey(dictionary.Dictionaries, field)
+			value = GetValByKey(dictionary.Dictionaries, field)
 			if len(value) > 0 {
 				return value
 			}
@@ -289,7 +288,7 @@ func (d *AMIDictionary) TranslateFieldWith(field string, dictionaries []AMIEvent
 			return strings.ToLower(v)
 		} else {
 			if d.AllowForceTranslate {
-				value := utils.TakeValueFromKey(e.Dictionaries, field)
+				value := GetValByKey(e.Dictionaries, field)
 				if len(value) > 0 {
 					return value
 				}
@@ -303,7 +302,7 @@ func (d *AMIDictionary) TranslateFieldWith(field string, dictionaries []AMIEvent
 func (d *AMIDictionary) TranslateKey(value string) string {
 	dictionary, _ := d.FindDictionaryByKey(config.AmiListenerEventCommon)
 
-	_key := utils.TakeKeyFromValue(dictionary.Dictionaries, value)
+	_key := GetKeyByVal(dictionary.Dictionaries, value)
 
 	if !strings.EqualFold(_key, value) {
 		return _key
@@ -318,7 +317,7 @@ func (d *AMIDictionary) TranslateKeyWith(value string, dictionaries []AMIEventDi
 	}
 
 	for _, e := range dictionaries {
-		_key := utils.TakeKeyFromValue(e.Dictionaries, value)
+		_key := GetKeyByVal(e.Dictionaries, value)
 		if !strings.EqualFold(_key, value) {
 			return _key
 		}
@@ -337,7 +336,7 @@ func (d *AMIDictionary) Reset() {
 }
 
 func (d *AMIDictionary) Json() string {
-	return utils.ToJson(*overlapDictionaries)
+	return JsonString(*overlapDictionaries)
 }
 
 func (d *AMIDictionary) LenTranslatorCommon() int {
@@ -379,7 +378,7 @@ func (d *AMIDictionary) AddKeysTranslator(script map[string]string) *AMIDictiona
 // Example:
 // https://raw.githubusercontent.com/pnguyen215/gear-insights-free/master/ami.dictionaries.json
 func (d *AMIDictionary) AddKeyLinkTranslator(link string) *AMIDictionary {
-	keys, err := utils.ForkDictionaryFromLink(link, false)
+	keys, err := ForkDictionaryFromLink(link, false)
 
 	if err != nil {
 		return d
