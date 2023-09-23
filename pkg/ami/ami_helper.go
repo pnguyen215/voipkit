@@ -683,3 +683,35 @@ func JsonString(data interface{}) string {
 	}
 	return string(result)
 }
+
+func JsonStringify(data interface{}) string {
+	s, ok := data.(string)
+	if ok {
+		return s
+	}
+	result, err := MarshalIndent(data, "", "    ")
+	if err != nil {
+		return ""
+	}
+	return string(result)
+}
+
+func MarshalToString(v interface{}) (string, error) {
+	return _json.MarshalToString(v)
+}
+
+func MarshalJsonIterator(v interface{}) ([]byte, error) {
+	return _json.Marshal(v)
+}
+
+func Unmarshal(data []byte, v interface{}) error {
+	return _json.Unmarshal(data, v)
+}
+
+func UnmarshalFromString(str string, v interface{}) error {
+	return _json.UnmarshalFromString(str, v)
+}
+
+func MarshalIndent(v interface{}, prefix, indent string) ([]byte, error) {
+	return _json.MarshalIndent(v, prefix, indent)
+}
