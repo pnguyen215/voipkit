@@ -10,6 +10,11 @@ With Asterisk in Golang, developers benefit from the strengths of both the Golan
 
 - [Asterisk Manager Interface (AMI)](https://github.com/pnguyen215/gobase-voip-core/blob/master/docs/ami.md)
 
+### Github Action
+
+- [Action gh-release](https://github.com/softprops/action-gh-release)
+- [Github Security guides](https://docs.github.com/en/actions/security-guides)
+
 ### Reference
 
 - [Asterisk Documentation](https://docs.asterisk.org)
