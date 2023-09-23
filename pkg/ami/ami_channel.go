@@ -34,34 +34,30 @@ func (c *AMIChannel) SetExtension(extension string) *AMIChannel {
 	return c
 }
 
-func (c *AMIChannel) Valid(regex string, extension string) bool {
-
+func (c *AMIChannel) Verify(regex string, extension string) bool {
 	if strings.EqualFold(regex, "") {
 		log.Printf(config.AmiErrorFieldRequired, "Regex")
 		return false
 	}
-
 	if strings.EqualFold(extension, "") {
 		log.Printf(config.AmiErrorFieldRequired, "Extension")
 		return false
 	}
-
 	_regexp, err := regexp.Compile(regex)
 	if err != nil {
 		log.Printf("regex '%v' has an error compile occurred: %v", regex, err.Error())
 		return false
 	}
-
 	match := _regexp.MatchString(extension)
 	return match
 }
 
-func (c *AMIChannel) ValidSIPDefault(extension string) bool {
+func (c *AMIChannel) VerifyDefaultSIP(extension string) bool {
 	c.SetChannelProtocol(config.AmiSIPChannelProtocol)
-	return c.Valid(config.AmiDigitExtensionRegexDefault, extension)
+	return c.Verify(config.AmiDigitExtensionRegexDefault, extension)
 }
 
-func (c *AMIChannel) ValidWith(channelProtocol string, regex string, digitsExten []interface{}, extension string) bool {
+func (c *AMIChannel) VerifyWith(channelProtocol string, regex string, digitsExten []interface{}, extension string) bool {
 	if len(digitsExten) == 0 {
 		return false
 	}
@@ -76,7 +72,7 @@ func (c *AMIChannel) ValidWith(channelProtocol string, regex string, digitsExten
 
 	for _, v := range digitsExten {
 		_regex := fmt.Sprintf(regex, v)
-		valid := c.Valid(_regex, extension)
+		valid := c.Verify(_regex, extension)
 		if valid {
 			has = valid
 			break
@@ -85,15 +81,15 @@ func (c *AMIChannel) ValidWith(channelProtocol string, regex string, digitsExten
 	return has
 }
 
-// ValidSIPDefaultWith
+// VerifyDefaultSIPWith
 // Example:
 /*
-	v := ami.NewChannel().ValidSIPDefaultWith([]interface{}{4, 5, 6}, "SIP/8103")
+	v := ami.NewChannel().VerifyDefaultSIPWith([]interface{}{4, 5, 6}, "SIP/8103")
 	log.Printf("outgoing: %v", v)
 */
-func (c *AMIChannel) ValidSIPDefaultWith(digitsExten []interface{}, extension string) bool {
+func (c *AMIChannel) VerifyDefaultSIPWith(digitsExten []interface{}, extension string) bool {
 	c.SetChannelProtocol(config.AmiSIPChannelProtocol)
-	return c.ValidWith(c.ChannelProtocol, config.AmiDigitExtensionRegexWithDigits, digitsExten, extension)
+	return c.VerifyWith(c.ChannelProtocol, config.AmiDigitExtensionRegexWithDigits, digitsExten, extension)
 }
 
 // JoinHostChannel
