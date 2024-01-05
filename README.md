@@ -6,9 +6,27 @@ Asterisk in Golang provides a wide range of features, including call routing, re
 
 With Asterisk in Golang, developers benefit from the strengths of both the Golang language and the Asterisk ecosystem, resulting in reliable and efficient VOIP solutions that meet the demands of modern communication systems.
 
+### Requirement
+
+The go version 1.20
+
+### Installation
+
+- Use a specific version (tag)
+
+```bash
+go get github.com/pnguyen215/voipkit@v1.0.0
+```
+
+- Latest version
+
+```bash
+go get -u github.com/pnguyen215/voipkit@latest
+```
+
 ### Usage
 
-- [Asterisk Manager Interface (AMI)](https://github.com/pnguyen215/gobase-voip-core/blob/master/docs/ami.md)
+- [Asterisk Manager Interface (AMI)](https://github.com/pnguyen215/voipkit/blob/master/docs/ami.md)
 
 ### Github Action
 

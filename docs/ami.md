@@ -1,11 +1,5 @@
 # Asterisk Manager Interface (AMI)
 
-## Installation
-
-```sh
-go get -u github.com/pnguyen215/gobase-voip-core@v1.0.13
-```
-
 ## Usage
 
 1. Open connection to asterisk server
@@ -32,7 +26,7 @@ package main
 import (
 	"log"
 
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami"
+	"github.com/pnguyen215/voipkit/pkg/ami"
 )
 
 func NewClient() (*ami.AMI, error) {
@@ -41,7 +35,7 @@ func NewClient() (*ami.AMI, error) {
 }
 
 func main() {
-	
+
 	client, err := NewClient()
 
 	if err != nil {
@@ -52,7 +46,7 @@ func main() {
 ```
 
 2. Custom listen all events from asterisk
-// note: using go func(){...}
+   // note: using go func(){...}
 
 ```Go
 // AllEvents subscribes to any AMI message received from Asterisk server
@@ -75,8 +69,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
+	"github.com/pnguyen215/voipkit/pkg/ami"
+	"github.com/pnguyen215/voipkit/pkg/ami/config"
 )
 
 func NewClient() (*ami.AMI, error) {
@@ -120,7 +114,7 @@ package main
 import (
 	"log"
 
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami"
+	"github.com/pnguyen215/voipkit/pkg/ami"
 )
 
 func NewClient() (*ami.AMI, error) {
@@ -146,6 +140,7 @@ func main() {
 ```
 
 4. Listen events and get field from event by adding key-value you want to take value from that field
+
 ##### Example
 
 ```Go
@@ -154,7 +149,7 @@ package main
 import (
 	"log"
 
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami"
+	"github.com/pnguyen215/voipkit/pkg/ami"
 )
 
 func NewClient() (*ami.AMI, error) {
@@ -184,7 +179,8 @@ func main() {
 ```
 
 5. Listen events and get field from event by adding key-value you want to take value from that field.
-You can customize event by adding new callback function
+   You can customize event by adding new callback function
+
 ##### Example
 
 ```Go
@@ -193,7 +189,7 @@ package main
 import (
 	"log"
 
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami"
+	"github.com/pnguyen215/voipkit/pkg/ami"
 )
 
 func NewClient() (*ami.AMI, error) {

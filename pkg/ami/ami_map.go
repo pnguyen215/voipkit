@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
+	"github.com/pnguyen215/voipkit/pkg/ami/config"
 )
 
 func (c *AMICore) ExtensionStatesMap(ctx context.Context, guard *AMIExtensionGuard) (response []AMIExtensionStatus, err error) {

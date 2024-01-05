@@ -6,7 +6,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
+	"github.com/pnguyen215/voipkit/pkg/ami/config"
 )
 
 func NewAuth() *AMIAuth {

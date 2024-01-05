@@ -1,4 +1,4 @@
-module github.com/pnguyen215/gobase-voip-core
+module github.com/pnguyen215/voipkit
 
 go 1.20
 

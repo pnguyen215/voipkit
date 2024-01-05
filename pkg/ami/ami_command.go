@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
+	"github.com/pnguyen215/voipkit/pkg/ami/config"
 	"golang.org/x/exp/slices"
 )
 

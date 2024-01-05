@@ -20,7 +20,7 @@ import (
 	"time"
 
 	"github.com/nyaruka/phonenumbers"
-	"github.com/pnguyen215/gobase-voip-core/pkg/ami/config"
+	"github.com/pnguyen215/voipkit/pkg/ami/config"
 
 	jsonI "github.com/json-iterator/go"
 )
