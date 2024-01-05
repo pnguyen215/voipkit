@@ -1,4 +1,4 @@
-# GobaseVoipCore
+# VoipKit
 
 The Asterisk VOIP library, implemented in the Go programming language (Golang), is a versatile and powerful tool for building robust voice over IP (VOIP) communication systems. Leveraging the efficiency and concurrency of Golang, this library enables developers to create scalable and high-performance VOIP applications with ease.
 
