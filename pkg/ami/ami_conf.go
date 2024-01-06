@@ -47,8 +47,8 @@ func NewAMIPeerStatus() *AMIPeerStatus {
 
 func NewAMIPeerStatusGuard() *AMIPeerStatusGuard {
 	e := &AMIPeerStatusGuard{}
-	e.SetDateTimeLayout(config.DateTimeFormatYYYYMMDDHHMMSS)
-	e.SetTimezone(config.DefaultTimezoneAsia)
+	e.SetDateTimeLayout(config.DateTimeFormat20060102150405)
+	e.SetTimezone(config.DefaultTimezoneVietnam)
 	return e
 }
 

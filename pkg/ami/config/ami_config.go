@@ -4,12 +4,60 @@ import (
 	"time"
 )
 
+// Time format styles for date and time formatting.
 const (
-	DateTimeFormatYYYYMMDDTHHMMSS = "2006-01-02T15:04:05"
-	DateTimeFormatYYYYMMDDHHMMSS  = "2006-01-02 15:04:05"
-	DateTimeFormatYYYYMMDD        = "2006-01-02"
-	DateTimeFormatYYYYMM          = "2006-01"
-	DefaultTimezoneAsia           = "Asia/Ho_Chi_Minh"
+	// DateTimeFormat20060102T150405 represents the time format "2006-01-02T15:04:05",
+	// which includes the full date in the format YYYY-MM-DD followed by the time in the
+	// format HH:MM:SS.
+	DateTimeFormat20060102T150405 = "2006-01-02T15:04:05"
+
+	// DateTimeFormat20060102150405 represents the time format "2006-01-02 15:04:05",
+	// which includes the full date in the format YYYY-MM-DD followed by the time in the
+	// format HH:MM:SS with a space between the date and time.
+	DateTimeFormat20060102150405 = "2006-01-02 15:04:05"
+
+	// DateTimeFormat20060102 represents the date format "2006-01-02",
+	// which includes the full date in the format YYYY-MM-DD without any time information.
+	DateTimeFormat20060102 = "2006-01-02"
+
+	// DateTimeFormat200601 represents the month format "2006-01",
+	// which includes the year and month in the format YYYY-MM without any day or time information.
+	DateTimeFormat200601 = "2006-01"
+)
+
+// Timezone constants representing default timezones for specific regions.
+const (
+	// DefaultTimezoneVietnam is a constant that holds the IANA Time Zone identifier
+	// for the default timezone in Vietnam, which is "Asia/Ho_Chi_Minh".
+	DefaultTimezoneVietnam = "Asia/Ho_Chi_Minh"
+
+	// DefaultTimezoneNewYork is a constant that holds the IANA Time Zone identifier
+	// for the default timezone in New York, USA, which is "America/New_York".
+	DefaultTimezoneNewYork = "America/New_York"
+
+	// DefaultTimezoneLondon is a constant that holds the IANA Time Zone identifier
+	// for the default timezone in London, United Kingdom, which is "Europe/London".
+	DefaultTimezoneLondon = "Europe/London"
+
+	// DefaultTimezoneTokyo is a constant that holds the IANA Time Zone identifier
+	// for the default timezone in Tokyo, Japan, which is "Asia/Tokyo".
+	DefaultTimezoneTokyo = "Asia/Tokyo"
+
+	// DefaultTimezoneSydney is a constant that holds the IANA Time Zone identifier
+	// for the default timezone in Sydney, Australia, which is "Australia/Sydney".
+	DefaultTimezoneSydney = "Australia/Sydney"
+
+	// DefaultTimezoneParis is a constant that holds the IANA Time Zone identifier
+	// for the default timezone in Paris, France, which is "Europe/Paris".
+	DefaultTimezoneParis = "Europe/Paris"
+
+	// DefaultTimezoneMoscow is a constant that holds the IANA Time Zone identifier
+	// for the default timezone in Moscow, Russia, which is "Europe/Moscow".
+	DefaultTimezoneMoscow = "Europe/Moscow"
+
+	// DefaultTimezoneLosAngeles is a constant that holds the IANA Time Zone identifier
+	// for the default timezone in Los Angeles, USA, which is "America/Los_Angeles".
+	DefaultTimezoneLosAngeles = "America/Los_Angeles"
 )
 
 const (
@@ -466,7 +514,7 @@ const (
 	AmiTypeOutboundNormalDirection = "outbound_normal"
 	AmiTypeInboundDialDirection    = "inbound_dial"  // from application on user local machine
 	AmiTypeInboundQueueDirection   = "inbound_queue" // from queue, not real user
-	AmiTypeChanSpyDirection        = "chan_spy"      //
+	AmiTypeChanSpyDirection        = "chan_spy"
 )
 
 var (
@@ -613,9 +661,17 @@ const (
 	AmiLastApplicationChanSpy = "ChanSpy"
 )
 
+// AmiChanspySpy, AmiChanspyBarge, and AmiChanspyWhisper are constants representing different modes
+// of ChanSpy functionality in Asterisk Manager Interface (AMI).
 const (
-	AmiChanspySpy     = "spy"
-	AmiChanspyBarge   = "barge"
+	// AmiChanspySpy represents the "spy" mode in ChanSpy, allowing monitoring without intervention.
+	AmiChanspySpy = "spy"
+
+	// AmiChanspyBarge represents the "barge" mode in ChanSpy, allowing the interceptor to join an ongoing call.
+	AmiChanspyBarge = "barge"
+
+	// AmiChanspyWhisper represents the "whisper" mode in ChanSpy, allowing the interceptor to listen and talk to
+	// one party in a call without the other party hearing the interceptor's voice.
 	AmiChanspyWhisper = "whisper"
 )
 

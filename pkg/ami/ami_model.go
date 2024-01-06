@@ -437,7 +437,7 @@ type AMICdr struct {
 	Direction           string `json:"direction"`
 	FlowCall            string `json:"flow_call"`
 	TypeDirection       string `json:"type_direction"`
-	UserExtension       string `json:"user_exten,omitempty"`
+	UserExtension       string `json:"user_extension,omitempty"`
 	PhoneNumber         string `json:"phone_number,omitempty"`
 	PlaybackUrl         string `json:"playback_url,omitempty"` // the only cdr has status answered
 	ExtenSplitterSymbol string `json:"-"`                      // default exten splitter symbol: -, example: SIP/1000-00098fec then split by -

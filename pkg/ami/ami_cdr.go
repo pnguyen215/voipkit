@@ -73,7 +73,7 @@ func (r *AMICdr) SetStartTime(value time.Time) *AMICdr {
 }
 
 func (r *AMICdr) SetStartTimeWith(value string) *AMICdr {
-	t, err := time.Parse(config.DateTimeFormatYYYYMMDDHHMMSS, value)
+	t, err := time.Parse(config.DateTimeFormat20060102150405, value)
 	if err == nil {
 		r.SetStartTime(t)
 	}
@@ -94,7 +94,7 @@ func (r *AMICdr) SetAnswerTime(value time.Time) *AMICdr {
 }
 
 func (r *AMICdr) SetAnswerTimeWith(value string) *AMICdr {
-	t, err := time.Parse(config.DateTimeFormatYYYYMMDDHHMMSS, value)
+	t, err := time.Parse(config.DateTimeFormat20060102150405, value)
 	if err == nil {
 		r.SetAnswerTime(t)
 	}
@@ -115,7 +115,7 @@ func (r *AMICdr) SetEndTime(value time.Time) *AMICdr {
 }
 
 func (r *AMICdr) SetEndTimeWith(value string) *AMICdr {
-	t, err := time.Parse(config.DateTimeFormatYYYYMMDDHHMMSS, value)
+	t, err := time.Parse(config.DateTimeFormat20060102150405, value)
 	if err == nil {
 		r.SetEndTime(t)
 	}
