@@ -75,4 +75,6 @@ const (
 	AmiFieldNumber              = "Number"
 	AmiFieldConference          = "Conference"
 	AmiFieldRecordFile          = "RecordFile"
+	AmiFieldUsername            = "Username"
+	AmiFieldSecret              = "Secret"
 )
