@@ -752,6 +752,21 @@ func ForkDictionaryFromLink(link string, debug bool) (*map[string]string, error)
 	return result, err
 }
 
+// VarsMap creates a map[string]string from a slice of string values, typically representing
+// key-value pairs in the format "key=value". It uses the VarsSplit function to extract
+// individual key-value pairs from each string in the input slice.
+//
+// Parameters:
+//   - values: A slice of strings representing key-value pairs, where each string is in the format "key=value".
+//
+// Returns:
+//   - A map[string]string containing the extracted key-value pairs from the input slice.
+//
+// Example:
+//
+//	values := []string{"name=John", "age=25", "city=New York"}
+//	result := VarsMap(values)
+//	// result is a map[string]string{"name": "John", "age": "25", "city": "New York"}.
 func VarsMap(values []string) map[string]string {
 	r := make(map[string]string)
 	for _, value := range values {
@@ -761,6 +776,19 @@ func VarsMap(values []string) map[string]string {
 	return r
 }
 
+// VarsSplit splits a string in the format "key=value" into its key and value components.
+//
+// Parameters:
+//   - value: A string in the format "key=value" to be split.
+//
+// Returns:
+//   - Two strings representing the key and value components extracted from the input string.
+//
+// Example:
+//
+//	value := "name=John"
+//	key, val := VarsSplit(value)
+//	// key is "name" and val is "John".
 func VarsSplit(value string) (string, string) {
 	s := strings.SplitN(value, "=", 2)
 	k := s[0]
@@ -770,21 +798,52 @@ func VarsSplit(value string) (string, string) {
 	return k, s[1]
 }
 
+// UsableRConnection checks the usability of a remote connection to a specified IP address and port.
+// It attempts to establish a TCP connection within a specified timeout duration.
+//
+// Parameters:
+//   - ip:   The IP address of the remote server.
+//   - port: The port number on the remote server.
+//
+// Returns:
+//   - A boolean value indicating whether the connection to the remote server is usable.
+//   - An error if there is an issue during the connection attempt.
+//
+// Example:
+//
+//	isUsable, err := UsableRConnection("127.0.0.1", 8080)
+//	// isUsable is true if the connection is usable, and err is an error indicating any connection issues.
 func UsableRConnection(ip string, port int) (bool, error) {
 	timeout := time.Second
 	conn, err := net.DialTimeout(config.AmiNetworkTcpKey, net.JoinHostPort(ip, strconv.Itoa(port)), timeout)
 	if err != nil {
-		log.Printf("Connecting error: %v", err)
+		D().Error("Connecting error: %v", err)
 		return false, err
 	}
 	if conn != nil {
 		defer conn.Close()
-		log.Printf("Opened on: %s", net.JoinHostPort(ip, strconv.Itoa(port)))
+		D().Info("Opened on: %s", net.JoinHostPort(ip, strconv.Itoa(port)))
 		return true, nil
 	}
 	return false, nil
 }
 
+// UsableRConnectionWith checks the usability of a remote connection to a specified IP address
+// across multiple ports. It iterates through the provided list of ports and attempts to establish
+// a TCP connection to each port within a specified timeout duration.
+//
+// Parameters:
+//   - ip:    The IP address of the remote server.
+//   - ports: A slice of port numbers on the remote server to check for usability.
+//
+// Returns:
+//   - A boolean value indicating whether at least one of the connections to the remote server is usable.
+//   - An error if there is an issue during any of the connection attempts.
+//
+// Example:
+//
+//	isUsable, err := UsableRConnectionWith("127.0.0.1", []int{8080, 8888, 9999})
+//	// isUsable is true if at least one of the connections is usable, and err is an error indicating any connection issues.
 func UsableRConnectionWith(ip string, ports []int) (bool, error) {
 	for _, port := range ports {
 		if ok, err := UsableRConnection(ip, port); err != nil {
@@ -794,8 +853,19 @@ func UsableRConnectionWith(ip string, ports []int) (bool, error) {
 	return true, nil
 }
 
-// DecodeIp
-// Decode IP into 2 parts: host, port
+// DecodeIp decodes an IP address into two parts: host and port.
+//
+// Parameters:
+//   - ip: A string representing the IP address to decode.
+//
+// Returns:
+//   - Two strings: host and port extracted from the input IP address.
+//   - An error if there is an issue during the decoding process.
+//
+// Example:
+//
+//	host, port, err := DecodeIp("http://example.com:8080")
+//	// host is "example.com", port is "8080", and err is an error indicating any decoding issues.
 func DecodeIp(ip string) (string, string, error) {
 	u, err := url.Parse(ip)
 	if err != nil {
@@ -805,6 +875,21 @@ func DecodeIp(ip string) (string, string, error) {
 	return host, port, err
 }
 
+// GetKeyByVal searches for a value in a map and returns the corresponding key.
+//
+// Parameters:
+//   - values: A map[string]string representing key-value pairs to search.
+//   - value:  The value to search for within the map.
+//
+// Returns:
+//   - The key associated with the specified value, if found.
+//   - If the value is not found, the function returns the input value itself.
+//
+// Example:
+//
+//	values := map[string]string{"one": "1", "two": "2", "three": "3"}
+//	key := GetKeyByVal(values, "2")
+//	// key is "two" since it corresponds to the value "2" in the map.
 func GetKeyByVal(values map[string]string, value string) string {
 	if len(values) <= 0 {
 		return value
@@ -817,6 +902,21 @@ func GetKeyByVal(values map[string]string, value string) string {
 	return value
 }
 
+// GetValByKey searches for a key in a map and returns the corresponding value.
+//
+// Parameters:
+//   - values: A map[string]string representing key-value pairs to search.
+//   - key:    The key to search for within the map.
+//
+// Returns:
+//   - The value associated with the specified key, if found.
+//   - If the key is not found, the function returns an empty string.
+//
+// Example:
+//
+//	values := map[string]string{"one": "1", "two": "2", "three": "3"}
+//	value := GetValByKey(values, "two")
+//	// value is "2" since it corresponds to the key "two" in the map.
 func GetValByKey(values map[string]string, key string) string {
 	if len(values) <= 0 {
 		return key
@@ -829,6 +929,31 @@ func GetValByKey(values map[string]string, key string) string {
 	return ""
 }
 
+// GetKeys retrieves the keys from a map or converts the indices of a slice to strings.
+//
+// Parameters:
+//   - in: An interface{} representing either a map or a slice.
+//
+// Returns:
+//   - A slice of strings containing the keys of the map or the stringified indices of the slice.
+//   - If the input is not a map or a slice, an empty slice is returned.
+//
+// Example:
+//
+//	// For a map
+//	m := map[string]int{"one": 1, "two": 2, "three": 3}
+//	keys := GetKeys(m)
+//	// keys is ["one", "two", "three"]
+//
+//	// For a slice
+//	s := []int{1, 2, 3}
+//	indices := GetKeys(s)
+//	// indices is ["0", "1", "2"]
+//
+//	// For an unsupported type
+//	unsupported := "unsupported"
+//	result := GetKeys(unsupported)
+//	// result is an empty slice since the input type is not supported.
 func GetKeys(in interface{}) (keys []string) {
 	switch z := in.(type) {
 	case map[string]int:
@@ -851,6 +976,33 @@ func GetKeys(in interface{}) (keys []string) {
 	return keys
 }
 
+// MergeMaps merges two maps into a new map, combining their key-value pairs.
+//
+// Parameters:
+//   - m1: A map[K]V representing the first map.
+//   - m2: A map[K]V representing the second map.
+//
+// Type Parameters:
+//   - K: The key type of the maps (must be comparable).
+//   - V: The value type of the maps.
+//
+// Returns:
+//   - A new map[K]V containing the merged key-value pairs from m1 and m2.
+//   - If both m1 and m2 are empty maps, an empty map is returned.
+//
+// Example:
+//
+//	// Merging maps with string keys and int values
+//	map1 := map[string]int{"one": 1, "two": 2}
+//	map2 := map[string]int{"three": 3, "four": 4}
+//	mergedMap := MergeMaps(map1, map2)
+//	// mergedMap is {"one": 1, "two": 2, "three": 3, "four": 4}
+//
+//	// Merging maps with int keys and string values
+//	map3 := map[int]string{1: "one", 2: "two"}
+//	map4 := map[int]string{3: "three", 4: "four"}
+//	mergedMapStrings := MergeMaps(map3, map4)
+//	// mergedMapStrings is {1: "one", 2: "two", 3: "three", 4: "four"}
 func MergeMaps[K comparable, V any](m1 map[K]V, m2 map[K]V) map[K]V {
 	merged := make(map[K]V)
 	if len(m1) > 0 {
@@ -866,7 +1018,29 @@ func MergeMaps[K comparable, V any](m1 map[K]V, m2 map[K]V) map[K]V {
 	return merged
 }
 
-// Contains check slice contains value or not
+// Contains checks if a given element is present in a slice.
+//
+// Parameters:
+//   - s: A slice of elements of type T.
+//   - e: The element of type T to check for in the slice.
+//
+// Type Parameters:
+//   - T: The type of elements in the slice (must be comparable).
+//
+// Returns:
+//   - true if the element e is found in the slice s; otherwise, false.
+//
+// Example:
+//
+//	// Checking if an integer is present in a slice of integers
+//	numbers := []int{1, 2, 3, 4, 5}
+//	containsThree := Contains(numbers, 3) // true
+//	containsTen := Contains(numbers, 10)  // false
+//
+//	// Checking if a string is present in a slice of strings
+//	fruits := []string{"apple", "banana", "orange"}
+//	containsBanana := Contains(fruits, "banana") // true
+//	containsGrape := Contains(fruits, "grape")   // false
 func Contains[T comparable](s []T, e T) bool {
 	for _, v := range s {
 		if v == e {
@@ -876,18 +1050,65 @@ func Contains[T comparable](s []T, e T) bool {
 	return false
 }
 
+// TrimStringSpaces trims leading and trailing spaces and collapses multiple spaces within a string into a single space.
+//
+// Parameters:
+//   - s: The input string to be trimmed.
+//
+// Returns:
+//   - A new string with leading and trailing spaces removed and multiple spaces collapsed into a single space.
+//
+// Example:
+//
+//	inputString := "   This    is   a   sample    string.   "
+//	trimmedString := TrimStringSpaces(inputString)
+//	// trimmedString is "This is a sample string."
 func TrimStringSpaces(s string) string {
 	return strings.Join(strings.Fields(s), " ")
 }
 
-// ApplyTimezone
+// ApplyTimezone applies a specified timezone to a given time and returns the time in the specified timezone.
+//
+// Parameters:
+//   - at: The time.Time value to be adjusted to the specified timezone.
+//   - timezone: The IANA Time Zone identifier representing the desired timezone (e.g., "America/New_York").
+//
+// Returns:
+//   - A new time.Time value adjusted to the specified timezone.
+//   - An error, if any, encountered during the process of loading the timezone.
+//
+// Example:
+//
+//	// Applying the "America/New_York" timezone to a specific time
+//	originalTime := time.Date(2023, time.March, 15, 12, 0, 0, 0, time.UTC)
+//	adjustedTime, err := ApplyTimezone(originalTime, "America/New_York")
+//	if err != nil {
+//	    log.Printf("Error applying timezone: %v", err)
+//	}
+//	// adjustedTime now represents the original time adjusted to the "America/New_York" timezone.
 func ApplyTimezone(at time.Time, timezone string) (time.Time, error) {
 	loc, err := time.LoadLocation(timezone)
 	now := at.In(loc)
 	return now, err
 }
 
-// AdjustTimezone
+// AdjustTimezone attempts to apply a specified timezone to a given time and returns the adjusted time.
+// If an error occurs during the timezone adjustment, the original time is returned.
+//
+// Parameters:
+//   - at: The time.Time value to be adjusted to the specified timezone.
+//   - timezone: The IANA Time Zone identifier representing the desired timezone (e.g., "America/New_York").
+//
+// Returns:
+//   - A new time.Time value adjusted to the specified timezone, or the original time if an error occurs.
+//
+// Example:
+//
+//	// Adjusting the time to the "America/New_York" timezone or keeping the original time in case of an error
+//	originalTime := time.Date(2023, time.March, 15, 12, 0, 0, 0, time.UTC)
+//	adjustedTime := AdjustTimezone(originalTime, "America/New_York")
+//	// adjustedTime now represents the original time adjusted to the "America/New_York" timezone,
+//	// or it remains the same as the original time in case of an error.
 func AdjustTimezone(at time.Time, timezone string) time.Time {
 	t, err := ApplyTimezone(at, timezone)
 	if err != nil {
@@ -896,11 +1117,72 @@ func AdjustTimezone(at time.Time, timezone string) time.Time {
 	return t
 }
 
+// JsonString converts the given data to a JSON-formatted string.
+// If the input data is already a string, it is returned as is.
+// If the conversion to JSON fails, an empty string is returned.
+//
+// Parameters:
+//   - data: The input data to be converted to a JSON-formatted string.
+//
+// Returns:
+//   - A string representing the JSON-formatted version of the input data, or an empty string if conversion fails.
+//
+// Example:
+//
+//	// Converting a struct to a JSON-formatted string
+//	myData := MyStruct{Field1: "value1", Field2: 42}
+//	jsonString := JsonString(myData)
+//	// jsonString now contains the JSON-formatted string representation of myData,
+//	// or an empty string if the conversion fails.
+func JsonString(data interface{}) string {
+	s, ok := data.(string)
+	if ok {
+		return s
+	}
+	result, err := json.Marshal(data)
+	if err != nil {
+		D().Error(err.Error())
+		return ""
+	}
+	return string(result)
+}
+
+// Base64Encode encodes the given data to a Base64-encoded string.
+// The input data is first converted to a JSON-formatted string using the JsonString function.
+//
+// Parameters:
+//   - v: The input data to be Base64-encoded.
+//
+// Returns:
+//   - A string representing the Base64-encoded version of the input data.
+//
+// Example:
+//
+//	// Encoding a struct to a Base64-encoded string
+//	myData := MyStruct{Field1: "value1", Field2: 42}
+//	base64String := Base64Encode(myData)
+//	// base64String now contains the Base64-encoded string representation of myData.
 func Base64Encode(v interface{}) string {
 	d := JsonString(v)
 	return base64.StdEncoding.EncodeToString([]byte(d))
 }
 
+// Base64Decode decodes the given Base64-encoded string to its original representation.
+// The decoded string is returned, or an empty string if decoding fails.
+//
+// Parameters:
+//   - encoded: The Base64-encoded string to be decoded.
+//
+// Returns:
+//   - A string representing the decoded version of the Base64-encoded input string,
+//     or an empty string if decoding fails.
+//
+// Example:
+//
+//	// Decoding a Base64-encoded string to its original representation
+//	base64String := "eyJmb28iOiJiYXIifQ=="
+//	decodedString := Base64Decode(base64String)
+//	// decodedString now contains the original string representation of the Base64-encoded data.
 func Base64Decode(encoded string) string {
 	if IsStringEmpty(encoded) {
 		return encoded
@@ -910,17 +1192,4 @@ func Base64Decode(encoded string) string {
 		return ""
 	}
 	return string(d)
-}
-
-func JsonString(data interface{}) string {
-	s, ok := data.(string)
-	if ok {
-		return s
-	}
-	result, err := json.Marshal(data)
-	if err != nil {
-		log.Printf(err.Error())
-		return ""
-	}
-	return string(result)
 }
