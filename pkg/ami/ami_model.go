@@ -329,12 +329,12 @@ type AMIPayloadDb struct {
 }
 
 type AMIOriginateDirection struct {
-	Telephone         string `json:"telephone" binding:"required"`        // like customer phone number or no. extension internal from all routes
-	ChannelProtocol   string `json:"channel_protocol" binding:"required"` // protocols include: SIP, H323, IAX...
-	Extension         int    `json:"extension" binding:"required"`        // like current user using no. extension
-	AllowDebug        bool   `json:"allow_debug"`                         // allow to trace log
-	Timeout           int    `json:"timeout"`                             // set timeout while calling
-	AllowSysValidator bool   `json:"allow_sys_validator"`                 // allow validate the extension and channel
+	Telephone       string `json:"telephone" binding:"required"`        // like customer phone number or no. extension internal from all routes
+	ChannelProtocol string `json:"channel_protocol" binding:"required"` // protocols include: SIP, H323, IAX...
+	Extension       int    `json:"extension" binding:"required"`        // like current user using no. extension
+	DebugMode       bool   `json:"debug_mode"`                          // allow to trace log
+	Timeout         int    `json:"timeout"`                             // set timeout while calling
+	ExtensionExists bool   `json:"extension_exists"`                    // allow validate the extension and channel
 }
 
 type AMIExtensionStatesConf struct {
@@ -431,16 +431,13 @@ type AMICdr struct {
 	UserField      string    `json:"user_field,omitempty"`
 	DateReceivedAt time.Time `json:"date_received_at"`
 	Privilege      string    `json:"privilege,omitempty"`
-	// Type of call direction
-	// `inbound`
-	// `outbound`
-	Direction           string `json:"direction"`
-	FlowCall            string `json:"flow_call"`
-	TypeDirection       string `json:"type_direction"`
-	UserExtension       string `json:"user_extension,omitempty"`
-	PhoneNumber         string `json:"phone_number,omitempty"`
-	PlaybackUrl         string `json:"playback_url,omitempty"` // the only cdr has status answered
-	ExtenSplitterSymbol string `json:"-"`                      // default exten splitter symbol: -, example: SIP/1000-00098fec then split by -
+	Direction      string    `json:"direction"` // inbound, outbound
+	Desc           string    `json:"desc"`
+	Type           string    `json:"type"`
+	UserExtension  string    `json:"user_extension,omitempty"`
+	PhoneNumber    string    `json:"phone_number,omitempty"`
+	PlaybackUrl    string    `json:"playback_url,omitempty"` // the only cdr has status answered
+	symbol         string    `json:"-"`                      // default extension splitter symbol: -, example: SIP/1000-00098fec then split by -
 }
 
 type AMIPayloadChanspy struct {
@@ -448,5 +445,5 @@ type AMIPayloadChanspy struct {
 	SourceExten     string `json:"source_extension" binding:"required"`
 	CurrentExten    string `json:"current_extension" binding:"required"`
 	ChannelProtocol string `json:"channel_protocol" binding:"required"` // protocols include: SIP, H323, IAX...
-	AllowDebug      bool   `json:"allow_debug"`                         // allow to trace log
+	DebugMode       bool   `json:"debug_mode"`                          // allow to trace log
 }

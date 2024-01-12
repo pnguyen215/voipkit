@@ -13,7 +13,7 @@ import (
 func NewAMICdr() *AMICdr {
 	r := &AMICdr{}
 	r.SetEvent(config.AmiListenerEventCdr)
-	r.SetExtenSplitterSymbol("-")
+	r.SetSymbol("-")
 	return r
 }
 
@@ -203,17 +203,17 @@ func (r *AMICdr) SetDirection(value string) *AMICdr {
 	return r
 }
 
-func (r *AMICdr) SetFlowCall(value string) *AMICdr {
-	r.FlowCall = value
+func (r *AMICdr) SetDesc(value string) *AMICdr {
+	r.Desc = value
 	return r
 }
 
-func (r *AMICdr) SetTypeDirection(value string) *AMICdr {
-	r.TypeDirection = TrimStringSpaces(value)
+func (r *AMICdr) SetType(value string) *AMICdr {
+	r.Type = TrimStringSpaces(value)
 	return r
 }
 
-func (r *AMICdr) SetUserExten(value string) *AMICdr {
+func (r *AMICdr) SetUserExtension(value string) *AMICdr {
 	r.UserExtension = TrimStringSpaces(value)
 	return r
 }
@@ -223,8 +223,8 @@ func (r *AMICdr) SetPhoneNumber(value string) *AMICdr {
 	return r
 }
 
-func (r *AMICdr) SetExtenSplitterSymbol(value string) *AMICdr {
-	r.ExtenSplitterSymbol = TrimStringSpaces(value)
+func (r *AMICdr) SetSymbol(value string) *AMICdr {
+	r.symbol = TrimStringSpaces(value)
 	return r
 }
 
@@ -298,19 +298,19 @@ func (r *AMICdr) IsCdrOutbound() bool {
 }
 
 func (r *AMICdr) IsCdrInboundDial() bool {
-	return strings.EqualFold(r.TypeDirection, config.AmiTypeInboundDialDirection)
+	return strings.EqualFold(r.Type, config.AmiTypeInboundDialDirection)
 }
 
 func (r *AMICdr) IsCdrInboundQueue() bool {
-	return strings.EqualFold(r.TypeDirection, config.AmiTypeInboundQueueDirection)
+	return strings.EqualFold(r.Type, config.AmiTypeInboundQueueDirection)
 }
 
 func (r *AMICdr) IsCdrOutboundNormal() bool {
-	return strings.EqualFold(r.TypeDirection, config.AmiTypeOutboundNormalDirection)
+	return strings.EqualFold(r.Type, config.AmiTypeOutboundNormalDirection)
 }
 
 func (r *AMICdr) IsCdrOutboundChanSpy() bool {
-	return strings.EqualFold(r.TypeDirection, config.AmiLastApplicationChanSpy)
+	return strings.EqualFold(r.Type, config.AmiLastApplicationChanSpy)
 }
 
 func ParseCdr(e *AMIMessage, d *AMIDictionary) *AMICdr {
@@ -344,14 +344,14 @@ func ParseCdr(e *AMIMessage, d *AMIDictionary) *AMICdr {
 
 	// detect outbound, inbound
 	// if the field destination is phone number, so mark this cdr belong to outbound, otherwise mark as inbound
-	form := "flow_call_from_'%v'_to_'%v'"
+	form := "CDR.call_from_'%v'_to_'%v'"
 	phone := RemoveStringPrefix(r.Destination, e.PhonePrefix...)
-	if IsPhoneNumberWith(phone, e.Region) {
+	if VerifyPhoneNo(phone, e.Region) {
 		flow := fmt.Sprintf(form, r.Channel, phone)
-		r.SetFlowCall(flow)
+		r.SetDesc(flow)
 		r.SetDirection(config.AmiOutboundDirection)
-		r.SetTypeDirection(config.AmiTypeOutboundNormalDirection)
-		r.SetUserExten(strings.Split(r.Channel, r.ExtenSplitterSymbol)[0])
+		r.SetType(config.AmiTypeOutboundNormalDirection)
+		r.SetUserExtension(strings.Split(r.Channel, r.symbol)[0])
 		r.SetPhoneNumber(phone)
 	} else {
 		var inCase bool = false
@@ -359,33 +359,33 @@ func ParseCdr(e *AMIMessage, d *AMIDictionary) *AMICdr {
 		if strings.EqualFold(r.LastApplication, config.AmiLastApplicationChanSpy) {
 			inCase = true
 			flow := fmt.Sprintf(form, r.Channel, r.LastData)
-			r.SetFlowCall(flow)
-			r.SetTypeDirection(config.AmiTypeChanSpyDirection)
+			r.SetDesc(flow)
+			r.SetType(config.AmiTypeChanSpyDirection)
 			r.SetDirection(config.AmiOutboundDirection)
-			r.SetUserExten(strings.Split(r.Channel, r.ExtenSplitterSymbol)[0])
+			r.SetUserExtension(strings.Split(r.Channel, r.symbol)[0])
 		}
 		// from inbound dial
 		if strings.EqualFold(r.LastApplication, config.AmiLastApplicationDial) {
 			inCase = true
 			flow := fmt.Sprintf(form, r.Source, r.DestinationChannel)
-			r.SetFlowCall(flow)
+			r.SetDesc(flow)
 			r.SetDirection(config.AmiInboundDirection)
-			r.SetTypeDirection(config.AmiTypeInboundDialDirection)
-			r.SetUserExten(strings.Split(r.DestinationChannel, r.ExtenSplitterSymbol)[0])
+			r.SetType(config.AmiTypeInboundDialDirection)
+			r.SetUserExtension(strings.Split(r.DestinationChannel, r.symbol)[0])
 			r.SetPhoneNumber(r.Source)
 		}
 		// from inbound queue
 		if strings.EqualFold(r.LastApplication, config.AmiLastApplicationQueue) {
 			inCase = true
 			flow := fmt.Sprintf(form, r.Source, r.Channel)
-			r.SetFlowCall(flow)
+			r.SetDesc(flow)
 			r.SetDirection(config.AmiInboundDirection)
-			r.SetTypeDirection(config.AmiTypeInboundQueueDirection)
-			r.SetUserExten(strings.Split(r.Channel, r.ExtenSplitterSymbol)[0])
+			r.SetType(config.AmiTypeInboundQueueDirection)
+			r.SetUserExtension(strings.Split(r.Channel, r.symbol)[0])
 			r.SetPhoneNumber(r.Source)
 		}
 		if !inCase {
-			log.Printf("ParseCdr, CDR exception case = %v", JsonString(r))
+			log.Printf("ParseCdr, CDR got an error exception case:: %v", JsonString(r))
 		}
 	}
 	return r

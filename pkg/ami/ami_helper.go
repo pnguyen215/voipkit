@@ -1,7 +1,6 @@
 package ami
 
 import (
-	"bufio"
 	"bytes"
 	"context"
 	"encoding/base64"
@@ -10,7 +9,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"net/textproto"
 	"net/url"
 	"os"
 	"reflect"
@@ -21,104 +19,91 @@ import (
 
 	"github.com/nyaruka/phonenumbers"
 	"github.com/pnguyen215/voipkit/pkg/ami/config"
-
-	jsonI "github.com/json-iterator/go"
 )
 
-// OpenContext
-func OpenContext(conn net.Conn) (*AMI, context.Context) {
-	ctx, cancel := context.WithCancel(context.Background())
-
-	client := &AMI{
-		Reader: textproto.NewReader(bufio.NewReader(conn)),
-		Writer: bufio.NewWriter(conn),
-		Conn:   conn,
-		Cancel: cancel,
-	}
-
-	// checking conn available
-	if conn != nil {
-		addr := conn.RemoteAddr().String()
-		_socket, err := NewAMISocketWith(ctx, addr)
-
-		if err == nil {
-			client.Socket = _socket
-			log.Printf("OpenContext, cloning (addr: %v) socket connection succeeded", addr)
-		}
-	}
-
-	return client, ctx
-}
-
-// OpenDial
-func OpenDial(ip string, port int) (net.Conn, error) {
-	return OpenDialWith(config.AmiNetworkTcpKey, ip, port)
-}
-
-// OpenDialWith
-func OpenDialWith(network, ip string, port int) (net.Conn, error) {
-
-	if !config.AmiNetworkKeys[network] {
-		return nil, AMIErrorNew("AMI: Invalid network")
-	}
-
-	if ip == "" {
-		return nil, AMIErrorNew("AMI: IP must be not empty")
-	}
-
-	if port <= 0 {
-		return nil, AMIErrorNew("AMI: Port must be positive number")
-	}
-
-	host, _port, _ := DecodeIp(ip)
-
-	if len(host) > 0 && len(_port) > 0 {
-		form := net.JoinHostPort(host, _port)
-		log.Printf("AMI: (IP decoded) dial connection = %v", form)
-		return net.Dial(network, form)
-	}
-
-	form := RemoveProtocol(ip, port)
-	log.Printf("AMI: dial connection = %v", form)
-	return net.Dial(network, form)
-}
-
-// RemoveProtocol
-// Return form as string: <ip>:<port>
+// RemoveProtocol removes the protocol prefix and port from the given IP address.
+// If the IP address is empty or the port is negative, the original IP address is returned unchanged.
+// The function supports removing both "http://" and "https://" protocol prefixes.
+// The resulting IP address is formatted as a string without the protocol prefix and with the specified port,
+// or without the port if it was negative or not provided.
+//
+// Parameters:
+//   - ip: The input IP address with an optional protocol prefix and port.
+//   - port: The port number to be included in the formatted IP address.
+//     If the port is negative, it is excluded from the formatted IP address.
+//
+// Returns:
+//   - The formatted IP address as a string without the protocol prefix and with the specified port,
+//     or without the port if it was negative or not provided.
+//
 // Example:
-// Ip: http://127.0.0.1 or https://127.0.0.1
-// Port: 18080
-// Result: 127.0.0.1:18080
+//
+//	input: "http://127.0.0.1:8088", port: 8088
+//	output: "127.0.0.1:8088"
+//
+//	input: "https://example.com", port: -1
+//	output: "example.com"
+//
+//	input: "invalid", port: 5060
+//	output: "invalid:5060"
 func RemoveProtocol(ip string, port int) string {
-	if ip == "" {
+	if IsStringEmpty(ip) || port < 0 {
 		return ip
 	}
-
-	if port < 0 {
-		return ip
-	}
-
 	if strings.HasPrefix(ip, config.AmiProtocolHttpKey) {
 		ip = strings.Replace(ip, config.AmiProtocolHttpKey, "", -1)
 	}
-
 	if strings.HasPrefix(ip, config.AmiProtocolHttpsKey) {
 		ip = strings.Replace(ip, config.AmiProtocolHttpsKey, "", -1)
 	}
-
 	_ip := strings.Split(ip, ":")
 	ip = _ip[0]
-
 	form := net.JoinHostPort(ip, strconv.Itoa(port))
 	return form
 }
 
-// JoinHostPortString
+// JoinHostPortString joins the given IP address and port into a formatted string.
+// The function utilizes the RemoveProtocol function to handle the removal of protocol prefixes.
+//
+// Parameters:
+//   - ip: The input IP address with an optional protocol prefix and port.
+//   - port: The port number to be included in the formatted IP address.
+//     If the port is negative, it is excluded from the formatted IP address.
+//
+// Returns:
+//   - The formatted IP address as a string without the protocol prefix and with the specified port,
+//     or without the port if it was negative or not provided.
+//
+// Example:
+//
+//	input: "http://127.0.0.1:8088", port: 8088
+//	output: "127.0.0.1:8088"
+//
+//	input: "https://example.com", port: -1
+//	output: "example.com"
+//
+//	input: "invalid", port: 5060
+//	output: "invalid:5060"
 func JoinHostPortString(ip string, port int) string {
 	return RemoveProtocol(ip, port)
 }
 
-// JoinHostPortStrings
+// JoinHostPortStrings joins the given slice of IP addresses with the specified port into formatted strings.
+// Each IP address in the slice may have an optional protocol prefix and port, which is handled by the JoinHostPortString function.
+//
+// Parameters:
+//   - ip: The input slice of IP addresses, where each IP address may have an optional protocol prefix and port.
+//   - port: The port number to be included in the formatted IP addresses.
+//     If the port is negative, it is excluded from the formatted IP addresses.
+//
+// Returns:
+//   - A slice of formatted IP addresses as strings without the protocol prefix and with the specified port,
+//     or without the port if it was negative or not provided.
+//
+// Example:
+//
+//	input: []string{"http://127.0.0.1:8088", "https://example.com", "invalid"}, port: 5060
+//	output: []string{"127.0.0.1:8088", "example.com", "invalid:5060"}
 func JoinHostPortStrings(ip []string, port int) (result []string) {
 	if len(ip) == 0 {
 		return ip
@@ -129,7 +114,24 @@ func JoinHostPortStrings(ip []string, port int) (result []string) {
 	return result
 }
 
-// WriteString
+// WriteString writes a formatted key-value pair to the provided bytes.Buffer.
+// The key (tag) and value are concatenated with appropriate separators, and a newline signal is added at the end.
+// If the key (tag) is an empty string, it is excluded from the output.
+//
+// Parameters:
+//   - buf: A pointer to the bytes.Buffer where the formatted string will be written.
+//   - tag: The key (tag) representing the identifier of the value.
+//   - value: The value associated with the key.
+//
+// Example:
+//
+//	buf := &bytes.Buffer{}
+//	WriteString(buf, "Action", "Login")
+//	result: "Action: Login\r\n"
+//
+//	buf := &bytes.Buffer{}
+//	WriteString(buf, "", "ValueOnly")
+//	result: "ValueOnly\r\n"
 func WriteString(buf *bytes.Buffer, tag, value string) {
 	if len(tag) > 0 {
 		buf.WriteString(tag)
@@ -139,6 +141,28 @@ func WriteString(buf *bytes.Buffer, tag, value string) {
 	buf.WriteString(config.AmiSignalLetter)
 }
 
+// IsOmitempty checks if the given struct field tag contains the "omitempty" flag.
+//
+// Parameters:
+//   - tag: The struct field tag to be analyzed.
+//
+// Returns:
+//   - A tuple containing the modified tag without the "omitempty" flag (if present),
+//     a boolean indicating whether "omitempty" was present, and an error (if any).
+//
+// Example:
+//
+//	tag := `json:"name,omitempty"`
+//	result, omitempty, err := IsOmitempty(tag)
+//	// result: "json:\"name\"", omitempty: true, err: nil
+//
+//	tag := `json:"age"`
+//	result, omitempty, err := IsOmitempty(tag)
+//	// result: "json:\"age\"", omitempty: false, err: nil
+//
+//	tag := `json:"salary,omitempty,unsupported"`
+//	result, omitempty, err := IsOmitempty(tag)
+//	// result: "", omitempty: false, err: "unsupported flag \"unsupported\" in tag \"json:\"salary,omitempty,unsupported\""
 func IsOmitempty(tag string) (string, bool, error) {
 	fields := strings.Split(tag, ",")
 	if len(fields) > 1 {
@@ -152,6 +176,31 @@ func IsOmitempty(tag string) (string, bool, error) {
 	return tag, false, nil
 }
 
+// IsZero checks if the given reflect.Value is considered "zero" based on its kind.
+//
+// Parameters:
+//   - v: The reflect.Value to be checked for being "zero."
+//
+// Returns:
+//   - A boolean indicating whether the provided reflect.Value is considered "zero."
+//
+// Example:
+//
+//	var str string
+//	result := IsZero(reflect.ValueOf(str))
+//	// result: true
+//
+//	var num int
+//	result := IsZero(reflect.ValueOf(num))
+//	// result: true
+//
+//	var slice []int
+//	result := IsZero(reflect.ValueOf(slice))
+//	// result: true
+//
+//	var ptr *int
+//	result := IsZero(reflect.ValueOf(ptr))
+//	// result: true
 func IsZero(v reflect.Value) bool {
 	switch v.Kind() {
 	case reflect.String:
@@ -177,6 +226,31 @@ func IsZero(v reflect.Value) bool {
 	return false
 }
 
+// Encode writes the encoded Asterisk Manager Interface (AMI) command parameters to the provided bytes.Buffer.
+// The encoding is based on the provided struct field tag and the reflect.Value of the corresponding struct field.
+// Supported types for encoding include string, integer types, boolean, floating-point types, pointers, interfaces, structs, maps, and slices.
+//
+// Parameters:
+//   - buf: A pointer to the bytes.Buffer where the encoded parameters will be written.
+//   - tag: The struct field tag specifying the key (identifier) for the AMI command parameter.
+//   - v: The reflect.Value representing the value to be encoded.
+//
+// Returns:
+//   - An error if there's an issue during encoding; otherwise, returns nil.
+//
+// Example:
+//
+//	type ExampleStruct struct {
+//	    Name   string `ami:"Name"`
+//	    Age    int    `ami:"Age,omitempty"`
+//	    Active bool   `ami:"Active"`
+//	}
+//
+//	buf := &bytes.Buffer{}
+//	data := ExampleStruct{Name: "John", Age: 30, Active: true}
+//	err := Encode(buf, "ExampleAction", reflect.ValueOf(data))
+//	// Encoded data in buf:
+//	// "ExampleAction: Name: John\r\nAge: 30\r\nActive: true\r\n"
 func Encode(buf *bytes.Buffer, tag string, v reflect.Value) error {
 	switch v.Kind() {
 	case reflect.String:
@@ -214,6 +288,30 @@ func Encode(buf *bytes.Buffer, tag string, v reflect.Value) error {
 	return nil
 }
 
+// EncodeStruct writes the encoded Asterisk Manager Interface (AMI) command parameters for a struct to the provided bytes.Buffer.
+// The encoding is based on the struct field tags and the reflect.Value of each struct field.
+// Supported types for encoding include string, integer types, boolean, floating-point types, pointers, interfaces, structs, maps, and slices.
+//
+// Parameters:
+//   - buf: A pointer to the bytes.Buffer where the encoded parameters will be written.
+//   - v: The reflect.Value representing the struct whose fields are to be encoded.
+//
+// Returns:
+//   - An error if there's an issue during encoding; otherwise, returns nil.
+//
+// Example:
+//
+//	type ExampleStruct struct {
+//	    Name   string `ami:"Name"`
+//	    Age    int    `ami:"Age,omitempty"`
+//	    Active bool   `ami:"Active"`
+//	}
+//
+//	buf := &bytes.Buffer{}
+//	data := ExampleStruct{Name: "John", Age: 30, Active: true}
+//	err := EncodeStruct(buf, reflect.ValueOf(data))
+//	// Encoded data in buf:
+//	// "Name: John\r\nAge: 30\r\nActive: true\r\n"
 func EncodeStruct(buf *bytes.Buffer, v reflect.Value) error {
 	var omitempty bool
 	var err error
@@ -242,6 +340,29 @@ func EncodeStruct(buf *bytes.Buffer, v reflect.Value) error {
 	return nil
 }
 
+// EncodeMap writes the encoded Asterisk Manager Interface (AMI) command parameters for a map to the provided bytes.Buffer.
+// The encoding is based on the keys (as tags) and values of the provided reflect.Value representing the map.
+// Supported types for encoding include string keys and values, integer types, boolean, floating-point types, pointers, interfaces, structs, maps, and slices.
+//
+// Parameters:
+//   - buf: A pointer to the bytes.Buffer where the encoded parameters will be written.
+//   - v: The reflect.Value representing the map whose keys and values are to be encoded.
+//
+// Returns:
+//   - An error if there's an issue during encoding; otherwise, returns nil.
+//
+// Example:
+//
+//	data := map[string]interface{}{
+//	    "Name":   "John",
+//	    "Age":    30,
+//	    "Active": true,
+//	}
+//
+//	buf := &bytes.Buffer{}
+//	err := EncodeMap(buf, reflect.ValueOf(data))
+//	// Encoded data in buf:
+//	// "Name: John\r\nAge: 30\r\nActive: true\r\n"
 func EncodeMap(buf *bytes.Buffer, v reflect.Value) error {
 	for _, key := range v.MapKeys() {
 		value := v.MapIndex(key)
@@ -255,6 +376,28 @@ func EncodeMap(buf *bytes.Buffer, v reflect.Value) error {
 	return nil
 }
 
+// Marshal serializes the provided data structure into a slice of bytes based on the Asterisk Manager Interface (AMI) command parameters.
+// The encoding is performed using reflection, and the resulting byte slice includes the encoded parameters followed by a newline signal.
+//
+// Parameters:
+//   - v: The data structure (e.g., struct, map) to be serialized.
+//
+// Returns:
+//   - A slice of bytes containing the serialized representation of the provided data structure.
+//   - An error if there's an issue during serialization; otherwise, returns nil.
+//
+// Example:
+//
+//	type ExampleStruct struct {
+//	    Name   string `ami:"Name"`
+//	    Age    int    `ami:"Age,omitempty"`
+//	    Active bool   `ami:"Active"`
+//	}
+//
+//	data := ExampleStruct{Name: "John", Age: 30, Active: true}
+//	result, err := Marshal(data)
+//	// Serialized data in result:
+//	// "Name: John\r\nAge: 30\r\nActive: true\r\n"
 func Marshal(v interface{}) ([]byte, error) {
 	var buf bytes.Buffer
 	if err := Encode(&buf, "", reflect.ValueOf(v)); err != nil {
@@ -264,7 +407,17 @@ func Marshal(v interface{}) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-// GenUUID returns a new UUID based on /dev/urandom (unix).
+// GenUUID generates a universally unique identifier (UUID) using a cryptographically secure random number source.
+// The UUID is represented as a string with the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" where each 'x' is a hexadecimal digit.
+//
+// Returns:
+//   - A string representing the generated UUID.
+//   - An error if there's an issue during UUID generation; otherwise, returns nil.
+//
+// Example:
+//
+//	uuid, err := GenUUID()
+//	// Example output: "3d96b8b9-4a84-4f69-9f9b-8f7ab9e6a96a"
 func GenUUID() (string, error) {
 	file, err := os.Open("/dev/urandom")
 	if err != nil {
@@ -285,6 +438,17 @@ func GenUUID() (string, error) {
 	return uuid, nil
 }
 
+// GenUUIDShorten generates a universally unique identifier (UUID) using a cryptographically secure random number source.
+// The UUID is represented as a string with the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" where each 'x' is a hexadecimal digit.
+//
+// Returns:
+//   - A string representing the generated UUID.
+//   - An error if there's an issue during UUID generation; otherwise, returns nil.
+//
+// Example:
+//
+//	uuid, err := GenUUID()
+//	// Example output: "3d96b8b9-4a84-4f69-9f9b-8f7ab9e6a96a"
 func GenUUIDShorten() string {
 	uuid, err := GenUUID()
 	if err != nil {
@@ -293,8 +457,21 @@ func GenUUIDShorten() string {
 	return uuid
 }
 
-// IsSuccess
-// Check event from asterisk feedback to console is succeeded
+// IsSuccess checks whether an Asterisk Manager Interface (AMI) command response indicates success.
+// It evaluates the provided raw AMI result to determine if the response is non-empty, has a valid response key,
+// and the response status is considered successful.
+//
+// Parameters:
+//   - raw: The AMIResultRaw representing the raw result of an AMI command response.
+//
+// Returns:
+//   - A boolean value indicating whether the response is successful.
+//
+// Example:
+//
+//	raw := AMIResultRaw{"Response": "Success", "ActionID": "123", "Event": "SomeEvent"}
+//	success := IsSuccess(raw)
+//	// success is true if the response indicates success, otherwise false.
 func IsSuccess(raw AMIResultRaw) bool {
 	if len(raw) == 0 {
 		return false
@@ -304,15 +481,38 @@ func IsSuccess(raw AMIResultRaw) bool {
 		strings.EqualFold(response, config.AmiStatusSuccessKey)
 }
 
-// IsFailure
-// Check event from asterisk feedback to console is failure
+// IsFailure checks whether an Asterisk Manager Interface (AMI) command response indicates failure.
+// It evaluates the provided raw AMI result to determine if the response is non-empty and does not have a successful status.
+//
+// Parameters:
+//   - raw: The AMIResultRaw representing the raw result of an AMI command response.
+//
+// Returns:
+//   - A boolean value indicating whether the response is a failure.
+//
+// Example:
+//
+//	raw := AMIResultRaw{"Response": "Error", "ActionID": "123", "Message": "Command failed"}
+//	failure := IsFailure(raw)
+//	// failure is true if the response indicates failure, otherwise false.
 func IsFailure(raw AMIResultRaw) bool {
 	return !IsSuccess(raw)
 }
 
-// IsEvent
-// Check result from asterisk server to console is event?
-// Get key `Event` and value of `Event` is not equal whitespace
+// IsEvent checks whether an Asterisk Manager Interface (AMI) command response represents an event.
+// It evaluates the provided raw AMI result to determine if the response is non-empty and contains a non-whitespace value for the 'Event' key.
+//
+// Parameters:
+//   - raw: The AMIResultRaw representing the raw result of an AMI command response.
+//
+// Returns:
+//   - A boolean value indicating whether the response is an event.
+//
+// Example:
+//
+//	raw := AMIResultRaw{"Event": "SomeEvent", "ActionID": "123"}
+//	isEvent := IsEvent(raw)
+//	// isEvent is true if the response represents an event, otherwise false.
 func IsEvent(raw AMIResultRaw) bool {
 	if len(raw) == 0 {
 		return false
@@ -429,7 +629,19 @@ func TransformKeyLevel(response AMIResultRawLevel, d *AMIDictionary) AMIResultRa
 	return _m
 }
 
-func IsPhoneNumber(phone string) bool {
+// VerifyPhoneNoCustomize checks whether a given phone number string is in a valid format based on a customized regular expression pattern.
+//
+// Parameters:
+//   - phone: The phone number string to be verified.
+//
+// Returns:
+//   - A boolean value indicating whether the provided phone number is in a valid format.
+//
+// Example:
+//
+//	isValid := VerifyPhoneNoCustomize("+1 (123) 456-7890")
+//	// isValid is true if the phone number is in a valid format, otherwise false.
+func VerifyPhoneNoCustomize(phone string) bool {
 	if IsStringEmpty(phone) {
 		return false
 	}
@@ -437,7 +649,24 @@ func IsPhoneNumber(phone string) bool {
 	return matcher.MatchString(phone)
 }
 
-func IsPhoneNumberWith(phone string, region string) bool {
+// VerifyPhoneNo checks whether a given phone number string is both a valid and possible phone number
+// based on the specified region using the Google's libphonenumber library.
+// Additionally, it verifies the phone number using a customized regular expression pattern.
+//
+// Parameters:
+//   - phone:  The phone number string to be verified.
+//   - region: The ISO 3166-1 alpha-2 country code representing the region associated with the phone number.
+//
+// Returns:
+//   - A boolean value indicating whether the provided phone number is both valid and possible
+//     for the specified region and passes the additional customization check.
+//
+// Example:
+//
+//	isValid := VerifyPhoneNo("+1 (123) 456-7890", "US")
+//	// isValid is true if the phone number is both valid and possible for the US region,
+//	// and it passes the additional customization check; otherwise, false.
+func VerifyPhoneNo(phone string, region string) bool {
 	if IsStringEmpty(phone) {
 		return false
 	}
@@ -449,9 +678,22 @@ func IsPhoneNumberWith(phone string, region string) bool {
 	}
 	v := phonenumbers.IsValidNumber(p)
 	l := phonenumbers.IsPossibleNumber(p)
-	return v && l && IsPhoneNumber(phone)
+	return v && l && VerifyPhoneNoCustomize(phone)
 }
 
+// RemoveStringPrefix removes specified prefixes from the beginning of a given string.
+//
+// Parameters:
+//   - str:    The string from which prefixes should be removed.
+//   - prefix: One or more prefixes to be removed from the beginning of the string.
+//
+// Returns:
+//   - A string with the specified prefixes removed from the beginning.
+//
+// Example:
+//
+//	result := RemoveStringPrefix("example-string", "example-", "prefix-")
+//	// result is "string" after removing both "example-" and "prefix-" prefixes.
 func RemoveStringPrefix(str string, prefix ...string) string {
 	if IsStringEmpty(str) {
 		return str
@@ -465,13 +707,38 @@ func RemoveStringPrefix(str string, prefix ...string) string {
 	return str
 }
 
+// IsStringEmpty checks whether a given string is empty or consists only of whitespace characters.
+//
+// Parameters:
+//   - str: The string to be checked for emptiness.
+//
+// Returns:
+//   - A boolean value indicating whether the provided string is empty or consists only of whitespace characters.
+//
+// Example:
+//
+//	isEmpty := IsStringEmpty("   ")
+//	// isEmpty is true if the string is empty or consists only of whitespace characters; otherwise, false.
 func IsStringEmpty(str string) bool {
 	return len(str) == 0 || str == "" || strings.TrimSpace(str) == ""
 }
 
-// ForkDictionaryFromLink
-// Link must be provided to file formatted as json
-// Return maps[string]string
+// ForkDictionaryFromLink retrieves a dictionary (map[string]string) from a specified link
+// where the content is formatted as JSON. The function performs a GET request to the provided link.
+//
+// Parameters:
+//   - link:  The URL link to the JSON-formatted file containing the dictionary data.
+//   - debug: A boolean flag indicating whether to enable debugging for the HTTP requests.
+//
+// Returns:
+//   - A pointer to a map[string]string representing the dictionary retrieved from the provided link.
+//   - An error if the HTTP request or JSON decoding fails.
+//
+// Example:
+//
+//	dict, err := ForkDictionaryFromLink("https://example.com/dictionary.json", true)
+//	// dict is a pointer to a map[string]string containing the dictionary data,
+//	// and err is an error indicating any issues during the retrieval process.
 func ForkDictionaryFromLink(link string, debug bool) (*map[string]string, error) {
 	c := NewRestify(link)
 	c.SetDebug(debug)
@@ -645,50 +912,15 @@ func Base64Decode(encoded string) string {
 	return string(d)
 }
 
-var _json = jsonI.ConfigCompatibleWithStandardLibrary
-
 func JsonString(data interface{}) string {
 	s, ok := data.(string)
 	if ok {
 		return s
 	}
 	result, err := json.Marshal(data)
-	// result, err := MarshalToString(data)
 	if err != nil {
 		log.Printf(err.Error())
 		return ""
 	}
 	return string(result)
-}
-
-func JsonStringify(data interface{}) string {
-	s, ok := data.(string)
-	if ok {
-		return s
-	}
-	result, err := MarshalIndent(data, "", "    ")
-	if err != nil {
-		return ""
-	}
-	return string(result)
-}
-
-func MarshalToString(v interface{}) (string, error) {
-	return _json.MarshalToString(v)
-}
-
-func MarshalJsonIterator(v interface{}) ([]byte, error) {
-	return _json.Marshal(v)
-}
-
-func Unmarshal(data []byte, v interface{}) error {
-	return _json.Unmarshal(data, v)
-}
-
-func UnmarshalFromString(str string, v interface{}) error {
-	return _json.UnmarshalFromString(str, v)
-}
-
-func MarshalIndent(v interface{}, prefix, indent string) ([]byte, error) {
-	return _json.MarshalIndent(v, prefix, indent)
 }

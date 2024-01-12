@@ -16,7 +16,7 @@ func NewAMIPayloadOriginate() *AMIPayloadOriginate {
 
 func NewAMIOriginateDirection() *AMIOriginateDirection {
 	o := &AMIOriginateDirection{}
-	o.SetAllowSysValidator(true)
+	o.SetExtensionExists(true)
 	return o
 }
 
@@ -150,8 +150,8 @@ func (o *AMIOriginateDirection) SetExtension(value int) *AMIOriginateDirection {
 	return o
 }
 
-func (o *AMIOriginateDirection) SetAllowDebug(value bool) *AMIOriginateDirection {
-	o.AllowDebug = value
+func (o *AMIOriginateDirection) SetDebugMode(value bool) *AMIOriginateDirection {
+	o.DebugMode = value
 	return o
 }
 
@@ -162,8 +162,8 @@ func (o *AMIOriginateDirection) SetTimeout(value int) *AMIOriginateDirection {
 	return o
 }
 
-func (o *AMIOriginateDirection) SetAllowSysValidator(value bool) *AMIOriginateDirection {
-	o.AllowSysValidator = value
+func (o *AMIOriginateDirection) SetExtensionExists(value bool) *AMIOriginateDirection {
+	o.ExtensionExists = value
 	return o
 }
 
@@ -200,7 +200,7 @@ func MakeOutboundCall(ctx context.Context, s AMISocket, d AMIOriginateDirection)
 		o.SetTimeout(30000) // as default
 	}
 
-	if d.AllowSysValidator {
+	if d.ExtensionExists {
 		peer, err := SIPPeerStatusShort(ctx, s, fmt.Sprintf("%v", d.Extension))
 		if err != nil {
 			return nil, false, err
@@ -211,7 +211,7 @@ func MakeOutboundCall(ctx context.Context, s AMISocket, d AMIOriginateDirection)
 		o.SetChannel(peer.GetVal(config.AmiJsonFieldPeer))
 	}
 
-	if d.AllowDebug {
+	if d.DebugMode {
 		log.Printf("MakeOutboundCall, an outgoing call with originate request body = %v", o.Json())
 		log.Printf("MakeOutboundCall, an outgoing call with original request body (setter) = %v", d.Json())
 	}
@@ -244,7 +244,7 @@ func MakeInternalCall(ctx context.Context, s AMISocket, d AMIOriginateDirection)
 		o.SetTimeout(30000) // as default
 	}
 
-	if d.AllowSysValidator {
+	if d.ExtensionExists {
 		peer, err := SIPPeerStatusShort(ctx, s, fmt.Sprintf("%v", d.Extension))
 		if err != nil {
 			return nil, false, err
@@ -255,7 +255,7 @@ func MakeInternalCall(ctx context.Context, s AMISocket, d AMIOriginateDirection)
 		o.SetChannel(peer.GetVal(config.AmiJsonFieldPeer))
 	}
 
-	if d.AllowDebug {
+	if d.DebugMode {
 		log.Printf("MakeInternalCall, an internal call with originate request body = %v", o.Json())
 		log.Printf("MakeInternalCall, an internal call with original request body (setter) = %v", d.Json())
 	}
