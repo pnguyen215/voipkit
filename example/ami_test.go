@@ -25,3 +25,17 @@ func TestAmiClient(t *testing.T) {
 	}
 	ami.D().Info("Authenticated successfully")
 }
+
+func TestAllEventConsume(t *testing.T) {
+	c, err := createConn()
+	if err != nil {
+		ami.D().Error(err.Error())
+		return
+	}
+	event := ami.NewEventListener()
+	event.OpenFullEventsAsyncFunc(c)
+}
+
+func TestDialOut(t *testing.T) {
+	// adding logic here
+}

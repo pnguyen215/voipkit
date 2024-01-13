@@ -40,23 +40,19 @@ func (a *AMIAuth) SetEvents(events ...string) *AMIAuth {
 	return a
 }
 
-// Login
-// Login provides the login manager.
-func Login(ctx context.Context, s AMISocket, auth *AMIAuth) error {
+// WithAuthenticate
+// WithAuthenticate provides the login manager.
+func WithAuthenticate(ctx context.Context, s AMISocket, auth *AMIAuth) error {
 	if len(auth.Username) <= 0 {
 		return fmt.Errorf(config.AmiErrorUsernameRequired)
 	}
-
 	if len(auth.Secret) <= 0 {
 		return fmt.Errorf(config.AmiErrorPasswordRequired)
 	}
-
 	if len(auth.Events) == 0 {
 		auth.SetEvent(config.AmiManagerPerm)
 	}
-
 	c := NewCommand()
-
 	if len(s.UUID) <= 0 {
 		uuid, err := GenUUID()
 		if err != nil {
@@ -67,24 +63,19 @@ func Login(ctx context.Context, s AMISocket, auth *AMIAuth) error {
 	} else {
 		c.SetId(s.UUID)
 	}
-
 	c.SetV(auth)
 	c.SetAction(config.AmiActionLogin)
 	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	response, err := callback.Send()
-
 	if len(response) == 0 {
 		return fmt.Errorf(config.AmiErrorLoginFailed)
 	}
-
 	if err != nil {
 		return fmt.Errorf(config.AmiErrorLoginFailedMessage, err.Error())
 	}
-
 	if IsFailure(response) {
 		return fmt.Errorf(config.AmiErrorLoginFailedMessage, response.Get(config.AmiFieldMessage))
 	}
-
 	return nil
 }
 

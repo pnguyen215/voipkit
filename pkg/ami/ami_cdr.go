@@ -317,8 +317,8 @@ func ParseCdr(e *AMIMessage, d *AMIDictionary) *AMICdr {
 	if d == nil {
 		d = NewDictionary()
 	}
-	if !d.AllowForceTranslate {
-		d.SetAllowForceTranslate(true)
+	if !d.EnabledForceTranslate {
+		d.SetEnabledForceTranslate(true)
 	}
 	r := NewAMICdr().
 		SetAccountCode(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldAccountCode, "AccountCode")).

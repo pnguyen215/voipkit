@@ -56,7 +56,7 @@ type AMIEvent struct {
 }
 
 type AMIDictionary struct {
-	AllowForceTranslate bool `json:"allow_force_translate"`
+	EnabledForceTranslate bool `json:"enabled_force_translate"`
 }
 
 type AMIEventDictionary struct {
@@ -68,8 +68,8 @@ type AMIGrouping struct {
 }
 
 type AMIAction struct {
-	ActionCmd string `json:"action_cmd"`
-	Timeout   int    `json:"timeout,omitempty"`
+	Name    string `json:"name"`
+	Timeout int    `json:"timeout,omitempty"`
 }
 
 type AMIResponse struct {
@@ -113,7 +113,7 @@ type AMICommand struct {
 
 type AMIAuth struct {
 	Username string `ami:"Username" json:"username" binding:"required"`
-	Secret   string `ami:"Secret" json:"secret" binding:"required"`
+	Secret   string `ami:"Secret" json:"-" binding:"required"`
 	Events   string `ami:"Events,omitempty" json:"events" binding:"required"`
 }
 

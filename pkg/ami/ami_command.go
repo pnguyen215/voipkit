@@ -146,7 +146,7 @@ func (a *AMICommand) Read(ctx context.Context, socket AMISocket) (AmiReply, erro
 		if socket.MaxConcurrencyMillis > 0 {
 			if concurrency >= socket.MaxConcurrencyMillis {
 				if socket.DebugMode {
-					log.Printf("Read(). max over concurrency = %v (millis), the concurrency allowed = %v (millis)",
+					D().Warn("Read(). max over concurrency: %v (ms) and the concurrency allowed: %v (ms)",
 						concurrency, socket.MaxConcurrencyMillis)
 				}
 				break
@@ -177,7 +177,7 @@ func (a *AMICommand) ReadLevel(ctx context.Context, socket AMISocket) (AmiReplie
 		if socket.MaxConcurrencyMillis > 0 {
 			if concurrency >= socket.MaxConcurrencyMillis {
 				if socket.DebugMode {
-					log.Printf("ReadLevel(). max over concurrency = %v (millis), the concurrency allowed = %v (millis)",
+					D().Warn("ReadLevel(). max over concurrency: %v (ms) and the concurrency allowed: %v (ms)",
 						concurrency, socket.MaxConcurrencyMillis)
 				}
 				break

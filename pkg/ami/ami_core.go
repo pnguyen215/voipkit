@@ -47,37 +47,32 @@ func (c *AMICore) ResetUUID() *AMICore {
 	return c
 }
 
-// NewAmiCore
+// WithCore
 // Creating new instance asterisk server connection
 // Firstly, create new instance AMISocket
 // Secondly, create new request body to login
-func NewAmiCore(ctx context.Context, socket *AMISocket, auth *AMIAuth) (*AMICore, error) {
+func WithCore(ctx context.Context, socket *AMISocket, auth *AMIAuth) (*AMICore, error) {
 	uuid, err := GenUUID()
-
 	if err != nil {
 		return nil, err
 	}
-
 	socket.SetUUID(uuid)
-	err = Login(ctx, *socket, auth)
-
+	err = WithAuthenticate(ctx, *socket, auth)
 	if err != nil {
 		return nil, err
 	}
-
 	core := NewCore()
 	core.SetSocket(socket)
 	core.SetUUID(uuid)
 	core.SetDictionary(socket.Dictionary)
-
 	core.Wg.Add(1)
-	go core.Run(ctx)
+	go core.run(ctx)
 	return core, nil
 }
 
-// Run
+// run
 // Go-func to consume event from asterisk server response
-func (c *AMICore) Run(ctx context.Context) {
+func (c *AMICore) run(ctx context.Context) {
 	defer c.Wg.Done()
 	for {
 		select {

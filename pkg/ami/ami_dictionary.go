@@ -16,8 +16,8 @@ func NewDictionary() *AMIDictionary {
 	return d
 }
 
-func (d *AMIDictionary) SetAllowForceTranslate(allow bool) *AMIDictionary {
-	d.AllowForceTranslate = allow
+func (d *AMIDictionary) SetEnabledForceTranslate(allow bool) *AMIDictionary {
+	d.EnabledForceTranslate = allow
 	return d
 }
 
@@ -267,7 +267,7 @@ func (d *AMIDictionary) TranslateField(field string) string {
 	if ok {
 		return strings.ToLower(value)
 	} else {
-		if d.AllowForceTranslate {
+		if d.EnabledForceTranslate {
 			value = GetValByKey(dictionary.Dictionaries, field)
 			if len(value) > 0 {
 				return value
@@ -287,7 +287,7 @@ func (d *AMIDictionary) TranslateFieldWith(field string, dictionaries []AMIEvent
 		if v, ok := e.Dictionaries[field]; ok {
 			return strings.ToLower(v)
 		} else {
-			if d.AllowForceTranslate {
+			if d.EnabledForceTranslate {
 				value := GetValByKey(e.Dictionaries, field)
 				if len(value) > 0 {
 					return value

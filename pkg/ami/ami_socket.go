@@ -21,13 +21,13 @@ func NewAmiSocket() *AMISocket {
 		DebugMode: false,
 	}
 	d := NewDictionary()
-	d.SetAllowForceTranslate(true)
+	d.SetEnabledForceTranslate(true)
 
 	s.SetDictionary(d)
 	s.SetUsedDictionary(true)
 	s.SetRetry(true)
 	s.SetMaxRetries(3)
-	s.SetMaxConcurrencyMillis(config.AmiMaxConcurrencyMillis) // 1 minute = 60000 millis
+	s.SetMaxConcurrencyMillis(-1)
 	return s
 }
 
@@ -42,9 +42,7 @@ func (s *AMISocket) SetMaxRetries(value int) *AMISocket {
 }
 
 func (s *AMISocket) SetMaxConcurrencyMillis(value int64) *AMISocket {
-	if value > 0 {
-		s.MaxConcurrencyMillis = value
-	}
+	s.MaxConcurrencyMillis = value
 	return s
 }
 

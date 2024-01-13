@@ -2,7 +2,6 @@ package ami
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/pnguyen215/voipkit/pkg/ami/config"
@@ -15,13 +14,13 @@ func NewAction() *AMIAction {
 
 func NewRevokeAction(cmd string, timeout int) *AMIAction {
 	cli := NewAction()
-	cli.ActionCmd = cmd
+	cli.Name = cmd
 	cli.Timeout = timeout
 	return cli
 }
 
-func (a *AMIAction) SetActionCmd(action string) *AMIAction {
-	a.ActionCmd = action
+func (a *AMIAction) SetName(action string) *AMIAction {
+	a.Name = action
 	return a
 }
 
@@ -32,14 +31,14 @@ func (a *AMIAction) SetTimeout(timeout int) *AMIAction {
 	return a
 }
 
-// RevokeAction run cli on asterisk server
-func (c *AMIAction) RevokeAction(a *AMI, d *AMIDictionary, e *AMIMessage, deadlock bool) (*AMIResponse, error) {
-	log.Printf(" [>] Ami revoke action (state mutex opened lock~unlock) >>> \n '%v' \n", e.String())
+// Revoke run cli on asterisk server
+func (c *AMIAction) Revoke(a *AMI, d *AMIDictionary, e *AMIMessage, deadlock bool) (*AMIResponse, error) {
+	D().Info("[>] Ami revoke action (state mutex opened lock~unlock) >>> '%v'", e.String())
 	var response AMIResponse
 	var _err error
 
-	if strings.EqualFold(c.ActionCmd, "") {
-		response.ErrorMessage = fmt.Sprintf(config.AmiErrorFieldRequired, "action_cmd")
+	if strings.EqualFold(c.Name, "") {
+		response.ErrorMessage = fmt.Sprintf(config.AmiErrorFieldRequired, "name")
 		response.IsSuccess = false
 		_err = fmt.Errorf(response.ErrorMessage)
 		return &response, _err
@@ -81,34 +80,34 @@ on_failed:
 	return &response, _err
 }
 
-// RunAction for run cli asterisk server
-func (c *AMIAction) RunAction(a *AMI) (*AMIResponse, error) {
+// Run for run cli asterisk server
+func (c *AMIAction) Run(a *AMI) (*AMIResponse, error) {
 	action := NewActionWith(config.AmiActionCommand)
-	action.AddField(config.AmiActionCommand, c.ActionCmd)
-	return c.RevokeAction(a, NewDictionary(), action, false)
+	action.AddField(config.AmiActionCommand, c.Name)
+	return c.Revoke(a, NewDictionary(), action, false)
 }
 
-// RunActionDict
-func (c *AMIAction) RunActionDict(a *AMI, dictionaries map[string]string) (*AMIResponse, error) {
+// RunDictionary
+func (c *AMIAction) RunDictionary(a *AMI, dictionaries map[string]string) (*AMIResponse, error) {
 	action := NewActionWith(config.AmiActionCommand)
-	action.AddField(config.AmiActionCommand, c.ActionCmd)
+	action.AddField(config.AmiActionCommand, c.Name)
 	d := NewDictionary()
 	d.AddKeysTranslator(dictionaries)
-	return c.RevokeAction(a, d, action, false)
+	return c.Revoke(a, d, action, false)
 }
 
-// RunActionScript with script action
-func (c *AMIAction) RunActionScript(a *AMI, script map[string]string) (*AMIResponse, error) {
-	action := NewActionWith(c.ActionCmd)
+// RunScript with script action
+func (c *AMIAction) RunScript(a *AMI, script map[string]string) (*AMIResponse, error) {
+	action := NewActionWith(c.Name)
 	action.AddFields(script)
-	return c.RevokeAction(a, NewDictionary(), action, false)
+	return c.Revoke(a, NewDictionary(), action, false)
 }
 
-// RunActionScriptDict with script action
-func (c *AMIAction) RunActionScriptDict(a *AMI, script, dictionaries map[string]string) (*AMIResponse, error) {
-	action := NewActionWith(c.ActionCmd)
+// WithRun with script action
+func (c *AMIAction) WithRun(a *AMI, script, dictionaries map[string]string) (*AMIResponse, error) {
+	action := NewActionWith(c.Name)
 	action.AddFields(script)
 	d := NewDictionary()
 	d.AddKeysTranslator(dictionaries)
-	return c.RevokeAction(a, d, action, false)
+	return c.Revoke(a, d, action, false)
 }
