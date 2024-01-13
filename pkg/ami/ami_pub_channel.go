@@ -82,24 +82,29 @@ func (k *AMIPubSubQueue) Subscribes(keys ...string) PubChannel {
 	return ch
 }
 
+// Publish broadcasts the provided AMI message to all subscribers interested in the corresponding event type.
+// It also broadcasts the message to subscribers interested in all events.
+// Returns true if the message is successfully published; otherwise, returns false.
+//
+// Example:
+//
+//	pubSubQueue.Publish(amiMessage)
+//
+// Note: The AMI Pub-Sub mechanism allows subscribers to receive notifications for specific events or all events.
+// This method ensures that the message is sent to relevant subscribers based on event type and general subscriptions.
 func (k *AMIPubSubQueue) Publish(message *AMIMessage) bool {
 	k.Mutex.RLock()
 	defer k.Mutex.RUnlock()
-
 	if k.Off {
 		return false
 	}
-
 	ch, ok := k.Message[config.AmiPubSubKeyRef]
-
 	if ok {
 		go func(ch PubChannel) {
 			ch <- message
 		}(ch)
 	}
-
 	name := strings.ToLower(message.Field(strings.ToLower(config.AmiEventKey)))
-
 	if name != "" {
 		if ch, ok := k.Message[name]; ok {
 			go func(ch PubChannel) {
@@ -107,6 +112,5 @@ func (k *AMIPubSubQueue) Publish(message *AMIMessage) bool {
 			}(ch)
 		}
 	}
-
 	return true
 }
