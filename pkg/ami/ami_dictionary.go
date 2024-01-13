@@ -228,7 +228,7 @@ func (d *AMIDictionary) GetDictionaries() *[]AMIEventDictionary {
 
 	overlapDictionaries = &dictionaries
 	dictionary, _ := d.FindDictionaryByKey(config.AmiListenerEventCommon)
-	log.Printf("Dictionaries (common) was initialized, len = %d", len(dictionary.Dictionaries))
+	D().Info("Dictionaries (common) was initialized, len: %d", len(dictionary.Dictionaries))
 	return overlapDictionaries
 }
 

@@ -77,21 +77,21 @@ func OnUdpConn(ip string, port int) (net.Conn, error) {
 //	defer conn.Close()
 func NewNetwork(network, ip string, port int) (net.Conn, error) {
 	if !config.AmiNetworkKeys[network] {
-		return nil, AmiErrorWrap("AMI: Invalid network")
+		return nil, AmiErrorWrap("Ami: Invalid network")
 	}
 	if IsStringEmpty(ip) {
-		return nil, AmiErrorWrap("AMI: IP must be not empty")
+		return nil, AmiErrorWrap("Ami: IP must be not empty")
 	}
 	if port <= 0 {
-		return nil, AmiErrorWrap("AMI: Port must be positive number")
+		return nil, AmiErrorWrap("Ami: Port must be positive number")
 	}
 	host, _port, _ := DecodeIp(ip)
 	if len(host) > 0 && len(_port) > 0 {
 		form := net.JoinHostPort(host, _port)
-		D().Info("AMI: (IP decoded) dial connection: %v", form)
+		D().Info("Ami (IP decoded) dial connection: %v", form)
 		return net.Dial(network, form)
 	}
 	form := RemoveProtocol(ip, port)
-	D().Info("AMI: dial connection: %v", form)
+	D().Info("Ami dial connection: %v", form)
 	return net.Dial(network, form)
 }

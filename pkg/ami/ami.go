@@ -393,7 +393,7 @@ func create(conn net.Conn) (*AMI, context.Context) {
 		_socket, err := WithSocket(ctx, addr)
 		if err == nil {
 			c.Socket = _socket
-			D().Info("Ami cloning (addr: %v) socket connection succeeded", addr)
+			D().Info("Ami network cloning (addr: %v) socket connection succeeded", addr)
 		}
 	}
 	return c, ctx
