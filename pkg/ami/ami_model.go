@@ -167,7 +167,7 @@ type AMIPayloadQueue struct {
 	Parameters     string `ami:"Parameters,omitempty"`
 }
 
-// AMIPayloadOriginate holds information used to originate outgoing calls.
+// AMIOriginate holds information used to originate outgoing calls.
 //
 //	Channel - Channel name to call.
 //	Exten - Extension to use (requires Context and Priority)
@@ -184,7 +184,7 @@ type AMIPayloadQueue struct {
 //	Codecs - Comma-separated list of codecs to use for this call.
 //	ChannelId - Channel UniqueId to be set on the channel.
 //	OtherChannelId - Channel UniqueId to be set on the second local channel.
-type AMIPayloadOriginate struct {
+type AMIOriginate struct {
 	Channel        string   `ami:"Channel,omitempty"`
 	Exten          string   `ami:"Exten,omitempty"`
 	Context        string   `ami:"Context,omitempty"`
@@ -328,7 +328,7 @@ type AMIPayloadDb struct {
 	Value  string `ami:"Val,omitempty"`
 }
 
-type AMIOriginateDirection struct {
+type AMIDialCall struct {
 	Telephone       string `json:"telephone" binding:"required"`        // like customer phone number or no. extension internal from all routes
 	ChannelProtocol string `json:"channel_protocol" binding:"required"` // protocols include: SIP, H323, IAX...
 	Extension       int    `json:"extension" binding:"required"`        // like current user using no. extension

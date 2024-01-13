@@ -706,11 +706,11 @@ func (c *AMICore) Hangup(ctx context.Context, channel, cause string) (AmiReply, 
 }
 
 // Originate
-func (c *AMICore) Originate(ctx context.Context, originate AMIPayloadOriginate) (AmiReply, error) {
+func (c *AMICore) Originate(ctx context.Context, originate AMIOriginate) (AmiReply, error) {
 	return Originate(ctx, *c.Socket, originate)
 }
 
-func (c *AMICore) MakeCall(ctx context.Context, originate AMIPayloadOriginate) (AmiReply, error) {
+func (c *AMICore) MakeCall(ctx context.Context, originate AMIOriginate) (AmiReply, error) {
 	return c.Originate(ctx, originate)
 }
 
@@ -1350,12 +1350,12 @@ func (c *AMICore) ConfbridgeStopRecord(ctx context.Context, conference string) (
 }
 
 // DialOut
-func (c *AMICore) DialOut(ctx context.Context, d AMIOriginateDirection) (AmiReply, bool, error) {
+func (c *AMICore) DialOut(ctx context.Context, d AMIDialCall) (AmiReply, bool, error) {
 	return DialOut(ctx, *c.Socket, d)
 }
 
 // DialIn
-func (c *AMICore) DialIn(ctx context.Context, d AMIOriginateDirection) (AmiReply, bool, error) {
+func (c *AMICore) DialIn(ctx context.Context, d AMIDialCall) (AmiReply, bool, error) {
 	return DialIn(ctx, *c.Socket, d)
 }
 

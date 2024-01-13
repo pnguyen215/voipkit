@@ -8,61 +8,61 @@ import (
 	"github.com/pnguyen215/voipkit/pkg/ami/config"
 )
 
-func NewAMIPayloadOriginate() *AMIPayloadOriginate {
-	o := &AMIPayloadOriginate{}
+func NewAmiOriginate() *AMIOriginate {
+	o := &AMIOriginate{}
 	return o
 }
 
-func NewAMIOriginateDirection() *AMIOriginateDirection {
-	o := &AMIOriginateDirection{}
+func NewAmiDialCall() *AMIDialCall {
+	o := &AMIDialCall{}
 	o.SetExtensionExists(true)
 	return o
 }
 
-func (o *AMIPayloadOriginate) SetAsync(value bool) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetAsync(value bool) *AMIOriginate {
 	states := map[bool]string{true: "true", false: "false"}
 	o.Async = states[value]
 	return o
 }
 
-func (o *AMIPayloadOriginate) SetChannel(value string) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetChannel(value string) *AMIOriginate {
 	o.Channel = strings.TrimSpace(value)
 	return o
 }
 
-func (o *AMIPayloadOriginate) SetExtension(value string) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetExtension(value string) *AMIOriginate {
 	o.Exten = strings.TrimSpace(value)
 	return o
 }
 
-func (o *AMIPayloadOriginate) SetContext(value string) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetContext(value string) *AMIOriginate {
 	o.Context = strings.TrimSpace(value)
 	return o
 }
 
-func (o *AMIPayloadOriginate) SetPriority(value int) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetPriority(value int) *AMIOriginate {
 	if value >= 0 {
 		o.Priority = value
 	}
 	return o
 }
 
-func (o *AMIPayloadOriginate) SetApplication(value string) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetApplication(value string) *AMIOriginate {
 	o.Application = strings.TrimSpace(value)
 	return o
 }
 
-func (o *AMIPayloadOriginate) SetData(value string) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetData(value string) *AMIOriginate {
 	o.Data = value
 	return o
 }
 
-func (o *AMIPayloadOriginate) SetDataWith(value interface{}) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetDataWith(value interface{}) *AMIOriginate {
 	o.SetData(JsonString(value))
 	return o
 }
 
-func (o *AMIPayloadOriginate) SetTimeout(value int) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetTimeout(value int) *AMIOriginate {
 	if value >= config.AmiMinTimeoutInMsForCall && value <= config.AmiMaxTimeoutInMsForCall {
 		o.Timeout = value
 	} else {
@@ -71,17 +71,17 @@ func (o *AMIPayloadOriginate) SetTimeout(value int) *AMIPayloadOriginate {
 	return o
 }
 
-func (o *AMIPayloadOriginate) SetCallerId(value string) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetCallerId(value string) *AMIOriginate {
 	o.CallerID = value
 	return o
 }
 
-func (o *AMIPayloadOriginate) SetVar(value ...string) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetVar(value ...string) *AMIOriginate {
 	o.Variable = append(o.Variable, value...)
 	return o
 }
 
-func (c *AMIPayloadOriginate) SetVars(delimiter string, variables ...string) *AMIPayloadOriginate {
+func (c *AMIOriginate) SetVars(delimiter string, variables ...string) *AMIOriginate {
 	if strings.EqualFold(delimiter, "") {
 		delimiter = ";"
 	}
@@ -90,7 +90,7 @@ func (c *AMIPayloadOriginate) SetVars(delimiter string, variables ...string) *AM
 	return c
 }
 
-func (c *AMIPayloadOriginate) SetVarsMap(delimiter string, variables map[string]interface{}) *AMIPayloadOriginate {
+func (c *AMIOriginate) SetVarsMap(delimiter string, variables map[string]interface{}) *AMIOriginate {
 	if len(variables) <= 0 {
 		return c
 	}
@@ -105,75 +105,75 @@ func (c *AMIPayloadOriginate) SetVarsMap(delimiter string, variables map[string]
 	return c
 }
 
-func (o *AMIPayloadOriginate) SetAccount(value string) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetAccount(value string) *AMIOriginate {
 	o.Account = value
 	return o
 }
 
-func (o *AMIPayloadOriginate) SetEarlyMedia(value string) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetEarlyMedia(value string) *AMIOriginate {
 	o.EarlyMedia = value
 	return o
 }
 
-func (o *AMIPayloadOriginate) SetCodecs(value string) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetCodecs(value string) *AMIOriginate {
 	o.Codecs = strings.TrimSpace(value)
 	return o
 }
 
-func (o *AMIPayloadOriginate) SetChannelId(value string) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetChannelId(value string) *AMIOriginate {
 	o.ChannelID = strings.TrimSpace(value)
 	return o
 }
 
-func (o *AMIPayloadOriginate) SetOtherChannelId(value string) *AMIPayloadOriginate {
+func (o *AMIOriginate) SetOtherChannelId(value string) *AMIOriginate {
 	o.OtherChannelID = strings.TrimSpace(value)
 	return o
 }
 
-func (o *AMIPayloadOriginate) Json() string {
+func (o *AMIOriginate) Json() string {
 	return JsonString(o)
 }
 
-func (o *AMIOriginateDirection) SetTelephone(value string) *AMIOriginateDirection {
+func (o *AMIDialCall) SetTelephone(value string) *AMIDialCall {
 	o.Telephone = strings.TrimSpace(value)
 	return o
 }
 
-func (o *AMIOriginateDirection) SetChannelProtocol(value string) *AMIOriginateDirection {
+func (o *AMIDialCall) SetChannelProtocol(value string) *AMIDialCall {
 	o.ChannelProtocol = strings.TrimSpace(value)
 	return o
 }
 
-func (o *AMIOriginateDirection) SetExtension(value int) *AMIOriginateDirection {
+func (o *AMIDialCall) SetExtension(value int) *AMIDialCall {
 	if value >= 0 {
 		o.Extension = value
 	}
 	return o
 }
 
-func (o *AMIOriginateDirection) SetDebugMode(value bool) *AMIOriginateDirection {
+func (o *AMIDialCall) SetDebugMode(value bool) *AMIDialCall {
 	o.DebugMode = value
 	return o
 }
 
-func (o *AMIOriginateDirection) SetTimeout(value int) *AMIOriginateDirection {
+func (o *AMIDialCall) SetTimeout(value int) *AMIDialCall {
 	if value >= config.AmiMinTimeoutInMsForCall && value <= config.AmiMaxTimeoutInMsForCall {
 		o.Timeout = value
 	}
 	return o
 }
 
-func (o *AMIOriginateDirection) SetExtensionExists(value bool) *AMIOriginateDirection {
+func (o *AMIDialCall) SetExtensionExists(value bool) *AMIDialCall {
 	o.ExtensionExists = value
 	return o
 }
 
-func (o *AMIOriginateDirection) Json() string {
+func (o *AMIDialCall) Json() string {
 	return JsonString(o)
 }
 
 // DialCall
-func DialCall(ctx context.Context, s AMISocket, originate AMIPayloadOriginate) (AmiReply, error) {
+func DialCall(ctx context.Context, s AMISocket, originate AMIOriginate) (AmiReply, error) {
 	return Originate(ctx, s, originate)
 }
 
@@ -186,10 +186,10 @@ func DialCall(ctx context.Context, s AMISocket, originate AMIPayloadOriginate) (
 // exten: 012345678
 // priority: 1
 // timeout: 60000
-func DialOut(ctx context.Context, s AMISocket, d AMIOriginateDirection) (AmiReply, bool, error) {
+func DialOut(ctx context.Context, s AMISocket, d AMIDialCall) (AmiReply, bool, error) {
 	channel := NewChannel().
 		SetChannelProtocol(d.ChannelProtocol)
-	o := NewAMIPayloadOriginate().
+	o := NewAmiOriginate().
 		SetPriority(1).
 		SetAsync(true).
 		SetTimeout(d.Timeout).
@@ -224,10 +224,10 @@ func DialOut(ctx context.Context, s AMISocket, d AMIOriginateDirection) (AmiRepl
 // exten: 1001
 // priority: 1
 // timeout: 60000
-func DialIn(ctx context.Context, s AMISocket, d AMIOriginateDirection) (AmiReply, bool, error) {
+func DialIn(ctx context.Context, s AMISocket, d AMIDialCall) (AmiReply, bool, error) {
 	channel := NewChannel().
 		SetChannelProtocol(d.ChannelProtocol)
-	o := NewAMIPayloadOriginate().
+	o := NewAmiOriginate().
 		SetPriority(1).
 		SetAsync(true).
 		SetTimeout(d.Timeout).

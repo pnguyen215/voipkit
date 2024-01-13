@@ -166,7 +166,7 @@ func Hangup(ctx context.Context, s AMISocket, channel, cause string) (AmiReply, 
 
 // Originate originates a call.
 // Generates an outgoing call to a Extension/Context/Priority or Application/Data.
-func Originate(ctx context.Context, s AMISocket, originate AMIPayloadOriginate) (AmiReply, error) {
+func Originate(ctx context.Context, s AMISocket, originate AMIOriginate) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionOriginate)
 	c.SetVCmd(originate)
 	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
