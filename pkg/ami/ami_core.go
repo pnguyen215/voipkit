@@ -10,9 +10,9 @@ import (
 
 func NewCore() *AMICore {
 	c := &AMICore{}
-	c.SetEvent(make(chan AMIResultRaw))
+	c.SetEvent(make(chan AmiReply))
 	c.SetStop(make(chan struct{}))
-	c.SetSocket(NewAMISocket())
+	c.SetSocket(NewAmiSocket())
 	return c
 }
 
@@ -26,7 +26,7 @@ func (c *AMICore) SetUUID(id string) *AMICore {
 	return c
 }
 
-func (c *AMICore) SetEvent(event chan AMIResultRaw) *AMICore {
+func (c *AMICore) SetEvent(event chan AmiReply) *AMICore {
 	c.Event = event
 	return c
 }
@@ -98,7 +98,7 @@ func (c *AMICore) Run(ctx context.Context) {
 
 // Events
 // Consume all events will be returned an channel received from asterisk server log.
-func (c *AMICore) Events() <-chan AMIResultRaw {
+func (c *AMICore) Events() <-chan AmiReply {
 	return c.Event
 }
 
@@ -172,8 +172,8 @@ func (c *AMICore) Events() <-chan AMIResultRaw {
     "tone_zone": "<Not set>"
   }
 */
-func (c *AMICore) GetSIPPeers(ctx context.Context) ([]AMIResultRaw, error) {
-	var peers []AMIResultRaw
+func (c *AMICore) GetSIPPeers(ctx context.Context) ([]AmiReply, error) {
+	var peers []AmiReply
 	response, err := SIPPeers(ctx, *c.Socket)
 	switch {
 	case err != nil:
@@ -262,7 +262,7 @@ func (c *AMICore) GetSIPPeers(ctx context.Context) ([]AMIResultRaw, error) {
   "voicemail_box": "8103@default"
 }
 */
-func (c *AMICore) GetSIPPeer(ctx context.Context, peer string) (AMIResultRaw, error) {
+func (c *AMICore) GetSIPPeer(ctx context.Context, peer string) (AmiReply, error) {
 	return SIPShowPeer(ctx, *c.Socket, peer)
 }
 
@@ -279,8 +279,8 @@ func (c *AMICore) GetSIPPeer(ctx context.Context, peer string) (AMIResultRaw, er
     "time": "28"
   }
 */
-func (c *AMICore) GetSIPPeersStatus(ctx context.Context) ([]AMIResultRaw, error) {
-	var peers []AMIResultRaw
+func (c *AMICore) GetSIPPeersStatus(ctx context.Context) ([]AmiReply, error) {
+	var peers []AmiReply
 	response, err := SIPPeers(ctx, *c.Socket)
 	switch {
 	case err != nil:
@@ -313,7 +313,7 @@ func (c *AMICore) GetSIPPeersStatus(ctx context.Context) ([]AMIResultRaw, error)
   "time": "42"
 }
 */
-func (c *AMICore) GetSIPPeerStatus(ctx context.Context, peer string) (AMIResultRaw, error) {
+func (c *AMICore) GetSIPPeerStatus(ctx context.Context, peer string) (AmiReply, error) {
 	return SIPPeerStatusShort(ctx, *c.Socket, peer)
 }
 
@@ -327,7 +327,7 @@ func (c *AMICore) HasSIPPeerStatus(ctx context.Context, peer string) (bool, erro
 /*
 
  */
-func (c *AMICore) GetSIPShowRegistry(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) GetSIPShowRegistry(ctx context.Context) ([]AmiReply, error) {
 	return SIPShowRegistry(ctx, *c.Socket)
 }
 
@@ -346,8 +346,8 @@ func (c *AMICore) GetSIPShowRegistry(ctx context.Context) ([]AMIResultRaw, error
     "privilege": "call,all"
   },
 */
-func (c *AMICore) GetSIPQualifyPeer(ctx context.Context) ([]AMIResultRaw, error) {
-	var peers []AMIResultRaw
+func (c *AMICore) GetSIPQualifyPeer(ctx context.Context) ([]AmiReply, error) {
+	var peers []AmiReply
 	response, err := SIPPeers(ctx, *c.Socket)
 	switch {
 	case err != nil:
@@ -381,109 +381,109 @@ func (c *AMICore) Ping(ctx context.Context) error {
 }
 
 // Command executes an Asterisk CLI Command.
-func (c *AMICore) Command(ctx context.Context, cmd string) (AMIResultRawLevel, error) {
+func (c *AMICore) Command(ctx context.Context, cmd string) (AmiReplies, error) {
 	return Command(ctx, *c.Socket, cmd)
 }
 
 // CoreSettings shows PBX core settings (version etc).
-func (c *AMICore) GetCoreSettings(ctx context.Context) (AMIResultRaw, error) {
+func (c *AMICore) GetCoreSettings(ctx context.Context) (AmiReply, error) {
 	return CoreSettings(ctx, *c.Socket)
 }
 
 // CoreStatus shows PBX core status variables.
-func (c *AMICore) GetCoreStatus(ctx context.Context) (AMIResultRaw, error) {
+func (c *AMICore) GetCoreStatus(ctx context.Context) (AmiReply, error) {
 	return CoreStatus(ctx, *c.Socket)
 }
 
 // ListCommands lists available manager commands.
 // Returns the action name and synopsis for every action that is available to the user
-func (c *AMICore) GetListCommands(ctx context.Context) (AMIResultRaw, error) {
+func (c *AMICore) GetListCommands(ctx context.Context) (AmiReply, error) {
 	return ListCommands(ctx, *c.Socket)
 }
 
 // Challenge generates a challenge for MD5 authentication.
-func (c *AMICore) Challenge(ctx context.Context) (AMIResultRaw, error) {
+func (c *AMICore) Challenge(ctx context.Context) (AmiReply, error) {
 	return Challenge(ctx, *c.Socket)
 }
 
 // CreateConfig creates an empty file in the configuration directory.
 // This action will create an empty file in the configuration directory.
 // This action is intended to be used before an UpdateConfig action.
-func (c *AMICore) CreateConfig(ctx context.Context, filename string) (AMIResultRaw, error) {
+func (c *AMICore) CreateConfig(ctx context.Context, filename string) (AmiReply, error) {
 	return CreateConfig(ctx, *c.Socket, filename)
 }
 
 // DataGet retrieves the data api tree.
-func (c *AMICore) DataGet(ctx context.Context, path, search, filter string) (AMIResultRaw, error) {
+func (c *AMICore) DataGet(ctx context.Context, path, search, filter string) (AmiReply, error) {
 	return DataGet(ctx, *c.Socket, path, search, filter)
 }
 
 // EventFlow control Event Flow.
 // eventMask: Enable/Disable sending of events to this manager client.
-func (c *AMICore) EventFlow(ctx context.Context, eventMask string) (AMIResultRaw, error) {
+func (c *AMICore) EventFlow(ctx context.Context, eventMask string) (AmiReply, error) {
 	return EventFlow(ctx, *c.Socket, eventMask)
 }
 
 // GetConfig retrieves configuration.
 // This action will dump the contents of a configuration file by category and contents or optionally by specified category only.
-func (c *AMICore) GetConfig(ctx context.Context, filename, category, filter string) (AMIResultRaw, error) {
+func (c *AMICore) GetConfig(ctx context.Context, filename, category, filter string) (AmiReply, error) {
 	return GetConfig(ctx, *c.Socket, filename, category, filter)
 }
 
 // GetConfigJson retrieves configuration (JSON format).
 // This action will dump the contents of a configuration file by category and contents in JSON format.
 // This only makes sense to be used using raw man over the HTTP interface.
-func (c *AMICore) GetConfigJson(ctx context.Context, filename, category, filter string) (AMIResultRaw, error) {
+func (c *AMICore) GetConfigJson(ctx context.Context, filename, category, filter string) (AmiReply, error) {
 	return GetConfigJson(ctx, *c.Socket, filename, category, filter)
 }
 
 // JabberSend sends a message to a Jabber Client
-func (c *AMICore) JabberSend(ctx context.Context, jabber, jid, message string) (AMIResultRaw, error) {
+func (c *AMICore) JabberSend(ctx context.Context, jabber, jid, message string) (AmiReply, error) {
 	return JabberSend(ctx, *c.Socket, jabber, jid, message)
 }
 
 // ListCategories lists categories in configuration file.
 // Example:
 // filename like: manager.conf, extensions.conf, sip.conf...
-func (c *AMICore) ListCategories(ctx context.Context, filename string) (AMIResultRaw, error) {
+func (c *AMICore) ListCategories(ctx context.Context, filename string) (AmiReply, error) {
 	return ListCategories(ctx, *c.Socket, filename)
 }
 
 // ModuleCheck checks if module is loaded.
 // Checks if Asterisk module is loaded. Will return Success/Failure. For success returns, the module revision number is included.
-func (c *AMICore) ModuleCheck(ctx context.Context, module string) (AMIResultRaw, error) {
+func (c *AMICore) ModuleCheck(ctx context.Context, module string) (AmiReply, error) {
 	return ModuleCheck(ctx, *c.Socket, module)
 }
 
 // ModuleLoad module management.
 // Loads, unloads or reloads an Asterisk module in a running system.
-func (c *AMICore) ModuleLoad(ctx context.Context, module, loadType string) (AMIResultRaw, error) {
+func (c *AMICore) ModuleLoad(ctx context.Context, module, loadType string) (AmiReply, error) {
 	return ModuleLoad(ctx, *c.Socket, module, loadType)
 }
 
 // Reload Sends a reload event.
-func (c *AMICore) Reload(ctx context.Context, module string) (AMIResultRaw, error) {
+func (c *AMICore) Reload(ctx context.Context, module string) (AmiReply, error) {
 	return Reload(ctx, *c.Socket, module)
 }
 
 // ShowDialPlan shows dialplan contexts and extensions
 // Be aware that showing the full dialplan may take a lot of capacity.
-func (c *AMICore) ShowDialPlan(ctx context.Context, extension, context string) ([]AMIResultRaw, error) {
+func (c *AMICore) ShowDialPlan(ctx context.Context, extension, context string) ([]AmiReply, error) {
 	return ShowDialPlan(ctx, *c.Socket, extension, context)
 }
 
 // Filter dynamically add filters for the current manager session.
-func (c *AMICore) Filter(ctx context.Context, operation, filter string) (AMIResultRaw, error) {
+func (c *AMICore) Filter(ctx context.Context, operation, filter string) (AmiReply, error) {
 	return Filter(ctx, *c.Socket, operation, filter)
 }
 
 // DeviceStateList list the current known device states.
-func (c *AMICore) GetDeviceStateList(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) GetDeviceStateList(ctx context.Context) ([]AmiReply, error) {
 	return DeviceStateList(ctx, *c.Socket)
 }
 
 // LoggerRotate reload and rotate the Asterisk logger.
-func (c *AMICore) LoggerRotate(ctx context.Context) (AMIResultRaw, error) {
+func (c *AMICore) LoggerRotate(ctx context.Context) (AmiReply, error) {
 	return LoggerRotate(ctx, *c.Socket)
 }
 
@@ -516,7 +516,7 @@ Var-000004: 126
 Value-000004: >55555, Jason Bourne18, ***@noCia.gov.do
 ActionID: 495446608
 */
-func (c *AMICore) UpdateConfig(ctx context.Context, sourceFilename, destinationFilename string, reload bool, actions ...AMIUpdateConfigAction) (AMIResultRaw, error) {
+func (c *AMICore) UpdateConfig(ctx context.Context, sourceFilename, destinationFilename string, reload bool, actions ...AMIUpdateConfigAction) (AmiReply, error) {
 	return UpdateConfig(ctx, *c.Socket, sourceFilename, destinationFilename, reload, actions...)
 }
 
@@ -545,7 +545,7 @@ func (c *AMICore) UpdateConfig(ctx context.Context, sourceFilename, destinationF
   }
 ]
 */
-func (c *AMICore) GetQueueStatuses(ctx context.Context, queue string) ([]AMIResultRaw, error) {
+func (c *AMICore) GetQueueStatuses(ctx context.Context, queue string) ([]AmiReply, error) {
 	return QueueStatuses(ctx, *c.Socket, queue)
 }
 
@@ -567,64 +567,64 @@ func (c *AMICore) GetQueueStatuses(ctx context.Context, queue string) ([]AMIResu
   }
 ]
 */
-func (c *AMICore) GetQueueSummary(ctx context.Context, queue string) ([]AMIResultRaw, error) {
+func (c *AMICore) GetQueueSummary(ctx context.Context, queue string) ([]AmiReply, error) {
 	return QueueSummary(ctx, *c.Socket, queue)
 }
 
 // QueueMemberRingInUse
-func (c *AMICore) QueueMemberRingInUse(ctx context.Context, _interface, ringInUse, queue string) (AMIResultRaw, error) {
+func (c *AMICore) QueueMemberRingInUse(ctx context.Context, _interface, ringInUse, queue string) (AmiReply, error) {
 	return QueueMemberRingInUse(ctx, *c.Socket, _interface, ringInUse, queue)
 }
 
 // QueueStatus
-func (c *AMICore) QueueStatus(ctx context.Context, queue, member string) (AMIResultRaw, error) {
+func (c *AMICore) QueueStatus(ctx context.Context, queue, member string) (AmiReply, error) {
 	return QueueStatus(ctx, *c.Socket, queue, member)
 }
 
 // QueueRule
-func (c *AMICore) QueueRule(ctx context.Context, rule string) (AMIResultRaw, error) {
+func (c *AMICore) QueueRule(ctx context.Context, rule string) (AmiReply, error) {
 	return QueueRule(ctx, *c.Socket, rule)
 }
 
 // QueueReset
 // QueueReset resets queue statistics.
-func (c *AMICore) QueueReset(ctx context.Context, queue string) (AMIResultRaw, error) {
+func (c *AMICore) QueueReset(ctx context.Context, queue string) (AmiReply, error) {
 	return QueueReset(ctx, *c.Socket, queue)
 }
 
 // QueueRemove
 // QueueRemove removes interface from queue.
-func (c *AMICore) QueueRemove(ctx context.Context, queue AMIPayloadQueue) (AMIResultRaw, error) {
+func (c *AMICore) QueueRemove(ctx context.Context, queue AMIPayloadQueue) (AmiReply, error) {
 	return QueueRemove(ctx, *c.Socket, queue)
 }
 
 // QueueReload
 // QueueReload reloads a queue, queues, or any sub-section of a queue or queues.
-func (c *AMICore) QueueReload(ctx context.Context, queue AMIPayloadQueue) (AMIResultRaw, error) {
+func (c *AMICore) QueueReload(ctx context.Context, queue AMIPayloadQueue) (AmiReply, error) {
 	return QueueReload(ctx, *c.Socket, queue)
 }
 
 // QueuePenalty
 // QueuePenalty sets the penalty for a queue member.
-func (c *AMICore) QueuePenalty(ctx context.Context, queue AMIPayloadQueue) (AMIResultRaw, error) {
+func (c *AMICore) QueuePenalty(ctx context.Context, queue AMIPayloadQueue) (AmiReply, error) {
 	return QueuePenalty(ctx, *c.Socket, queue)
 }
 
 // QueuePause
 // QueuePause makes a queue member temporarily unavailable.
-func (c *AMICore) QueuePause(ctx context.Context, queue AMIPayloadQueue) (AMIResultRaw, error) {
+func (c *AMICore) QueuePause(ctx context.Context, queue AMIPayloadQueue) (AmiReply, error) {
 	return QueuePause(ctx, *c.Socket, queue)
 }
 
 // QueueLog
 // QueueLog adds custom entry in queue_log.
-func (c *AMICore) QueueLog(ctx context.Context, queue AMIPayloadQueue) (AMIResultRaw, error) {
+func (c *AMICore) QueueLog(ctx context.Context, queue AMIPayloadQueue) (AmiReply, error) {
 	return QueueLog(ctx, *c.Socket, queue)
 }
 
 // QueueAdd
 // QueueAdd adds interface to queue.
-func (c *AMICore) QueueAdd(ctx context.Context, queue AMIPayloadQueue) (AMIResultRaw, error) {
+func (c *AMICore) QueueAdd(ctx context.Context, queue AMIPayloadQueue) (AmiReply, error) {
 	return QueueAdd(ctx, *c.Socket, queue)
 }
 
@@ -644,7 +644,7 @@ func (c *AMICore) QueueAdd(ctx context.Context, queue AMIPayloadQueue) (AMIResul
   }
 ]
 */
-func (c *AMICore) ExtensionStateList(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) ExtensionStateList(ctx context.Context) ([]AmiReply, error) {
 	return ExtensionStateList(ctx, *c.Socket)
 }
 
@@ -662,13 +662,13 @@ func (c *AMICore) ExtensionStateList(ctx context.Context) ([]AMIResultRaw, error
   "status_text": "Idle"
 }
 */
-func (c *AMICore) ExtensionState(ctx context.Context, exten, context string) (AMIResultRaw, error) {
+func (c *AMICore) ExtensionState(ctx context.Context, exten, context string) (AmiReply, error) {
 	return ExtensionState(ctx, *c.Socket, exten, context)
 }
 
 // ExtensionStates
-func (c *AMICore) ExtensionStates(ctx context.Context) ([]AMIResultRaw, error) {
-	var extensions []AMIResultRaw
+func (c *AMICore) ExtensionStates(ctx context.Context) ([]AmiReply, error) {
+	var extensions []AmiReply
 	response, err := ExtensionStateList(ctx, *c.Socket)
 	switch {
 	case err != nil:
@@ -689,88 +689,88 @@ func (c *AMICore) ExtensionStates(ctx context.Context) ([]AMIResultRaw, error) {
 }
 
 // CoreShowChannels
-func (c *AMICore) CoreShowChannels(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) CoreShowChannels(ctx context.Context) ([]AmiReply, error) {
 	return CoreShowChannels(ctx, *c.Socket)
 }
 
 // AbsoluteTimeout
 // Hangup a channel after a certain time. Acknowledges set time with Timeout Set message.
-func (c *AMICore) AbsoluteTimeout(ctx context.Context, channel string, timeout int) (AMIResultRaw, error) {
+func (c *AMICore) AbsoluteTimeout(ctx context.Context, channel string, timeout int) (AmiReply, error) {
 	return AbsoluteTimeout(ctx, *c.Socket, channel, timeout)
 }
 
 // Hangup
 // Hangup hangups channel.
-func (c *AMICore) Hangup(ctx context.Context, channel, cause string) (AMIResultRaw, error) {
+func (c *AMICore) Hangup(ctx context.Context, channel, cause string) (AmiReply, error) {
 	return Hangup(ctx, *c.Socket, channel, cause)
 }
 
 // Originate
-func (c *AMICore) Originate(ctx context.Context, originate AMIPayloadOriginate) (AMIResultRaw, error) {
+func (c *AMICore) Originate(ctx context.Context, originate AMIPayloadOriginate) (AmiReply, error) {
 	return Originate(ctx, *c.Socket, originate)
 }
 
-func (c *AMICore) MakeCall(ctx context.Context, originate AMIPayloadOriginate) (AMIResultRaw, error) {
+func (c *AMICore) MakeCall(ctx context.Context, originate AMIPayloadOriginate) (AmiReply, error) {
 	return c.Originate(ctx, originate)
 }
 
 // ParkedCalls
-func (c *AMICore) ParkedCalls(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) ParkedCalls(ctx context.Context) ([]AmiReply, error) {
 	return ParkedCalls(ctx, *c.Socket)
 }
 
 // Park
 // Park parks a channel.
-func (c *AMICore) Park(ctx context.Context, channel1, channel2 string, timeout int, parkinglot string) (AMIResultRaw, error) {
+func (c *AMICore) Park(ctx context.Context, channel1, channel2 string, timeout int, parkinglot string) (AmiReply, error) {
 	return Park(ctx, *c.Socket, channel1, channel2, timeout, parkinglot)
 }
 
 // Parkinglots
-func (c *AMICore) Parkinglots(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) Parkinglots(ctx context.Context) ([]AmiReply, error) {
 	return Parkinglots(ctx, *c.Socket)
 }
 
 // PlayDTMF
 // PlayDTMF plays DTMF signal on a specific channel.
-func (c *AMICore) PlayDTMF(ctx context.Context, channel, digit string, duration int) (AMIResultRaw, error) {
+func (c *AMICore) PlayDTMF(ctx context.Context, channel, digit string, duration int) (AmiReply, error) {
 	return PlayDTMF(ctx, *c.Socket, channel, digit, duration)
 }
 
 // Redirect
 // Redirect redirects (transfer) a call.
-func (c *AMICore) Redirect(ctx context.Context, call AMIPayloadCall) (AMIResultRaw, error) {
+func (c *AMICore) Redirect(ctx context.Context, call AMIPayloadCall) (AmiReply, error) {
 	return Redirect(ctx, *c.Socket, call)
 }
 
 // SendText
 // SendText sends text message to channel.
-func (c *AMICore) SendText(ctx context.Context, channel, message string) (AMIResultRaw, error) {
+func (c *AMICore) SendText(ctx context.Context, channel, message string) (AmiReply, error) {
 	return SendText(ctx, *c.Socket, channel, message)
 }
 
 // SetVar
 // SetVar sets a channel variable. Sets a global or local channel variable.
 // Note: If a channel name is not provided then the variable is global.
-func (c *AMICore) SetVar(ctx context.Context, channel, variable, value string) (AMIResultRaw, error) {
+func (c *AMICore) SetVar(ctx context.Context, channel, variable, value string) (AmiReply, error) {
 	return SetVar(ctx, *c.Socket, channel, variable, value)
 }
 
 // GetStatus
 // Status lists channel status.
 // Will return the status information of each channel along with the value for the specified channel variables.
-func (c *AMICore) GetStatus(ctx context.Context, channel, variables string) (AMIResultRaw, error) {
+func (c *AMICore) GetStatus(ctx context.Context, channel, variables string) (AmiReply, error) {
 	return Status(ctx, *c.Socket, channel, variables)
 }
 
 // AOCMessage
 // AOCMessage generates an Advice of Charge message on a channel.
-func (c *AMICore) AOCMessage(ctx context.Context, aoc AMIPayloadAOC) (AMIResultRaw, error) {
+func (c *AMICore) AOCMessage(ctx context.Context, aoc AMIPayloadAOC) (AmiReply, error) {
 	return AOCMessage(ctx, *c.Socket, aoc)
 }
 
 // GetVar
 // GetVar get a channel variable.
-func (c *AMICore) GetVar(ctx context.Context, channel, variable string) (AMIResultRaw, error) {
+func (c *AMICore) GetVar(ctx context.Context, channel, variable string) (AmiReply, error) {
 	return GetVar(ctx, *c.Socket, channel, variable)
 }
 
@@ -778,241 +778,241 @@ func (c *AMICore) GetVar(ctx context.Context, channel, variable string) (AMIResu
 // LocalOptimizeAway optimize away a local channel when possible.
 // A local channel created with "/n" will not automatically optimize away.
 // Calling this command on the local channel will clear that flag and allow it to optimize away if it's bridged or when it becomes bridged.
-func (c *AMICore) LocalOptimizeAway(ctx context.Context, channel string) (AMIResultRaw, error) {
+func (c *AMICore) LocalOptimizeAway(ctx context.Context, channel string) (AmiReply, error) {
 	return LocalOptimizeAway(ctx, *c.Socket, channel)
 }
 
 // MuteAudio
 // MuteAudio mute an audio stream.
-func (c *AMICore) MuteAudio(ctx context.Context, channel, direction string, state bool) (AMIResultRaw, error) {
+func (c *AMICore) MuteAudio(ctx context.Context, channel, direction string, state bool) (AmiReply, error) {
 	return MuteAudio(ctx, *c.Socket, channel, direction, state)
 }
 
 // GetAgents
 // Agents lists agents and their status.
-func (c *AMICore) GetAgents(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) GetAgents(ctx context.Context) ([]AmiReply, error) {
 	return Agents(ctx, *c.Socket)
 }
 
 // GetAgentLogoff
 // AgentLogoff sets an agent as no longer logged in.
-func (c *AMICore) GetAgentLogoff(ctx context.Context, agent string, soft bool) (AMIResultRaw, error) {
+func (c *AMICore) GetAgentLogoff(ctx context.Context, agent string, soft bool) (AmiReply, error) {
 	return AgentLogoff(ctx, *c.Socket, agent, soft)
 }
 
 // AGI
 // AGI add an AGI command to execute by Async AGI.
-func (c *AMICore) AGI(ctx context.Context, channel, agiCommand, agiCommandID string) (AMIResultRaw, error) {
+func (c *AMICore) AGI(ctx context.Context, channel, agiCommand, agiCommandID string) (AmiReply, error) {
 	return AGI(ctx, *c.Socket, channel, agiCommand, agiCommandID)
 }
 
 // ControlPlayback
 // ControlPlayback control the playback of a file being played to a channel.
-func (c *AMICore) ControlPlayback(ctx context.Context, channel string, control config.AGIControl) (AMIResultRaw, error) {
+func (c *AMICore) ControlPlayback(ctx context.Context, channel string, control config.AGIControl) (AmiReply, error) {
 	return ControlPlayback(ctx, *c.Socket, channel, control)
 }
 
 // VoicemailRefresh
 // VoicemailRefresh tell asterisk to poll mailboxes for a change.
-func (c *AMICore) VoicemailRefresh(ctx context.Context, context, mailbox string) (AMIResultRaw, error) {
+func (c *AMICore) VoicemailRefresh(ctx context.Context, context, mailbox string) (AmiReply, error) {
 	return VoicemailRefresh(ctx, *c.Socket, context, mailbox)
 }
 
 // VoicemailUsersList
 // VoicemailUsersList list all voicemail user information.
-func (c *AMICore) VoicemailUsersList(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) VoicemailUsersList(ctx context.Context) ([]AmiReply, error) {
 	return VoicemailUsersList(ctx, *c.Socket)
 }
 
 // PresenceState
 // PresenceState check presence state.
-func (c *AMICore) PresenceState(ctx context.Context, provider string) (AMIResultRaw, error) {
+func (c *AMICore) PresenceState(ctx context.Context, provider string) (AmiReply, error) {
 	return PresenceState(ctx, *c.Socket, provider)
 }
 
 // PresenceStateList
 // PresenceStateList list the current known presence states.
-func (c *AMICore) PresenceStateList(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) PresenceStateList(ctx context.Context) ([]AmiReply, error) {
 	return PresenceStateList(ctx, *c.Socket)
 }
 
 // MailboxCount
 // MailboxCount checks Mailbox Message Count.
-func (c *AMICore) MailboxCount(ctx context.Context, mailbox string) (AMIResultRaw, error) {
+func (c *AMICore) MailboxCount(ctx context.Context, mailbox string) (AmiReply, error) {
 	return MailboxCount(ctx, *c.Socket, mailbox)
 }
 
 // MailboxStatus
 // MailboxStatus checks Mailbox Message Count.
-func (c *AMICore) MailboxStatus(ctx context.Context, mailbox string) (AMIResultRaw, error) {
+func (c *AMICore) MailboxStatus(ctx context.Context, mailbox string) (AmiReply, error) {
 	return MailboxStatus(ctx, *c.Socket, mailbox)
 }
 
 // MWIDelete
 // MWIDelete delete selected mailboxes.
-func (c *AMICore) MWIDelete(ctx context.Context, mailbox string) (AMIResultRaw, error) {
+func (c *AMICore) MWIDelete(ctx context.Context, mailbox string) (AmiReply, error) {
 	return MWIDelete(ctx, *c.Socket, mailbox)
 }
 
 // MWIGet
 // MWIGet get selected mailboxes with message counts.
-func (c *AMICore) MWIGet(ctx context.Context, mailbox string) (AMIResultRaw, error) {
+func (c *AMICore) MWIGet(ctx context.Context, mailbox string) (AmiReply, error) {
 	return MWIGet(ctx, *c.Socket, mailbox)
 }
 
 // MWIUpdate
 // MWIUpdate update the mailbox message counts.
-func (c *AMICore) MWIUpdate(ctx context.Context, mailbox, oldMessages, newMessages string) (AMIResultRaw, error) {
+func (c *AMICore) MWIUpdate(ctx context.Context, mailbox, oldMessages, newMessages string) (AmiReply, error) {
 	return MWIUpdate(ctx, *c.Socket, mailbox, oldMessages, newMessages)
 }
 
 // MessageSend
 // MessageSend send an out of call message to an endpoint.
-func (c *AMICore) MessageSend(ctx context.Context, message AMIPayloadMessage) (AMIResultRaw, error) {
+func (c *AMICore) MessageSend(ctx context.Context, message AMIPayloadMessage) (AmiReply, error) {
 	return MessageSend(ctx, *c.Socket, message)
 }
 
 // KSendSMS
 // KSendSMS sends a SMS using KHOMP device.
-func (c *AMICore) KSendSMS(ctx context.Context, payload AMIPayloadKhompSMS) (AMIResultRaw, error) {
+func (c *AMICore) KSendSMS(ctx context.Context, payload AMIPayloadKhompSMS) (AmiReply, error) {
 	return KSendSMS(ctx, *c.Socket, payload)
 }
 
 // IAXnetstats
 // IAXnetstats show IAX channels network statistics.
-func (c *AMICore) IAXnetstats(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) IAXnetstats(ctx context.Context) ([]AmiReply, error) {
 	return IAXnetstats(ctx, *c.Socket)
 }
 
 // IAXpeerlist
 // IAXpeerlist show IAX channels network statistics.
-func (c *AMICore) IAXpeerlist(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) IAXpeerlist(ctx context.Context) ([]AmiReply, error) {
 	return IAXpeerlist(ctx, *c.Socket)
 }
 
 // IAXpeers
 // IAXpeers list IAX peers.
-func (c *AMICore) IAXpeers(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) IAXpeers(ctx context.Context) ([]AmiReply, error) {
 	return IAXpeers(ctx, *c.Socket)
 }
 
 // IAXregistry
 // IAXregistry show IAX registrations.
-func (c *AMICore) IAXregistry(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) IAXregistry(ctx context.Context) ([]AmiReply, error) {
 	return IAXregistry(ctx, *c.Socket)
 }
 
 // AddDialplanExtension
 // AddDialplanExtension add an extension to the dialplan.
-func (c *AMICore) AddDialplanExtension(ctx context.Context, extension AMIPayloadExtension) (AMIResultRaw, error) {
+func (c *AMICore) AddDialplanExtension(ctx context.Context, extension AMIPayloadExtension) (AmiReply, error) {
 	return AddDialplanExtension(ctx, *c.Socket, extension)
 }
 
 // RemoveDialplanExtension
 // RemoveDialplanExtension remove an extension from the dialplan.
-func (c *AMICore) RemoveDialplanExtension(ctx context.Context, extension AMIPayloadExtension) (AMIResultRaw, error) {
+func (c *AMICore) RemoveDialplanExtension(ctx context.Context, extension AMIPayloadExtension) (AmiReply, error) {
 	return RemoveDialplanExtension(ctx, *c.Socket, extension)
 }
 
 // Bridge
 // Bridge bridges two channels already in the PBX.
-func (c *AMICore) Bridge(ctx context.Context, channel1, channel2 string, tone string) (AMIResultRaw, error) {
+func (c *AMICore) Bridge(ctx context.Context, channel1, channel2 string, tone string) (AmiReply, error) {
 	return Bridge(ctx, *c.Socket, channel1, channel2, tone)
 }
 
 // BlindTransfer
 // BlindTransfer blind transfer channel(s) to the given destination.
-func (c *AMICore) BlindTransfer(ctx context.Context, channel, context, extension string) (AMIResultRaw, error) {
+func (c *AMICore) BlindTransfer(ctx context.Context, channel, context, extension string) (AmiReply, error) {
 	return BlindTransfer(ctx, *c.Socket, channel, context, extension)
 }
 
 // BridgeDestroy
 // BridgeDestroy destroy a bridge.
-func (c *AMICore) BridgeDestroy(ctx context.Context, bridgeUniqueId string) (AMIResultRaw, error) {
+func (c *AMICore) BridgeDestroy(ctx context.Context, bridgeUniqueId string) (AmiReply, error) {
 	return BridgeDestroy(ctx, *c.Socket, bridgeUniqueId)
 }
 
 // BridgeInfo
 // BridgeInfo get information about a bridge.
-func (c *AMICore) BridgeInfo(ctx context.Context, bridgeUniqueId string) (AMIResultRaw, error) {
+func (c *AMICore) BridgeInfo(ctx context.Context, bridgeUniqueId string) (AmiReply, error) {
 	return BridgeInfo(ctx, *c.Socket, bridgeUniqueId)
 }
 
 // BridgeKick
 // BridgeKick kick a channel from a bridge.
-func (c *AMICore) BridgeKick(ctx context.Context, bridgeUniqueId, channel string) (AMIResultRaw, error) {
+func (c *AMICore) BridgeKick(ctx context.Context, bridgeUniqueId, channel string) (AmiReply, error) {
 	return BridgeKick(ctx, *c.Socket, bridgeUniqueId, channel)
 }
 
 // BridgeList
 // BridgeList get a list of bridges in the system.
-func (c *AMICore) BridgeList(ctx context.Context, bridgeType string) (AMIResultRaw, error) {
+func (c *AMICore) BridgeList(ctx context.Context, bridgeType string) (AmiReply, error) {
 	return BridgeList(ctx, *c.Socket, bridgeType)
 }
 
 // BridgeTechnologyList
 // BridgeTechnologyList list available bridging technologies and their statuses.
-func (c *AMICore) BridgeTechnologyList(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) BridgeTechnologyList(ctx context.Context) ([]AmiReply, error) {
 	return BridgeTechnologyList(ctx, *c.Socket)
 }
 
 // BridgeTechnologySuspend
 // BridgeTechnologySuspend suspend a bridging technology.
-func (c *AMICore) BridgeTechnologySuspend(ctx context.Context, bridgeTechnology string) (AMIResultRaw, error) {
+func (c *AMICore) BridgeTechnologySuspend(ctx context.Context, bridgeTechnology string) (AmiReply, error) {
 	return BridgeTechnologySuspend(ctx, *c.Socket, bridgeTechnology)
 }
 
 // BridgeTechnologyUnsuspend
 // BridgeTechnologyUnsuspend unsuspend a bridging technology.
-func (c *AMICore) BridgeTechnologyUnsuspend(ctx context.Context, bridgeTechnology string) (AMIResultRaw, error) {
+func (c *AMICore) BridgeTechnologyUnsuspend(ctx context.Context, bridgeTechnology string) (AmiReply, error) {
 	return BridgeTechnologyUnsuspend(ctx, *c.Socket, bridgeTechnology)
 }
 
 // DBDel
 // DBDel Delete DB entry.
-func (c *AMICore) DBDel(ctx context.Context, family, key string) (AMIResultRaw, error) {
+func (c *AMICore) DBDel(ctx context.Context, family, key string) (AmiReply, error) {
 	return DBDel(ctx, *c.Socket, family, key)
 }
 
 // DBDelTree
 // DBDelTree delete DB tree.
-func (c *AMICore) DBDelTree(ctx context.Context, family, key string) (AMIResultRaw, error) {
+func (c *AMICore) DBDelTree(ctx context.Context, family, key string) (AmiReply, error) {
 	return DBDelTree(ctx, *c.Socket, family, key)
 }
 
 // DBPut
 // DBPut puts DB entry.
-func (c *AMICore) DBPut(ctx context.Context, family, key, value string) (AMIResultRaw, error) {
+func (c *AMICore) DBPut(ctx context.Context, family, key, value string) (AmiReply, error) {
 	return DBPut(ctx, *c.Socket, family, key, value)
 }
 
 // DBGet
 // DBGet gets DB Entry.
-func (c *AMICore) DBGet(ctx context.Context, family, key string) ([]AMIResultRaw, error) {
+func (c *AMICore) DBGet(ctx context.Context, family, key string) ([]AmiReply, error) {
 	return DBGet(ctx, *c.Socket, family, key)
 }
 
 // PRIDebugFileSet
 // PRIDebugFileSet set the file used for PRI debug message output.
-func (c *AMICore) PRIDebugFileSet(ctx context.Context, filename string) (AMIResultRaw, error) {
+func (c *AMICore) PRIDebugFileSet(ctx context.Context, filename string) (AmiReply, error) {
 	return PRIDebugFileSet(ctx, *c.Socket, filename)
 }
 
 // PRIDebugFileUnset
 // PRIDebugFileUnset disables file output for PRI debug messages.
-func (c *AMICore) PRIDebugFileUnset(ctx context.Context) (AMIResultRaw, error) {
+func (c *AMICore) PRIDebugFileUnset(ctx context.Context) (AmiReply, error) {
 	return PRIDebugFileUnset(ctx, *c.Socket)
 }
 
 // PRIDebugSet
 // PRIDebugSet set PRI debug levels for a span.
-func (c *AMICore) PRIDebugSet(ctx context.Context, span, level string) (AMIResultRaw, error) {
+func (c *AMICore) PRIDebugSet(ctx context.Context, span, level string) (AmiReply, error) {
 	return PRIDebugSet(ctx, *c.Socket, span, level)
 }
 
 // PRIShowSpans
 // PRIShowSpans show status of PRI spans.
-func (c *AMICore) PRIShowSpans(ctx context.Context, span string) ([]AMIResultRaw, error) {
+func (c *AMICore) PRIShowSpans(ctx context.Context, span string) ([]AmiReply, error) {
 	return PRIShowSpans(ctx, *c.Socket, span)
 }
 
@@ -1021,7 +1021,7 @@ func (c *AMICore) PRIShowSpans(ctx context.Context, span string) ([]AMIResultRaw
 // Lists Skinny devices in text format with details on current status.
 // Devicelist will follow as separate events,
 // followed by a final event called DevicelistComplete.
-func (c *AMICore) SKINNYDevices(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) SKINNYDevices(ctx context.Context) ([]AmiReply, error) {
 	return SKINNYDevices(ctx, *c.Socket)
 }
 
@@ -1030,336 +1030,336 @@ func (c *AMICore) SKINNYDevices(ctx context.Context) ([]AMIResultRaw, error) {
 // Lists Skinny lines in text format with details on current status.
 // Linelist will follow as separate events,
 // followed by a final event called LinelistComplete.
-func (c *AMICore) SKINNYLines(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) SKINNYLines(ctx context.Context) ([]AmiReply, error) {
 	return SKINNYLines(ctx, *c.Socket)
 }
 
 // SKINNYShowDevice
 // SKINNYShowDevice show SKINNY device (text format).
 // Show one SKINNY device with details on current status.
-func (c *AMICore) SKINNYShowDevice(ctx context.Context, device string) (AMIResultRaw, error) {
+func (c *AMICore) SKINNYShowDevice(ctx context.Context, device string) (AmiReply, error) {
 	return SKINNYShowDevice(ctx, *c.Socket, device)
 }
 
 // SKINNYShowline
 // SKINNYShowline shows SKINNY line (text format).
 // Show one SKINNY line with details on current status.
-func (c *AMICore) SKINNYShowline(ctx context.Context, line string) (AMIResultRaw, error) {
+func (c *AMICore) SKINNYShowline(ctx context.Context, line string) (AmiReply, error) {
 	return SKINNYShowline(ctx, *c.Socket, line)
 }
 
 // MeetMeList
 // MeetMeList lists all users in a particular MeetMe conference.
 // Will follow as separate events, followed by a final event called MeetmeListComplete.
-func (c *AMICore) MeetMeList(ctx context.Context, conference string) ([]AMIResultRaw, error) {
+func (c *AMICore) MeetMeList(ctx context.Context, conference string) ([]AmiReply, error) {
 	return MeetMeList(ctx, *c.Socket, conference)
 }
 
 // MeetMeMute
 // MeetMeMute mute a Meetme user.
-func (c *AMICore) MeetMeMute(ctx context.Context, meetme, userNumber string) (AMIResultRaw, error) {
+func (c *AMICore) MeetMeMute(ctx context.Context, meetme, userNumber string) (AmiReply, error) {
 	return MeetMeMute(ctx, *c.Socket, meetme, userNumber)
 }
 
 // MeetMeUnMute
 // MeetMeUnMute unmute a Meetme user.
-func (c *AMICore) MeetMeUnMute(ctx context.Context, meetme, userNumber string) (AMIResultRaw, error) {
+func (c *AMICore) MeetMeUnMute(ctx context.Context, meetme, userNumber string) (AmiReply, error) {
 	return MeetMeUnMute(ctx, *c.Socket, meetme, userNumber)
 }
 
 // MeetMeListRooms
 // MeetMeListRooms list active conferences.
-func (c *AMICore) MeetMeListRooms(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) MeetMeListRooms(ctx context.Context) ([]AmiReply, error) {
 	return MeetMeListRooms(ctx, *c.Socket)
 }
 
 // Monitor
 // Monitor monitors a channel.
 // This action may be used to record the audio on a specified channel.
-func (c *AMICore) Monitor(ctx context.Context, payload AMIPayloadMonitor) (AMIResultRaw, error) {
+func (c *AMICore) Monitor(ctx context.Context, payload AMIPayloadMonitor) (AmiReply, error) {
 	return Monitor(ctx, *c.Socket, payload)
 }
 
 // MonitorWith
-func (c *AMICore) MonitorWith(ctx context.Context, channel, file, format string, mix bool) (AMIResultRaw, error) {
+func (c *AMICore) MonitorWith(ctx context.Context, channel, file, format string, mix bool) (AmiReply, error) {
 	return MonitorWith(ctx, *c.Socket, channel, file, format, mix)
 }
 
 // ChangeMonitor
 // ChangeMonitor changes monitoring filename of a channel.
 // This action may be used to change the file started by a previous 'Monitor' action.
-func (c *AMICore) ChangeMonitor(ctx context.Context, payload AMIPayloadMonitor) (AMIResultRaw, error) {
+func (c *AMICore) ChangeMonitor(ctx context.Context, payload AMIPayloadMonitor) (AmiReply, error) {
 	return ChangeMonitor(ctx, *c.Socket, payload)
 }
 
 // ChangeMonitorWith
 // ChangeMonitor changes monitoring filename of a channel.
 // This action may be used to change the file started by a previous 'Monitor' action.
-func (c *AMICore) ChangeMonitorWith(ctx context.Context, channel, file string) (AMIResultRaw, error) {
+func (c *AMICore) ChangeMonitorWith(ctx context.Context, channel, file string) (AmiReply, error) {
 	return ChangeMonitorWith(ctx, *c.Socket, channel, file)
 }
 
 // MixMonitor
 // MixMonitor record a call and mix the audio during the recording.
-func (c *AMICore) MixMonitor(ctx context.Context, payload AMIPayloadMonitor) (AMIResultRaw, error) {
+func (c *AMICore) MixMonitor(ctx context.Context, payload AMIPayloadMonitor) (AmiReply, error) {
 	return MixMonitor(ctx, *c.Socket, payload)
 }
 
 // MixMonitorWith
 // MixMonitor record a call and mix the audio during the recording.
-func (c *AMICore) MixMonitorWith(ctx context.Context, channel, file, options, command string) (AMIResultRaw, error) {
+func (c *AMICore) MixMonitorWith(ctx context.Context, channel, file, options, command string) (AmiReply, error) {
 	return MixMonitorWith(ctx, *c.Socket, channel, file, options, command)
 }
 
 // MixMonitorMute
 // MixMonitorMute Mute / unMute a Mixmonitor recording.
 // This action may be used to mute a MixMonitor recording.
-func (c *AMICore) MixMonitorMute(ctx context.Context, channel, direction string, state bool) (AMIResultRaw, error) {
+func (c *AMICore) MixMonitorMute(ctx context.Context, channel, direction string, state bool) (AmiReply, error) {
 	return MixMonitorMute(ctx, *c.Socket, channel, direction, state)
 }
 
 // PauseMonitor
 // PauseMonitor pauses monitoring of a channel.
 // This action may be used to temporarily stop the recording of a channel.
-func (c *AMICore) PauseMonitor(ctx context.Context, channel string) (AMIResultRaw, error) {
+func (c *AMICore) PauseMonitor(ctx context.Context, channel string) (AmiReply, error) {
 	return PauseMonitor(ctx, *c.Socket, channel)
 }
 
 // UnpauseMonitor
 // UnpauseMonitor unpause monitoring of a channel.
 // This action may be used to re-enable recording of a channel after calling PauseMonitor.
-func (c *AMICore) UnpauseMonitor(ctx context.Context, channel string) (AMIResultRaw, error) {
+func (c *AMICore) UnpauseMonitor(ctx context.Context, channel string) (AmiReply, error) {
 	return UnpauseMonitor(ctx, *c.Socket, channel)
 }
 
 // StopMonitor
 // StopMonitor stops monitoring a channel.
 // This action may be used to end a previously started 'Monitor' action.
-func (c *AMICore) StopMonitor(ctx context.Context, channel string) (AMIResultRaw, error) {
+func (c *AMICore) StopMonitor(ctx context.Context, channel string) (AmiReply, error) {
 	return StopMonitor(ctx, *c.Socket, channel)
 }
 
 // StopMixMonitor
 // StopMixMonitor stop recording a call through MixMonitor, and free the recording's file handle.
-func (c *AMICore) StopMixMonitor(ctx context.Context, channel, mixMonitorId string) (AMIResultRaw, error) {
+func (c *AMICore) StopMixMonitor(ctx context.Context, channel, mixMonitorId string) (AmiReply, error) {
 	return StopMixMonitor(ctx, *c.Socket, channel, mixMonitorId)
 }
 
 // PJSIPNotify
 // PJSIPNotify send NOTIFY to either an endpoint, an arbitrary URI, or inside a SIP dialog.
-func (c *AMICore) PJSIPNotify(ctx context.Context, endpoint, uri, variable string) (AMIResultRaw, error) {
+func (c *AMICore) PJSIPNotify(ctx context.Context, endpoint, uri, variable string) (AmiReply, error) {
 	return PJSIPNotify(ctx, *c.Socket, endpoint, uri, variable)
 }
 
 // PJSIPQualify
 // PJSIPQualify qualify a chan_pjsip endpoint.
-func (c *AMICore) PJSIPQualify(ctx context.Context, endpoint string) (AMIResultRaw, error) {
+func (c *AMICore) PJSIPQualify(ctx context.Context, endpoint string) (AmiReply, error) {
 	return PJSIPQualify(ctx, *c.Socket, endpoint)
 }
 
 // PJSIPRegister
 // PJSIPRegister register an outbound registration.
-func (c *AMICore) PJSIPRegister(ctx context.Context, registration string) (AMIResultRaw, error) {
+func (c *AMICore) PJSIPRegister(ctx context.Context, registration string) (AmiReply, error) {
 	return PJSIPRegister(ctx, *c.Socket, registration)
 }
 
 // PJSIPUnregister
 // PJSIPUnregister unregister an outbound registration.
-func (c *AMICore) PJSIPUnregister(ctx context.Context, registration string) (AMIResultRaw, error) {
+func (c *AMICore) PJSIPUnregister(ctx context.Context, registration string) (AmiReply, error) {
 	return PJSIPUnregister(ctx, *c.Socket, registration)
 }
 
 // PJSIPShowEndpoint
 // PJSIPShowEndpoint detail listing of an endpoint and its objects.
-func (c *AMICore) PJSIPShowEndpoint(ctx context.Context, endpoint string) ([]AMIResultRaw, error) {
+func (c *AMICore) PJSIPShowEndpoint(ctx context.Context, endpoint string) ([]AmiReply, error) {
 	return PJSIPShowEndpoint(ctx, *c.Socket, endpoint)
 }
 
 // PJSIPShowEndpoints
 // PJSIPShowEndpoints list pjsip endpoints.
-func (c *AMICore) PJSIPShowEndpoints(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) PJSIPShowEndpoints(ctx context.Context) ([]AmiReply, error) {
 	return PJSIPShowEndpoints(ctx, *c.Socket)
 }
 
 // PJSIPShowRegistrationInboundContactStatuses
-func (c *AMICore) PJSIPShowRegistrationInboundContactStatuses(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) PJSIPShowRegistrationInboundContactStatuses(ctx context.Context) ([]AmiReply, error) {
 	return PJSIPShowRegistrationInboundContactStatuses(ctx, *c.Socket)
 }
 
 // PJSIPShowRegistrationsInbound
 // PJSIPShowRegistrationsInbound lists PJSIP inbound registrations.
-func (c *AMICore) PJSIPShowRegistrationsInbound(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) PJSIPShowRegistrationsInbound(ctx context.Context) ([]AmiReply, error) {
 	return PJSIPShowRegistrationsInbound(ctx, *c.Socket)
 }
 
 // PJSIPShowRegistrationsOutbound
 // PJSIPShowRegistrationsOutbound lists PJSIP outbound registrations.
-func (c *AMICore) PJSIPShowRegistrationsOutbound(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) PJSIPShowRegistrationsOutbound(ctx context.Context) ([]AmiReply, error) {
 	return PJSIPShowRegistrationsOutbound(ctx, *c.Socket)
 }
 
 // PJSIPShowResourceLists
 // PJSIPShowResourceLists displays settings for configured resource lists.
-func (c *AMICore) PJSIPShowResourceLists(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) PJSIPShowResourceLists(ctx context.Context) ([]AmiReply, error) {
 	return PJSIPShowResourceLists(ctx, *c.Socket)
 }
 
 // PJSIPShowSubscriptionsInbound
 // PJSIPShowSubscriptionsInbound list of inbound subscriptions.
-func (c *AMICore) PJSIPShowSubscriptionsInbound(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) PJSIPShowSubscriptionsInbound(ctx context.Context) ([]AmiReply, error) {
 	return PJSIPShowSubscriptionsInbound(ctx, *c.Socket)
 }
 
 // PJSIPShowSubscriptionsOutbound
 // PJSIPShowSubscriptionsOutbound list of outbound subscriptions.
-func (c *AMICore) PJSIPShowSubscriptionsOutbound(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) PJSIPShowSubscriptionsOutbound(ctx context.Context) ([]AmiReply, error) {
 	return PJSIPShowSubscriptionsOutbound(ctx, *c.Socket)
 }
 
 // FAXSession
 // FAXSession responds with a detailed description of a single FAX session.
-func (c *AMICore) FAXSession(ctx context.Context, sessionNumber string) (AMIResultRaw, error) {
+func (c *AMICore) FAXSession(ctx context.Context, sessionNumber string) (AmiReply, error) {
 	return FAXSession(ctx, *c.Socket, sessionNumber)
 }
 
 // FAXSessions
 // FAXSessions list active FAX sessions.
-func (c *AMICore) FAXSessions(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) FAXSessions(ctx context.Context) ([]AmiReply, error) {
 	return FAXSessions(ctx, *c.Socket)
 }
 
 // FAXStats
 // FAXStats responds with fax statistics.
-func (c *AMICore) FAXStats(ctx context.Context) (AMIResultRaw, error) {
+func (c *AMICore) FAXStats(ctx context.Context) (AmiReply, error) {
 	return FAXStats(ctx, *c.Socket)
 }
 
 // Atxfer
 // Atxfer attended transfer.
-func (c *AMICore) Atxfer(ctx context.Context, channel, extension, context string) (AMIResultRaw, error) {
+func (c *AMICore) Atxfer(ctx context.Context, channel, extension, context string) (AmiReply, error) {
 	return Atxfer(ctx, *c.Socket, channel, extension, context)
 }
 
 // CancelAtxfer
 // CancelAtxfer cancel an attended transfer.
-func (c *AMICore) CancelAtxfer(ctx context.Context, channel string) (AMIResultRaw, error) {
+func (c *AMICore) CancelAtxfer(ctx context.Context, channel string) (AmiReply, error) {
 	return CancelAtxfer(ctx, *c.Socket, channel)
 }
 
 // DAHDIDialOffhook
 // DAHDIDialOffhook dials over DAHDI channel while offhook.
 // Generate DTMF control frames to the bridged peer.
-func (c *AMICore) DAHDIDialOffhook(ctx context.Context, channel, number string) (AMIResultRaw, error) {
+func (c *AMICore) DAHDIDialOffhook(ctx context.Context, channel, number string) (AmiReply, error) {
 	return DAHDIDialOffhook(ctx, *c.Socket, channel, number)
 }
 
 // DAHDIDNDoff
 // DAHDIDNDoff toggles DAHDI channel Do Not Disturb status OFF.
-func (c *AMICore) DAHDIDNDoff(ctx context.Context, channel string) (AMIResultRaw, error) {
+func (c *AMICore) DAHDIDNDoff(ctx context.Context, channel string) (AmiReply, error) {
 	return DAHDIDNDoff(ctx, *c.Socket, channel)
 }
 
 // DAHDIDNDon
 // DAHDIDNDon toggles DAHDI channel Do Not Disturb status ON.
-func (c *AMICore) DAHDIDNDon(ctx context.Context, channel string) (AMIResultRaw, error) {
+func (c *AMICore) DAHDIDNDon(ctx context.Context, channel string) (AmiReply, error) {
 	return DAHDIDNDon(ctx, *c.Socket, channel)
 }
 
 // DAHDIHangup
 // DAHDIHangup hangups DAHDI Channel.
-func (c *AMICore) DAHDIHangup(ctx context.Context, channel string) (AMIResultRaw, error) {
+func (c *AMICore) DAHDIHangup(ctx context.Context, channel string) (AmiReply, error) {
 	return DAHDIHangup(ctx, *c.Socket, channel)
 }
 
 // DAHDIRestart
 // DAHDIRestart fully Restart DAHDI channels (terminates calls).
-func (c *AMICore) DAHDIRestart(ctx context.Context) (AMIResultRaw, error) {
+func (c *AMICore) DAHDIRestart(ctx context.Context) (AmiReply, error) {
 	return DAHDIRestart(ctx, *c.Socket)
 }
 
 // DAHDIShowChannels
 // DAHDIShowChannels show status of DAHDI channels.
-func (c *AMICore) DAHDIShowChannels(ctx context.Context, channel string) ([]AMIResultRaw, error) {
+func (c *AMICore) DAHDIShowChannels(ctx context.Context, channel string) ([]AmiReply, error) {
 	return DAHDIShowChannels(ctx, *c.Socket, channel)
 }
 
 // DAHDITransfer
 // DAHDITransfer transfers DAHDI Channel.
-func (c *AMICore) DAHDITransfer(ctx context.Context, channel string) (AMIResultRaw, error) {
+func (c *AMICore) DAHDITransfer(ctx context.Context, channel string) (AmiReply, error) {
 	return DAHDITransfer(ctx, *c.Socket, channel)
 }
 
 // ConfbridgeList
 // ConfbridgeList lists all users in a particular ConfBridge conference.
-func (c *AMICore) ConfbridgeList(ctx context.Context, conference string) ([]AMIResultRaw, error) {
+func (c *AMICore) ConfbridgeList(ctx context.Context, conference string) ([]AmiReply, error) {
 	return ConfbridgeList(ctx, *c.Socket, conference)
 }
 
 // ConfbridgeListRooms
 // ConfbridgeListRooms lists data about all active conferences.
-func (c *AMICore) ConfbridgeListRooms(ctx context.Context) ([]AMIResultRaw, error) {
+func (c *AMICore) ConfbridgeListRooms(ctx context.Context) ([]AmiReply, error) {
 	return ConfbridgeListRooms(ctx, *c.Socket)
 }
 
 // ConfbridgeMute
 // ConfbridgeMute mutes a specified user in a specified conference.
-func (c *AMICore) ConfbridgeMute(ctx context.Context, conference string, channel string) (AMIResultRaw, error) {
+func (c *AMICore) ConfbridgeMute(ctx context.Context, conference string, channel string) (AmiReply, error) {
 	return ConfbridgeMute(ctx, *c.Socket, conference, channel)
 }
 
 // ConfbridgeUnmute
 // ConfbridgeUnmute unmute a specified user in a specified conference.
-func (c *AMICore) ConfbridgeUnmute(ctx context.Context, conference string, channel string) (AMIResultRaw, error) {
+func (c *AMICore) ConfbridgeUnmute(ctx context.Context, conference string, channel string) (AmiReply, error) {
 	return ConfbridgeUnmute(ctx, *c.Socket, conference, channel)
 }
 
 // ConfbridgeKick
 // ConfbridgeKick removes a specified user from a specified conference.
-func (c *AMICore) ConfbridgeKick(ctx context.Context, conference string, channel string) (AMIResultRaw, error) {
+func (c *AMICore) ConfbridgeKick(ctx context.Context, conference string, channel string) (AmiReply, error) {
 	return ConfbridgeKick(ctx, *c.Socket, conference, channel)
 }
 
 // ConfbridgeLock
 // ConfbridgeLock locks a specified conference.
-func (c *AMICore) ConfbridgeLock(ctx context.Context, conference string, channel string) (AMIResultRaw, error) {
+func (c *AMICore) ConfbridgeLock(ctx context.Context, conference string, channel string) (AmiReply, error) {
 	return ConfbridgeLock(ctx, *c.Socket, conference, channel)
 }
 
 // ConfbridgeUnlock
 // ConfbridgeUnlock unlocks a specified conference.
-func (c *AMICore) ConfbridgeUnlock(ctx context.Context, conference string, channel string) (AMIResultRaw, error) {
+func (c *AMICore) ConfbridgeUnlock(ctx context.Context, conference string, channel string) (AmiReply, error) {
 	return ConfbridgeUnlock(ctx, *c.Socket, config.AmiErrorLoginFailed, channel)
 }
 
 // ConfbridgeSetSingleVideoSrc
 // ConfbridgeSetSingleVideoSrc sets a conference user as the single video source distributed to all other video-capable participants.
-func (c *AMICore) ConfbridgeSetSingleVideoSrc(ctx context.Context, conference string, channel string) (AMIResultRaw, error) {
+func (c *AMICore) ConfbridgeSetSingleVideoSrc(ctx context.Context, conference string, channel string) (AmiReply, error) {
 	return ConfbridgeSetSingleVideoSrc(ctx, *c.Socket, conference, channel)
 }
 
 // ConfbridgeStartRecord
 // ConfbridgeStartRecord starts a recording in the context of given conference and creates a file with the name specified by recordFile
-func (c *AMICore) ConfbridgeStartRecord(ctx context.Context, conference string, recordFile string) (AMIResultRaw, error) {
+func (c *AMICore) ConfbridgeStartRecord(ctx context.Context, conference string, recordFile string) (AmiReply, error) {
 	return ConfbridgeStartRecord(ctx, *c.Socket, conference, recordFile)
 }
 
 // ConfbridgeStopRecord
 // ConfbridgeStopRecord stops a recording pertaining to the given conference
-func (c *AMICore) ConfbridgeStopRecord(ctx context.Context, conference string) (AMIResultRaw, error) {
+func (c *AMICore) ConfbridgeStopRecord(ctx context.Context, conference string) (AmiReply, error) {
 	return ConfbridgeStopRecord(ctx, *c.Socket, conference)
 }
 
-// MakeOutboundCall
-func (c *AMICore) MakeOutboundCall(ctx context.Context, d AMIOriginateDirection) (AMIResultRaw, bool, error) {
-	return MakeOutboundCall(ctx, *c.Socket, d)
+// DialOut
+func (c *AMICore) DialOut(ctx context.Context, d AMIOriginateDirection) (AmiReply, bool, error) {
+	return DialOut(ctx, *c.Socket, d)
 }
 
-// MakeInternalCall
-func (c *AMICore) MakeInternalCall(ctx context.Context, d AMIOriginateDirection) (AMIResultRaw, bool, error) {
-	return MakeInternalCall(ctx, *c.Socket, d)
+// DialIn
+func (c *AMICore) DialIn(ctx context.Context, d AMIOriginateDirection) (AmiReply, bool, error) {
+	return DialIn(ctx, *c.Socket, d)
 }
 
 // Chanspy
-func (c *AMICore) Chanspy(ctx context.Context, ch AMIPayloadChanspy) (AMIResultRawLevel, error) {
+func (c *AMICore) Chanspy(ctx context.Context, ch AMIPayloadChanspy) (AmiReplies, error) {
 	return Chanspy(ctx, *c.Socket, ch)
 }

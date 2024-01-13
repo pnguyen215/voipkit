@@ -7,7 +7,7 @@ import (
 )
 
 // Atxfer attended transfer.
-func Atxfer(ctx context.Context, s AMISocket, channel, extension, context string) (AMIResultRaw, error) {
+func Atxfer(ctx context.Context, s AMISocket, channel, extension, context string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionAtxfer)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel:   channel,
@@ -19,7 +19,7 @@ func Atxfer(ctx context.Context, s AMISocket, channel, extension, context string
 }
 
 // CancelAtxfer cancel an attended transfer.
-func CancelAtxfer(ctx context.Context, s AMISocket, channel string) (AMIResultRaw, error) {
+func CancelAtxfer(ctx context.Context, s AMISocket, channel string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionCancelAtxfer)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel: channel,

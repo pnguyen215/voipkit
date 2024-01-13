@@ -90,7 +90,7 @@ func Login(ctx context.Context, s AMISocket, auth *AMIAuth) error {
 
 // Events gets events from current client connection
 // It is mandatory set 'events' of ami.Login with "system,call,all,user", to received events.
-func Events(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
+func Events(ctx context.Context, s AMISocket) (AmiReply, error) {
 	c := NewCommand()
 	return c.Read(ctx, s)
 }
@@ -145,7 +145,7 @@ func Ping(ctx context.Context, s AMISocket) error {
 }
 
 // Command executes an Asterisk CLI Command.
-func Command(ctx context.Context, s AMISocket, cmd string) (AMIResultRawLevel, error) {
+func Command(ctx context.Context, s AMISocket, cmd string) (AmiReplies, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionCommand)
 	c.SetV(map[string]string{
 		config.AmiActionCommand: cmd,
@@ -155,14 +155,14 @@ func Command(ctx context.Context, s AMISocket, cmd string) (AMIResultRawLevel, e
 }
 
 // CoreSettings shows PBX core settings (version etc).
-func CoreSettings(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
+func CoreSettings(ctx context.Context, s AMISocket) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionCoreSettings)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
 // CoreStatus shows PBX core status variables.
-func CoreStatus(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
+func CoreStatus(ctx context.Context, s AMISocket) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionCoreStatus)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
@@ -170,14 +170,14 @@ func CoreStatus(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
 
 // ListCommands lists available manager commands.
 // Returns the action name and synopsis for every action that is available to the user
-func ListCommands(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
+func ListCommands(ctx context.Context, s AMISocket) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionListCommands)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
 // Challenge generates a challenge for MD5 authentication.
-func Challenge(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
+func Challenge(ctx context.Context, s AMISocket) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionChallenge)
 	c.SetV(map[string]string{
 		config.AmiAuthTypeKey: "MD5",
@@ -189,7 +189,7 @@ func Challenge(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
 // CreateConfig creates an empty file in the configuration directory.
 // This action will create an empty file in the configuration directory.
 // This action is intended to be used before an UpdateConfig action.
-func CreateConfig(ctx context.Context, s AMISocket, filename string) (AMIResultRaw, error) {
+func CreateConfig(ctx context.Context, s AMISocket, filename string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionCreateConfig)
 	c.SetV(map[string]string{
 		config.AmiFilenameKey: filename,
@@ -199,7 +199,7 @@ func CreateConfig(ctx context.Context, s AMISocket, filename string) (AMIResultR
 }
 
 // DataGet retrieves the data api tree.
-func DataGet(ctx context.Context, s AMISocket, path, search, filter string) (AMIResultRaw, error) {
+func DataGet(ctx context.Context, s AMISocket, path, search, filter string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDataGet)
 	c.SetV(map[string]string{
 		config.AmiFieldPath:   path,
@@ -212,7 +212,7 @@ func DataGet(ctx context.Context, s AMISocket, path, search, filter string) (AMI
 
 // EventFlow control Event Flow.
 // eventMask: Enable/Disable sending of events to this manager client.
-func EventFlow(ctx context.Context, s AMISocket, eventMask string) (AMIResultRaw, error) {
+func EventFlow(ctx context.Context, s AMISocket, eventMask string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionEvents)
 	c.SetV(map[string]string{
 		config.AmiFieldEventMask: eventMask,
@@ -223,7 +223,7 @@ func EventFlow(ctx context.Context, s AMISocket, eventMask string) (AMIResultRaw
 
 // GetConfig retrieves configuration.
 // This action will dump the contents of a configuration file by category and contents or optionally by specified category only.
-func GetConfig(ctx context.Context, s AMISocket, filename, category, filter string) (AMIResultRaw, error) {
+func GetConfig(ctx context.Context, s AMISocket, filename, category, filter string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionGetConfig)
 	c.SetV(map[string]string{
 		config.AmiFieldFilename: filename,
@@ -237,7 +237,7 @@ func GetConfig(ctx context.Context, s AMISocket, filename, category, filter stri
 // GetConfigJson retrieves configuration (JSON format).
 // This action will dump the contents of a configuration file by category and contents in JSON format.
 // This only makes sense to be used using raw man over the HTTP interface.
-func GetConfigJson(ctx context.Context, s AMISocket, filename, category, filter string) (AMIResultRaw, error) {
+func GetConfigJson(ctx context.Context, s AMISocket, filename, category, filter string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionGetConfigJson)
 	c.SetV(map[string]string{
 		config.AmiFieldFilename: filename,
@@ -249,7 +249,7 @@ func GetConfigJson(ctx context.Context, s AMISocket, filename, category, filter 
 }
 
 // JabberSend sends a message to a Jabber Client
-func JabberSend(ctx context.Context, s AMISocket, jabber, jid, message string) (AMIResultRaw, error) {
+func JabberSend(ctx context.Context, s AMISocket, jabber, jid, message string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionJabberSend)
 	c.SetV(map[string]string{
 		config.AmiFieldJabber:  jabber,
@@ -261,7 +261,7 @@ func JabberSend(ctx context.Context, s AMISocket, jabber, jid, message string) (
 }
 
 // ListCategories lists categories in configuration file.
-func ListCategories(ctx context.Context, s AMISocket, filename string) (AMIResultRaw, error) {
+func ListCategories(ctx context.Context, s AMISocket, filename string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionListCategories)
 	c.SetV(map[string]string{
 		config.AmiFieldFilename: filename,
@@ -272,7 +272,7 @@ func ListCategories(ctx context.Context, s AMISocket, filename string) (AMIResul
 
 // ModuleCheck checks if module is loaded.
 // Checks if Asterisk module is loaded. Will return Success/Failure. For success returns, the module revision number is included.
-func ModuleCheck(ctx context.Context, s AMISocket, module string) (AMIResultRaw, error) {
+func ModuleCheck(ctx context.Context, s AMISocket, module string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionModuleCheck)
 	c.SetV(map[string]string{
 		config.AmiFieldModule: module,
@@ -283,7 +283,7 @@ func ModuleCheck(ctx context.Context, s AMISocket, module string) (AMIResultRaw,
 
 // ModuleLoad module management.
 // Loads, unloads or reloads an Asterisk module in a running system.
-func ModuleLoad(ctx context.Context, s AMISocket, module, loadType string) (AMIResultRaw, error) {
+func ModuleLoad(ctx context.Context, s AMISocket, module, loadType string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionModuleLoad)
 	c.SetV(map[string]string{
 		config.AmiFieldModule:   module,
@@ -294,7 +294,7 @@ func ModuleLoad(ctx context.Context, s AMISocket, module, loadType string) (AMIR
 }
 
 // Reload Sends a reload event.
-func Reload(ctx context.Context, s AMISocket, module string) (AMIResultRaw, error) {
+func Reload(ctx context.Context, s AMISocket, module string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionReload)
 	c.SetV(map[string]string{
 		config.AmiFieldModule: module,
@@ -305,7 +305,7 @@ func Reload(ctx context.Context, s AMISocket, module string) (AMIResultRaw, erro
 
 // ShowDialPlan shows dialplan contexts and extensions
 // Be aware that showing the full dialplan may take a lot of capacity.
-func ShowDialPlan(ctx context.Context, s AMISocket, extension, context string) ([]AMIResultRaw, error) {
+func ShowDialPlan(ctx context.Context, s AMISocket, extension, context string) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionShowDialPlan)
 	c.SetV(map[string]string{
 		config.AmiFieldExtension_: extension,
@@ -317,7 +317,7 @@ func ShowDialPlan(ctx context.Context, s AMISocket, extension, context string) (
 }
 
 // Filter dynamically add filters for the current manager session.
-func Filter(ctx context.Context, s AMISocket, operation, filter string) (AMIResultRaw, error) {
+func Filter(ctx context.Context, s AMISocket, operation, filter string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionFilter)
 	c.SetV(map[string]string{
 		config.AmiFieldOperation: operation,
@@ -328,7 +328,7 @@ func Filter(ctx context.Context, s AMISocket, operation, filter string) (AMIResu
 }
 
 // DeviceStateList list the current known device states.
-func DeviceStateList(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func DeviceStateList(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDeviceStateList)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventDeviceStateChange}, []string{config.AmiListenerEventDeviceStateListComplete})
@@ -336,7 +336,7 @@ func DeviceStateList(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
 }
 
 // LoggerRotate reload and rotate the Asterisk logger.
-func LoggerRotate(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
+func LoggerRotate(ctx context.Context, s AMISocket) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionLoggerRotate)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
@@ -370,7 +370,7 @@ Var-000004: 126
 Value-000004: >55555, Jason Bourne18, ***@noCia.gov.do
 ActionID: 495446608
 */
-func UpdateConfig(ctx context.Context, s AMISocket, sourceFilename, destinationFilename string, reload bool, actions ...AMIUpdateConfigAction) (AMIResultRaw, error) {
+func UpdateConfig(ctx context.Context, s AMISocket, sourceFilename, destinationFilename string, reload bool, actions ...AMIUpdateConfigAction) (AmiReply, error) {
 	options := make(map[string]string)
 	options[config.AmiFieldSourceFilename] = sourceFilename
 	options[config.AmiFieldDestinationFilename] = destinationFilename

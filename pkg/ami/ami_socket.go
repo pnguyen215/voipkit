@@ -13,7 +13,7 @@ import (
 	"github.com/pnguyen215/voipkit/pkg/ami/config"
 )
 
-func NewAMISocket() *AMISocket {
+func NewAmiSocket() *AMISocket {
 	s := &AMISocket{
 		Incoming:  make(chan string, 32),
 		Shutdown:  make(chan struct{}),
@@ -28,11 +28,6 @@ func NewAMISocket() *AMISocket {
 	s.SetRetry(true)
 	s.SetMaxRetries(3)
 	s.SetMaxConcurrencyMillis(config.AmiMaxConcurrencyMillis) // 1 minute = 60000 millis
-	return s
-}
-
-func NewAMIResultRaw() *AMIResultRaw {
-	s := &AMIResultRaw{}
 	return s
 }
 
@@ -58,20 +53,20 @@ func (s *AMISocket) Json() string {
 }
 
 // NewSocket provides a new socket client, connecting to a tcp server.
-func NewAMISocketWith(ctx context.Context, address string) (*AMISocket, error) {
+func NewAmiSocketContext(ctx context.Context, address string) (*AMISocket, error) {
 	var dialer net.Dialer
 	conn, err := dialer.DialContext(ctx, config.AmiNetworkTcpKey, address)
 	if err != nil {
 		return nil, err
 	}
-	return NewAMISocketConn(ctx, conn, true)
+	return NewAmiSocketConn(ctx, conn, true)
 }
 
 // NewSocket provides a new socket client, connecting to a tcp server.
 // If the reuseConn = true, then using current connection.
 // Otherwise, clone the connection from current connection
-func NewAMISocketConn(ctx context.Context, conn net.Conn, reuseConn bool) (*AMISocket, error) {
-	s := NewAMISocket()
+func NewAmiSocketConn(ctx context.Context, conn net.Conn, reuseConn bool) (*AMISocket, error) {
+	s := NewAmiSocket()
 	if reuseConn {
 		s.Conn = conn
 	} else {
@@ -188,127 +183,4 @@ func (s *AMISocket) Run(ctx context.Context, conn net.Conn) {
 		}
 		s.Incoming <- msg
 	}
-}
-
-func (s AMIResultRaw) GetVal(key string) string {
-	if s == nil {
-		return ""
-	}
-
-	if len(s) == 0 {
-		return ""
-	}
-
-	v := s[key]
-	if len(v) == 0 {
-		return ""
-	}
-	return v
-}
-
-func (s AMIResultRaw) Values() []string {
-	if len(s) == 0 {
-		return []string{}
-	}
-	var result []string
-	for k := range s {
-		if config.AmiJsonIgnoringFieldType[k] {
-			continue
-		}
-		v := s.GetVal(k)
-		if !Contains(result, v) {
-			result = append(result, v)
-		}
-	}
-	return result
-}
-
-func (s AMIResultRaw) LenValue() int {
-	return len(s.Values())
-}
-
-func (s AMIResultRaw) GetValOrPref(key, pref string) string {
-	_v := s.GetVal(key)
-
-	if len(_v) == 0 {
-		return s.GetVal(pref)
-	}
-	return _v
-}
-
-func (s AMIResultRaw) GetValOrPrefers(key string, pref ...string) string {
-	if len(pref) == 0 {
-		return s.GetValOrPref(key, "")
-	}
-	_v := ""
-	for _, v := range pref {
-		_v = s.GetValOrPref(key, v)
-		if len(_v) > 0 {
-			break
-		}
-	}
-	return _v
-}
-
-func (s AMIResultRawLevel) GetVal(key string) string {
-	if s == nil {
-		return ""
-	}
-
-	if len(s) == 0 {
-		return ""
-	}
-
-	v := s[key]
-	if len(v) == 0 {
-		return ""
-	}
-	if len(v) == 1 {
-		return v[0]
-	}
-	return JsonString(v)
-}
-
-func (s AMIResultRawLevel) Values() []string {
-	if len(s) == 0 {
-		return []string{}
-	}
-	var result []string
-	for k := range s {
-		if config.AmiJsonIgnoringFieldType[k] {
-			continue
-		}
-		v := s.GetVal(k)
-		if !Contains(result, v) {
-			result = append(result, v)
-		}
-	}
-	return result
-}
-
-func (s AMIResultRawLevel) LenValue() int {
-	return len(s.Values())
-}
-
-func (s AMIResultRawLevel) GetValOrPref(key, pref string) string {
-	_v := s.GetVal(key)
-
-	if len(_v) == 0 {
-		return s.GetVal(pref)
-	}
-	return _v
-}
-
-func (s AMIResultRawLevel) GetValOrPrefers(key string, pref ...string) string {
-	if len(pref) == 0 {
-		return s.GetValOrPref(key, "")
-	}
-	_v := ""
-	for _, v := range pref {
-		_v = s.GetValOrPref(key, v)
-		if len(_v) > 0 {
-			break
-		}
-	}
-	return _v
 }

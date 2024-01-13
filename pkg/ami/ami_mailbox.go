@@ -7,7 +7,7 @@ import (
 )
 
 // MailboxCount checks Mailbox Message Count.
-func MailboxCount(ctx context.Context, s AMISocket, mailbox string) (AMIResultRaw, error) {
+func MailboxCount(ctx context.Context, s AMISocket, mailbox string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMailboxCount)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldMailbox: mailbox,
@@ -17,7 +17,7 @@ func MailboxCount(ctx context.Context, s AMISocket, mailbox string) (AMIResultRa
 }
 
 // MailboxStatus checks Mailbox Message Count.
-func MailboxStatus(ctx context.Context, s AMISocket, mailbox string) (AMIResultRaw, error) {
+func MailboxStatus(ctx context.Context, s AMISocket, mailbox string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMailboxStatus)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldMailbox: mailbox,
@@ -27,7 +27,7 @@ func MailboxStatus(ctx context.Context, s AMISocket, mailbox string) (AMIResultR
 }
 
 // MWIDelete delete selected mailboxes.
-func MWIDelete(ctx context.Context, s AMISocket, mailbox string) (AMIResultRaw, error) {
+func MWIDelete(ctx context.Context, s AMISocket, mailbox string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMWIDelete)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldMailbox: mailbox,
@@ -37,7 +37,7 @@ func MWIDelete(ctx context.Context, s AMISocket, mailbox string) (AMIResultRaw, 
 }
 
 // MWIGet get selected mailboxes with message counts.
-func MWIGet(ctx context.Context, s AMISocket, mailbox string) (AMIResultRaw, error) {
+func MWIGet(ctx context.Context, s AMISocket, mailbox string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMWIGet)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldMailbox: mailbox,
@@ -47,7 +47,7 @@ func MWIGet(ctx context.Context, s AMISocket, mailbox string) (AMIResultRaw, err
 }
 
 // MWIUpdate update the mailbox message counts.
-func MWIUpdate(ctx context.Context, s AMISocket, mailbox, oldMessages, newMessages string) (AMIResultRaw, error) {
+func MWIUpdate(ctx context.Context, s AMISocket, mailbox, oldMessages, newMessages string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMWIUpdate)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldMailbox:     mailbox,

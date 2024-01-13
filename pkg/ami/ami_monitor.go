@@ -48,7 +48,7 @@ func (m *AMIPayloadMonitor) SetMixMonitorId(value string) *AMIPayloadMonitor {
 
 // Monitor monitors a channel.
 // This action may be used to record the audio on a specified channel.
-func Monitor(ctx context.Context, s AMISocket, payload AMIPayloadMonitor) (AMIResultRaw, error) {
+func Monitor(ctx context.Context, s AMISocket, payload AMIPayloadMonitor) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMonitor)
 	c.SetVCmd(payload)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
@@ -57,14 +57,14 @@ func Monitor(ctx context.Context, s AMISocket, payload AMIPayloadMonitor) (AMIRe
 
 // Monitor monitors a channel.
 // This action may be used to record the audio on a specified channel.
-func MonitorWith(ctx context.Context, s AMISocket, channel, file, format string, mix bool) (AMIResultRaw, error) {
+func MonitorWith(ctx context.Context, s AMISocket, channel, file, format string, mix bool) (AmiReply, error) {
 	p := NewAMIPayloadMonitor().SetChannel(channel).SetFile(file).SetFormat(format).SetMix(mix)
 	return Monitor(ctx, s, *p)
 }
 
 // ChangeMonitor changes monitoring filename of a channel.
 // This action may be used to change the file started by a previous 'Monitor' action.
-func ChangeMonitor(ctx context.Context, s AMISocket, payload AMIPayloadMonitor) (AMIResultRaw, error) {
+func ChangeMonitor(ctx context.Context, s AMISocket, payload AMIPayloadMonitor) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionChangeMonitor)
 	c.SetVCmd(payload)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
@@ -73,13 +73,13 @@ func ChangeMonitor(ctx context.Context, s AMISocket, payload AMIPayloadMonitor) 
 
 // ChangeMonitor changes monitoring filename of a channel.
 // This action may be used to change the file started by a previous 'Monitor' action.
-func ChangeMonitorWith(ctx context.Context, s AMISocket, channel, file string) (AMIResultRaw, error) {
+func ChangeMonitorWith(ctx context.Context, s AMISocket, channel, file string) (AmiReply, error) {
 	p := NewAMIPayloadMonitor().SetChannel(channel).SetFile(file)
 	return ChangeMonitor(ctx, s, *p)
 }
 
 // MixMonitor record a call and mix the audio during the recording.
-func MixMonitor(ctx context.Context, s AMISocket, payload AMIPayloadMonitor) (AMIResultRaw, error) {
+func MixMonitor(ctx context.Context, s AMISocket, payload AMIPayloadMonitor) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMixMonitor)
 	c.SetVCmd(payload)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
@@ -87,7 +87,7 @@ func MixMonitor(ctx context.Context, s AMISocket, payload AMIPayloadMonitor) (AM
 }
 
 // MixMonitor record a call and mix the audio during the recording.
-func MixMonitorWith(ctx context.Context, s AMISocket, channel, file, options, command string) (AMIResultRaw, error) {
+func MixMonitorWith(ctx context.Context, s AMISocket, channel, file, options, command string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMixMonitor)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel: channel,
@@ -101,7 +101,7 @@ func MixMonitorWith(ctx context.Context, s AMISocket, channel, file, options, co
 
 // MixMonitorMute Mute / unMute a Mixmonitor recording.
 // This action may be used to mute a MixMonitor recording.
-func MixMonitorMute(ctx context.Context, s AMISocket, channel, direction string, state bool) (AMIResultRaw, error) {
+func MixMonitorMute(ctx context.Context, s AMISocket, channel, direction string, state bool) (AmiReply, error) {
 	states := map[bool]string{false: "0", true: "1"}
 	p := NewAMIPayloadMonitor().SetChannel(channel).SetDirection(direction).SetState(states[state])
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMixMonitorMute)
@@ -112,7 +112,7 @@ func MixMonitorMute(ctx context.Context, s AMISocket, channel, direction string,
 
 // PauseMonitor pauses monitoring of a channel.
 // This action may be used to temporarily stop the recording of a channel.
-func PauseMonitor(ctx context.Context, s AMISocket, channel string) (AMIResultRaw, error) {
+func PauseMonitor(ctx context.Context, s AMISocket, channel string) (AmiReply, error) {
 	p := NewAMIPayloadMonitor().SetChannel(channel)
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPauseMonitor)
 	c.SetVCmd(p)
@@ -122,7 +122,7 @@ func PauseMonitor(ctx context.Context, s AMISocket, channel string) (AMIResultRa
 
 // UnpauseMonitor unpause monitoring of a channel.
 // This action may be used to re-enable recording of a channel after calling PauseMonitor.
-func UnpauseMonitor(ctx context.Context, s AMISocket, channel string) (AMIResultRaw, error) {
+func UnpauseMonitor(ctx context.Context, s AMISocket, channel string) (AmiReply, error) {
 	p := NewAMIPayloadMonitor().SetChannel(channel)
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionUnpauseMonitor)
 	c.SetVCmd(p)
@@ -132,7 +132,7 @@ func UnpauseMonitor(ctx context.Context, s AMISocket, channel string) (AMIResult
 
 // StopMonitor stops monitoring a channel.
 // This action may be used to end a previously started 'Monitor' action.
-func StopMonitor(ctx context.Context, s AMISocket, channel string) (AMIResultRaw, error) {
+func StopMonitor(ctx context.Context, s AMISocket, channel string) (AmiReply, error) {
 	p := NewAMIPayloadMonitor().SetChannel(channel)
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionStopMonitor)
 	c.SetVCmd(p)
@@ -141,7 +141,7 @@ func StopMonitor(ctx context.Context, s AMISocket, channel string) (AMIResultRaw
 }
 
 // StopMixMonitor stop recording a call through MixMonitor, and free the recording's file handle.
-func StopMixMonitor(ctx context.Context, s AMISocket, channel, mixMonitorId string) (AMIResultRaw, error) {
+func StopMixMonitor(ctx context.Context, s AMISocket, channel, mixMonitorId string) (AmiReply, error) {
 	p := NewAMIPayloadMonitor().SetChannel(channel).SetMixMonitorId(mixMonitorId)
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionStopMixMonitor)
 	c.SetVCmd(p)

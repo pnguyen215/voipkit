@@ -133,7 +133,7 @@ func (c *AMIChannel) JoinChannelWith(protocol, extension string) string {
 }
 
 // CoreShowChannels list currently active channels.
-func CoreShowChannels(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func CoreShowChannels(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionCoreShowChannels)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventCoreShowChannel}, []string{config.AmiListenerEventCoreShowChannelsComplete})
@@ -142,7 +142,7 @@ func CoreShowChannels(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) 
 
 // AbsoluteTimeout set absolute timeout.
 // Hangup a channel after a certain time. Acknowledges set time with Timeout Set message.
-func AbsoluteTimeout(ctx context.Context, s AMISocket, channel string, timeout int) (AMIResultRaw, error) {
+func AbsoluteTimeout(ctx context.Context, s AMISocket, channel string, timeout int) (AmiReply, error) {
 	_timeout := strconv.Itoa(timeout)
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionAbsoluteTimeout)
 	c.SetV(map[string]string{
@@ -154,7 +154,7 @@ func AbsoluteTimeout(ctx context.Context, s AMISocket, channel string, timeout i
 }
 
 // Hangup hangups channel.
-func Hangup(ctx context.Context, s AMISocket, channel, cause string) (AMIResultRaw, error) {
+func Hangup(ctx context.Context, s AMISocket, channel, cause string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionHangup)
 	c.SetV(map[string]string{
 		config.AmiFieldChannel: channel,
@@ -166,7 +166,7 @@ func Hangup(ctx context.Context, s AMISocket, channel, cause string) (AMIResultR
 
 // Originate originates a call.
 // Generates an outgoing call to a Extension/Context/Priority or Application/Data.
-func Originate(ctx context.Context, s AMISocket, originate AMIPayloadOriginate) (AMIResultRaw, error) {
+func Originate(ctx context.Context, s AMISocket, originate AMIPayloadOriginate) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionOriginate)
 	c.SetVCmd(originate)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
@@ -174,7 +174,7 @@ func Originate(ctx context.Context, s AMISocket, originate AMIPayloadOriginate) 
 }
 
 // ParkedCalls list parked calls.
-func ParkedCalls(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func ParkedCalls(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionParkedCalls)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventParkedCall}, []string{config.AmiListenerEventParkedCallsComplete})
@@ -182,7 +182,7 @@ func ParkedCalls(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
 }
 
 // Park parks a channel.
-func Park(ctx context.Context, s AMISocket, channel1, channel2 string, timeout int, parkinglot string) (AMIResultRaw, error) {
+func Park(ctx context.Context, s AMISocket, channel1, channel2 string, timeout int, parkinglot string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionHangup)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel:    channel1,
@@ -195,7 +195,7 @@ func Park(ctx context.Context, s AMISocket, channel1, channel2 string, timeout i
 }
 
 // Parkinglots get a list of parking lots.
-func Parkinglots(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func Parkinglots(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionParkingLots)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventParkedCall}, []string{config.AmiListenerEventParkinglotsComplete})
@@ -203,7 +203,7 @@ func Parkinglots(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
 }
 
 // PlayDTMF plays DTMF signal on a specific channel.
-func PlayDTMF(ctx context.Context, s AMISocket, channel, digit string, duration int) (AMIResultRaw, error) {
+func PlayDTMF(ctx context.Context, s AMISocket, channel, digit string, duration int) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPlayDtmf)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel:  channel,
@@ -215,7 +215,7 @@ func PlayDTMF(ctx context.Context, s AMISocket, channel, digit string, duration 
 }
 
 // Redirect redirects (transfer) a call.
-func Redirect(ctx context.Context, s AMISocket, call AMIPayloadCall) (AMIResultRaw, error) {
+func Redirect(ctx context.Context, s AMISocket, call AMIPayloadCall) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionRedirect)
 	c.SetVCmd(call)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
@@ -223,7 +223,7 @@ func Redirect(ctx context.Context, s AMISocket, call AMIPayloadCall) (AMIResultR
 }
 
 // SendText sends text message to channel.
-func SendText(ctx context.Context, s AMISocket, channel, message string) (AMIResultRaw, error) {
+func SendText(ctx context.Context, s AMISocket, channel, message string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionSendText)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel: channel,
@@ -235,7 +235,7 @@ func SendText(ctx context.Context, s AMISocket, channel, message string) (AMIRes
 
 // SetVar sets a channel variable. Sets a global or local channel variable.
 // Note: If a channel name is not provided then the variable is global.
-func SetVar(ctx context.Context, s AMISocket, channel, variable, value string) (AMIResultRaw, error) {
+func SetVar(ctx context.Context, s AMISocket, channel, variable, value string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionSetVar)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel:  channel,
@@ -248,7 +248,7 @@ func SetVar(ctx context.Context, s AMISocket, channel, variable, value string) (
 
 // Status lists channel status.
 // Will return the status information of each channel along with the value for the specified channel variables.
-func Status(ctx context.Context, s AMISocket, channel, variables string) (AMIResultRaw, error) {
+func Status(ctx context.Context, s AMISocket, channel, variables string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionStatus)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel:   channel,
@@ -259,7 +259,7 @@ func Status(ctx context.Context, s AMISocket, channel, variables string) (AMIRes
 }
 
 // AOCMessage generates an Advice of Charge message on a channel.
-func AOCMessage(ctx context.Context, s AMISocket, aoc AMIPayloadAOC) (AMIResultRaw, error) {
+func AOCMessage(ctx context.Context, s AMISocket, aoc AMIPayloadAOC) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionAocMessage)
 	c.SetVCmd(aoc)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
@@ -267,7 +267,7 @@ func AOCMessage(ctx context.Context, s AMISocket, aoc AMIPayloadAOC) (AMIResultR
 }
 
 // GetVar get a channel variable.
-func GetVar(ctx context.Context, s AMISocket, channel, variable string) (AMIResultRaw, error) {
+func GetVar(ctx context.Context, s AMISocket, channel, variable string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionGetVar)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel:  channel,
@@ -280,7 +280,7 @@ func GetVar(ctx context.Context, s AMISocket, channel, variable string) (AMIResu
 // LocalOptimizeAway optimize away a local channel when possible.
 // A local channel created with "/n" will not automatically optimize away.
 // Calling this command on the local channel will clear that flag and allow it to optimize away if it's bridged or when it becomes bridged.
-func LocalOptimizeAway(ctx context.Context, s AMISocket, channel string) (AMIResultRaw, error) {
+func LocalOptimizeAway(ctx context.Context, s AMISocket, channel string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionLocalOptimizeAway)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel: channel,
@@ -290,7 +290,7 @@ func LocalOptimizeAway(ctx context.Context, s AMISocket, channel string) (AMIRes
 }
 
 // MuteAudio mute an audio stream.
-func MuteAudio(ctx context.Context, s AMISocket, channel, direction string, state bool) (AMIResultRaw, error) {
+func MuteAudio(ctx context.Context, s AMISocket, channel, direction string, state bool) (AmiReply, error) {
 	states := map[bool]string{false: "off", true: "on"}
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMuteAudio)
 	c.SetV(map[string]interface{}{

@@ -7,7 +7,7 @@ import (
 )
 
 // PRIDebugFileSet set the file used for PRI debug message output.
-func PRIDebugFileSet(ctx context.Context, s AMISocket, filename string) (AMIResultRaw, error) {
+func PRIDebugFileSet(ctx context.Context, s AMISocket, filename string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPRIDebugFileSet)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldFile: filename,
@@ -17,14 +17,14 @@ func PRIDebugFileSet(ctx context.Context, s AMISocket, filename string) (AMIResu
 }
 
 // PRIDebugFileUnset disables file output for PRI debug messages.
-func PRIDebugFileUnset(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
+func PRIDebugFileUnset(ctx context.Context, s AMISocket) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPRIDebugFileUnset)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
 // PRIDebugSet set PRI debug levels for a span.
-func PRIDebugSet(ctx context.Context, s AMISocket, span, level string) (AMIResultRaw, error) {
+func PRIDebugSet(ctx context.Context, s AMISocket, span, level string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPRIDebugSet)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldSpan:  span,
@@ -35,7 +35,7 @@ func PRIDebugSet(ctx context.Context, s AMISocket, span, level string) (AMIResul
 }
 
 // PRIShowSpans show status of PRI spans.
-func PRIShowSpans(ctx context.Context, s AMISocket, span string) ([]AMIResultRaw, error) {
+func PRIShowSpans(ctx context.Context, s AMISocket, span string) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPRIShowSpans)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldSpan: span,

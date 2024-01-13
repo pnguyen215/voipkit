@@ -32,7 +32,7 @@ func (a *AMIPayloadKhompSMS) SetMessage(value string) *AMIPayloadKhompSMS {
 }
 
 // KSendSMS sends a SMS using KHOMP device.
-func KSendSMS(ctx context.Context, s AMISocket, payload AMIPayloadKhompSMS) (AMIResultRaw, error) {
+func KSendSMS(ctx context.Context, s AMISocket, payload AMIPayloadKhompSMS) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionKSendSMS)
 	c.SetVCmd(payload)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})

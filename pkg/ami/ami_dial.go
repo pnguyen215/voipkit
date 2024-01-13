@@ -42,7 +42,7 @@ func OnConnContext(conn net.Conn) (*AMI, context.Context) {
 	// Check if the connection is available
 	if conn != nil {
 		addr := conn.RemoteAddr().String()
-		_socket, err := NewAMISocketWith(ctx, addr)
+		_socket, err := NewAmiSocketContext(ctx, addr)
 
 		if err == nil {
 			client.Socket = _socket

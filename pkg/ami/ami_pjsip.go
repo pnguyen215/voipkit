@@ -7,7 +7,7 @@ import (
 )
 
 // PJSIPNotify send NOTIFY to either an endpoint, an arbitrary URI, or inside a SIP dialog.
-func PJSIPNotify(ctx context.Context, s AMISocket, endpoint, uri, variable string) (AMIResultRaw, error) {
+func PJSIPNotify(ctx context.Context, s AMISocket, endpoint, uri, variable string) (AmiReply, error) {
 	params := map[string]string{
 		config.AmiFieldVariable: variable,
 	}
@@ -27,7 +27,7 @@ func PJSIPNotify(ctx context.Context, s AMISocket, endpoint, uri, variable strin
 }
 
 // PJSIPQualify qualify a chan_pjsip endpoint.
-func PJSIPQualify(ctx context.Context, s AMISocket, endpoint string) (AMIResultRaw, error) {
+func PJSIPQualify(ctx context.Context, s AMISocket, endpoint string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPQualify)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldEndpoint: endpoint,
@@ -37,7 +37,7 @@ func PJSIPQualify(ctx context.Context, s AMISocket, endpoint string) (AMIResultR
 }
 
 // PJSIPRegister register an outbound registration.
-func PJSIPRegister(ctx context.Context, s AMISocket, registration string) (AMIResultRaw, error) {
+func PJSIPRegister(ctx context.Context, s AMISocket, registration string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPRegister)
 	c.SetVCmd(map[string]interface{}{
 		config.AmiFieldRegistration: registration,
@@ -47,7 +47,7 @@ func PJSIPRegister(ctx context.Context, s AMISocket, registration string) (AMIRe
 }
 
 // PJSIPUnregister unregister an outbound registration.
-func PJSIPUnregister(ctx context.Context, s AMISocket, registration string) (AMIResultRaw, error) {
+func PJSIPUnregister(ctx context.Context, s AMISocket, registration string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPUnregister)
 	c.SetVCmd(map[string]interface{}{
 		config.AmiFieldRegistration: registration,
@@ -57,7 +57,7 @@ func PJSIPUnregister(ctx context.Context, s AMISocket, registration string) (AMI
 }
 
 // PJSIPShowEndpoint detail listing of an endpoint and its objects.
-func PJSIPShowEndpoint(ctx context.Context, s AMISocket, endpoint string) ([]AMIResultRaw, error) {
+func PJSIPShowEndpoint(ctx context.Context, s AMISocket, endpoint string) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPShowEndpoint)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldEndpoint: endpoint,
@@ -72,7 +72,7 @@ func PJSIPShowEndpoint(ctx context.Context, s AMISocket, endpoint string) ([]AMI
 }
 
 // PJSIPShowEndpoints list pjsip endpoints.
-func PJSIPShowEndpoints(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func PJSIPShowEndpoints(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPShowEndpoints)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventEndpointList},
@@ -81,7 +81,7 @@ func PJSIPShowEndpoints(ctx context.Context, s AMISocket) ([]AMIResultRaw, error
 }
 
 // PJSIPShowRegistrationInboundContactStatuses lists ContactStatuses for PJSIP inbound registrations.
-func PJSIPShowRegistrationInboundContactStatuses(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func PJSIPShowRegistrationInboundContactStatuses(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPShowRegistrationInboundContactStatuses)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventContactStatusDetail},
@@ -90,7 +90,7 @@ func PJSIPShowRegistrationInboundContactStatuses(ctx context.Context, s AMISocke
 }
 
 // PJSIPShowRegistrationsInbound lists PJSIP inbound registrations.
-func PJSIPShowRegistrationsInbound(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func PJSIPShowRegistrationsInbound(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPShowRegistrationsInbound)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventInboundRegistrationDetail},
@@ -99,7 +99,7 @@ func PJSIPShowRegistrationsInbound(ctx context.Context, s AMISocket) ([]AMIResul
 }
 
 // PJSIPShowRegistrationsOutbound lists PJSIP outbound registrations.
-func PJSIPShowRegistrationsOutbound(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func PJSIPShowRegistrationsOutbound(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPShowRegistrationsOutbound)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventOutboundRegistrationDetail},
@@ -108,7 +108,7 @@ func PJSIPShowRegistrationsOutbound(ctx context.Context, s AMISocket) ([]AMIResu
 }
 
 // PJSIPShowResourceLists displays settings for configured resource lists.
-func PJSIPShowResourceLists(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func PJSIPShowResourceLists(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPShowResourceLists)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventResourceListDetail},
@@ -117,7 +117,7 @@ func PJSIPShowResourceLists(ctx context.Context, s AMISocket) ([]AMIResultRaw, e
 }
 
 // PJSIPShowSubscriptionsInbound list of inbound subscriptions.
-func PJSIPShowSubscriptionsInbound(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func PJSIPShowSubscriptionsInbound(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPShowSubscriptionsInbound)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventInboundSubscriptionDetail},
@@ -126,7 +126,7 @@ func PJSIPShowSubscriptionsInbound(ctx context.Context, s AMISocket) ([]AMIResul
 }
 
 // PJSIPShowSubscriptionsOutbound list of outbound subscriptions.
-func PJSIPShowSubscriptionsOutbound(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func PJSIPShowSubscriptionsOutbound(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPShowSubscriptionsOutbound)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventOutboundSubscriptionDetail},

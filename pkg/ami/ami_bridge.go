@@ -7,7 +7,7 @@ import (
 )
 
 // Bridge bridges two channels already in the PBX.
-func Bridge(ctx context.Context, s AMISocket, channel1, channel2 string, tone string) (AMIResultRaw, error) {
+func Bridge(ctx context.Context, s AMISocket, channel1, channel2 string, tone string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionBridge)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel1: channel1,
@@ -19,7 +19,7 @@ func Bridge(ctx context.Context, s AMISocket, channel1, channel2 string, tone st
 }
 
 // BlindTransfer blind transfer channel(s) to the given destination.
-func BlindTransfer(ctx context.Context, s AMISocket, channel, context, extension string) (AMIResultRaw, error) {
+func BlindTransfer(ctx context.Context, s AMISocket, channel, context, extension string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionBlindTransfer)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel:   channel,
@@ -31,7 +31,7 @@ func BlindTransfer(ctx context.Context, s AMISocket, channel, context, extension
 }
 
 // BridgeDestroy destroy a bridge.
-func BridgeDestroy(ctx context.Context, s AMISocket, bridgeUniqueId string) (AMIResultRaw, error) {
+func BridgeDestroy(ctx context.Context, s AMISocket, bridgeUniqueId string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionBridgeDestroy)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldBridgeUniqueId: bridgeUniqueId,
@@ -41,7 +41,7 @@ func BridgeDestroy(ctx context.Context, s AMISocket, bridgeUniqueId string) (AMI
 }
 
 // BridgeInfo get information about a bridge.
-func BridgeInfo(ctx context.Context, s AMISocket, bridgeUniqueId string) (AMIResultRaw, error) {
+func BridgeInfo(ctx context.Context, s AMISocket, bridgeUniqueId string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionBridgeInfo)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldBridgeUniqueId: bridgeUniqueId,
@@ -51,7 +51,7 @@ func BridgeInfo(ctx context.Context, s AMISocket, bridgeUniqueId string) (AMIRes
 }
 
 // BridgeKick kick a channel from a bridge.
-func BridgeKick(ctx context.Context, s AMISocket, bridgeUniqueId, channel string) (AMIResultRaw, error) {
+func BridgeKick(ctx context.Context, s AMISocket, bridgeUniqueId, channel string) (AmiReply, error) {
 	params := map[string]string{
 		config.AmiFieldChannel: channel,
 	}
@@ -65,7 +65,7 @@ func BridgeKick(ctx context.Context, s AMISocket, bridgeUniqueId, channel string
 }
 
 // BridgeList get a list of bridges in the system.
-func BridgeList(ctx context.Context, s AMISocket, bridgeType string) (AMIResultRaw, error) {
+func BridgeList(ctx context.Context, s AMISocket, bridgeType string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionBridgeList)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldBridgeType: bridgeType,
@@ -75,7 +75,7 @@ func BridgeList(ctx context.Context, s AMISocket, bridgeType string) (AMIResultR
 }
 
 // BridgeTechnologyList list available bridging technologies and their statuses.
-func BridgeTechnologyList(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func BridgeTechnologyList(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionBridgeTechnologyList)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventBridgeTechnologyListItem}, []string{config.AmiListenerEventBridgeTechnologyListComplete})
@@ -83,7 +83,7 @@ func BridgeTechnologyList(ctx context.Context, s AMISocket) ([]AMIResultRaw, err
 }
 
 // BridgeTechnologySuspend suspend a bridging technology.
-func BridgeTechnologySuspend(ctx context.Context, s AMISocket, bridgeTechnology string) (AMIResultRaw, error) {
+func BridgeTechnologySuspend(ctx context.Context, s AMISocket, bridgeTechnology string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionBridgeTechnologySuspend)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldBridgeTechnology: bridgeTechnology,
@@ -93,7 +93,7 @@ func BridgeTechnologySuspend(ctx context.Context, s AMISocket, bridgeTechnology 
 }
 
 // BridgeTechnologyUnsuspend unsuspend a bridging technology.
-func BridgeTechnologyUnsuspend(ctx context.Context, s AMISocket, bridgeTechnology string) (AMIResultRaw, error) {
+func BridgeTechnologyUnsuspend(ctx context.Context, s AMISocket, bridgeTechnology string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionBridgeTechnologyUnsuspend)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldBridgeTechnology: bridgeTechnology,

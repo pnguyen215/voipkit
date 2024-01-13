@@ -8,7 +8,7 @@ import (
 
 // DAHDIDialOffhook dials over DAHDI channel while offhook.
 // Generate DTMF control frames to the bridged peer.
-func DAHDIDialOffhook(ctx context.Context, s AMISocket, channel, number string) (AMIResultRaw, error) {
+func DAHDIDialOffhook(ctx context.Context, s AMISocket, channel, number string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDAHDIDialOffhook)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldDAHDIChannel: channel,
@@ -19,7 +19,7 @@ func DAHDIDialOffhook(ctx context.Context, s AMISocket, channel, number string) 
 }
 
 // DAHDIDNDoff toggles DAHDI channel Do Not Disturb status OFF.
-func DAHDIDNDoff(ctx context.Context, s AMISocket, channel string) (AMIResultRaw, error) {
+func DAHDIDNDoff(ctx context.Context, s AMISocket, channel string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDAHDIDNDoff)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldDAHDIChannel: channel,
@@ -29,7 +29,7 @@ func DAHDIDNDoff(ctx context.Context, s AMISocket, channel string) (AMIResultRaw
 }
 
 // DAHDIDNDon toggles DAHDI channel Do Not Disturb status ON.
-func DAHDIDNDon(ctx context.Context, s AMISocket, channel string) (AMIResultRaw, error) {
+func DAHDIDNDon(ctx context.Context, s AMISocket, channel string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDAHDIDNDon)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldDAHDIChannel: channel,
@@ -39,7 +39,7 @@ func DAHDIDNDon(ctx context.Context, s AMISocket, channel string) (AMIResultRaw,
 }
 
 // DAHDIHangup hangups DAHDI Channel.
-func DAHDIHangup(ctx context.Context, s AMISocket, channel string) (AMIResultRaw, error) {
+func DAHDIHangup(ctx context.Context, s AMISocket, channel string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDAHDIHangup)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldDAHDIChannel: channel,
@@ -49,14 +49,14 @@ func DAHDIHangup(ctx context.Context, s AMISocket, channel string) (AMIResultRaw
 }
 
 // DAHDIRestart fully Restart DAHDI channels (terminates calls).
-func DAHDIRestart(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
+func DAHDIRestart(ctx context.Context, s AMISocket) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDAHDIRestart)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
 // DAHDIShowChannels show status of DAHDI channels.
-func DAHDIShowChannels(ctx context.Context, s AMISocket, channel string) ([]AMIResultRaw, error) {
+func DAHDIShowChannels(ctx context.Context, s AMISocket, channel string) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDAHDIShowChannels)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldDAHDIChannel: channel,
@@ -66,7 +66,7 @@ func DAHDIShowChannels(ctx context.Context, s AMISocket, channel string) ([]AMIR
 }
 
 // DAHDITransfer transfers DAHDI Channel.
-func DAHDITransfer(ctx context.Context, s AMISocket, channel string) (AMIResultRaw, error) {
+func DAHDITransfer(ctx context.Context, s AMISocket, channel string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDAHDITransfer)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldDAHDIChannel: channel,

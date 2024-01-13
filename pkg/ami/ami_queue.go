@@ -7,7 +7,7 @@ import (
 )
 
 // QueueStatuses show status all members in queue.
-func QueueStatuses(ctx context.Context, s AMISocket, queue string) ([]AMIResultRaw, error) {
+func QueueStatuses(ctx context.Context, s AMISocket, queue string) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionQueueStatus)
 	c.SetV(map[string]string{
 		config.AmiFieldQueue: queue,
@@ -19,7 +19,7 @@ func QueueStatuses(ctx context.Context, s AMISocket, queue string) ([]AMIResultR
 }
 
 // QueueSummary show queue summary.
-func QueueSummary(ctx context.Context, s AMISocket, queue string) ([]AMIResultRaw, error) {
+func QueueSummary(ctx context.Context, s AMISocket, queue string) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionQueueSummary)
 	c.SetV(map[string]string{
 		config.AmiFieldQueue: queue,
@@ -31,7 +31,7 @@ func QueueSummary(ctx context.Context, s AMISocket, queue string) ([]AMIResultRa
 }
 
 // QueueMemberRingInUse set the ringinuse value for a queue member.
-func QueueMemberRingInUse(ctx context.Context, s AMISocket, _interface, ringInUse, queue string) (AMIResultRaw, error) {
+func QueueMemberRingInUse(ctx context.Context, s AMISocket, _interface, ringInUse, queue string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionQueueMemberRingInUse)
 	c.SetV(map[string]string{
 		config.AmiFieldInterface: _interface,
@@ -43,7 +43,7 @@ func QueueMemberRingInUse(ctx context.Context, s AMISocket, _interface, ringInUs
 }
 
 // QueueStatus show queue status by member.
-func QueueStatus(ctx context.Context, s AMISocket, queue, member string) (AMIResultRaw, error) {
+func QueueStatus(ctx context.Context, s AMISocket, queue, member string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionQueueStatus)
 	c.SetV(map[string]string{
 		config.AmiFieldQueue:  queue,
@@ -54,7 +54,7 @@ func QueueStatus(ctx context.Context, s AMISocket, queue, member string) (AMIRes
 }
 
 // QueueRule queues Rules.
-func QueueRule(ctx context.Context, s AMISocket, rule string) (AMIResultRaw, error) {
+func QueueRule(ctx context.Context, s AMISocket, rule string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionQueueRule)
 	c.SetV(map[string]string{
 		config.AmiFieldRule: rule,
@@ -64,7 +64,7 @@ func QueueRule(ctx context.Context, s AMISocket, rule string) (AMIResultRaw, err
 }
 
 // QueueReset resets queue statistics.
-func QueueReset(ctx context.Context, s AMISocket, queue string) (AMIResultRaw, error) {
+func QueueReset(ctx context.Context, s AMISocket, queue string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionQueueReset)
 	c.SetVCmd(AMIPayloadQueue{Queue: queue})
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
@@ -72,7 +72,7 @@ func QueueReset(ctx context.Context, s AMISocket, queue string) (AMIResultRaw, e
 }
 
 // QueueRemove removes interface from queue.
-func QueueRemove(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AMIResultRaw, error) {
+func QueueRemove(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionQueueRemove)
 	c.SetVCmd(queue)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
@@ -80,7 +80,7 @@ func QueueRemove(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AMIRe
 }
 
 // QueueReload reloads a queue, queues, or any sub-section of a queue or queues.
-func QueueReload(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AMIResultRaw, error) {
+func QueueReload(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionQueueReload)
 	c.SetVCmd(queue)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
@@ -88,7 +88,7 @@ func QueueReload(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AMIRe
 }
 
 // QueuePenalty sets the penalty for a queue member.
-func QueuePenalty(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AMIResultRaw, error) {
+func QueuePenalty(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionQueuePenalty)
 	c.SetVCmd(queue)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
@@ -96,7 +96,7 @@ func QueuePenalty(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AMIR
 }
 
 // QueuePause makes a queue member temporarily unavailable.
-func QueuePause(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AMIResultRaw, error) {
+func QueuePause(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionQueuePause)
 	c.SetVCmd(queue)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
@@ -104,7 +104,7 @@ func QueuePause(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AMIRes
 }
 
 // QueueLog adds custom entry in queue_log.
-func QueueLog(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AMIResultRaw, error) {
+func QueueLog(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionQueueLog)
 	c.SetVCmd(queue)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
@@ -112,7 +112,7 @@ func QueueLog(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AMIResul
 }
 
 // QueueAdd adds interface to queue.
-func QueueAdd(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AMIResultRaw, error) {
+func QueueAdd(ctx context.Context, s AMISocket, queue AMIPayloadQueue) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionQueueAdd)
 	c.SetVCmd(queue)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})

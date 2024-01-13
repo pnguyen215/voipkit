@@ -7,7 +7,7 @@ import (
 )
 
 // PresenceState check presence state.
-func PresenceState(ctx context.Context, s AMISocket, provider string) (AMIResultRaw, error) {
+func PresenceState(ctx context.Context, s AMISocket, provider string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPresenceState)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldProvider: provider,
@@ -17,7 +17,7 @@ func PresenceState(ctx context.Context, s AMISocket, provider string) (AMIResult
 }
 
 // PresenceStateList list the current known presence states.
-func PresenceStateList(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func PresenceStateList(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPresenceStateList)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventAgents}, []string{config.AmiListenerEventPresenceStateListComplete})

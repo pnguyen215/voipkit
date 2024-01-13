@@ -65,31 +65,31 @@ func (s *AMIPayloadChanspy) CommandChanspy(c_extension string) string {
 }
 
 // Chanspy
-func Chanspy(ctx context.Context, s AMISocket, ch AMIPayloadChanspy) (AMIResultRawLevel, error) {
+func Chanspy(ctx context.Context, s AMISocket, ch AMIPayloadChanspy) (AmiReplies, error) {
 	ok := config.AmiChanspy[ch.Join]
 	if !ok {
 		msg := fmt.Sprintf(config.AmiErrorChanspyMessage, strings.Join(GetKeys(config.AmiChanspy), ","))
 		log.Panic(config.AmiErrorInvalidChanspy, "\n", msg)
 	}
 	if IsStringEmpty(ch.SourceExten) {
-		return AMIResultRawLevel{}, fmt.Errorf("Source extension is required")
+		return AmiReplies{}, fmt.Errorf("Source extension is required")
 	}
 	if IsStringEmpty(ch.CurrentExten) {
-		return AMIResultRawLevel{}, fmt.Errorf("Current extension is required")
+		return AmiReplies{}, fmt.Errorf("Current extension is required")
 	}
 	source_extension_verify, err := HasSIPPeerStatus(ctx, s, ch.SourceExten)
 	if err != nil {
-		return AMIResultRawLevel{}, err
+		return AmiReplies{}, err
 	}
 	if !source_extension_verify {
-		return AMIResultRawLevel{}, fmt.Errorf("Source extension '%v' not found", ch.SourceExten)
+		return AmiReplies{}, fmt.Errorf("Source extension '%v' not found", ch.SourceExten)
 	}
 	current_extension_verify, err := HasSIPPeerStatus(ctx, s, ch.CurrentExten)
 	if err != nil {
-		return AMIResultRawLevel{}, err
+		return AmiReplies{}, err
 	}
 	if !current_extension_verify {
-		return AMIResultRawLevel{}, fmt.Errorf("Current extension '%v' not found", ch.CurrentExten)
+		return AmiReplies{}, fmt.Errorf("Current extension '%v' not found", ch.CurrentExten)
 	}
 	channel := NewChannel().SetChannelProtocol(ch.ChannelProtocol)
 	sourceExt := channel.JoinChannelWith(channel.ChannelProtocol, fmt.Sprintf("%v", ch.SourceExten))

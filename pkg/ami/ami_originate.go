@@ -3,7 +3,6 @@ package ami
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/pnguyen215/voipkit/pkg/ami/config"
@@ -66,6 +65,8 @@ func (o *AMIPayloadOriginate) SetDataWith(value interface{}) *AMIPayloadOriginat
 func (o *AMIPayloadOriginate) SetTimeout(value int) *AMIPayloadOriginate {
 	if value >= config.AmiMinTimeoutInMsForCall && value <= config.AmiMaxTimeoutInMsForCall {
 		o.Timeout = value
+	} else {
+		o.Timeout = 30000
 	}
 	return o
 }
@@ -171,12 +172,12 @@ func (o *AMIOriginateDirection) Json() string {
 	return JsonString(o)
 }
 
-// MakeCall
-func MakeCall(ctx context.Context, s AMISocket, originate AMIPayloadOriginate) (AMIResultRaw, error) {
+// DialCall
+func DialCall(ctx context.Context, s AMISocket, originate AMIPayloadOriginate) (AmiReply, error) {
 	return Originate(ctx, s, originate)
 }
 
-// MakeOutboundCall
+// DialOut
 // This is outbound call
 // Example:
 // action: originate
@@ -185,42 +186,36 @@ func MakeCall(ctx context.Context, s AMISocket, originate AMIPayloadOriginate) (
 // exten: 012345678
 // priority: 1
 // timeout: 60000
-func MakeOutboundCall(ctx context.Context, s AMISocket, d AMIOriginateDirection) (AMIResultRaw, bool, error) {
-	channel := NewChannel().SetChannelProtocol(d.ChannelProtocol)
+func DialOut(ctx context.Context, s AMISocket, d AMIOriginateDirection) (AmiReply, bool, error) {
+	channel := NewChannel().
+		SetChannelProtocol(d.ChannelProtocol)
 	o := NewAMIPayloadOriginate().
+		SetPriority(1).
 		SetAsync(true).
+		SetTimeout(d.Timeout).
 		SetContext(config.AmiContextOutbound).
 		SetExtension(strings.TrimSpace(d.Telephone)).
-		SetPriority(1).
 		SetChannel(channel.JoinChannelWith(channel.ChannelProtocol, fmt.Sprintf("%v", d.Extension)))
-
-	if d.Timeout >= config.AmiMinTimeoutInMsForCall && d.Timeout <= config.AmiMaxTimeoutInMsForCall {
-		o.SetTimeout(d.Timeout)
-	} else {
-		o.SetTimeout(30000) // as default
-	}
 
 	if d.ExtensionExists {
 		peer, err := SIPPeerStatusShort(ctx, s, fmt.Sprintf("%v", d.Extension))
 		if err != nil {
 			return nil, false, err
 		}
-		if peer.LenValue() == 0 {
+		if peer.Size() == 0 {
 			return nil, false, fmt.Errorf("Peer %v not found", d.Extension)
 		}
 		o.SetChannel(peer.GetVal(config.AmiJsonFieldPeer))
 	}
-
 	if d.DebugMode {
-		log.Printf("MakeOutboundCall, an outgoing call with originate request body = %v", o.Json())
-		log.Printf("MakeOutboundCall, an outgoing call with original request body (setter) = %v", d.Json())
+		D().Info("DialOut, an outgoing call with originate request body: %v", o.Json())
+		D().Info("DialOut, an outgoing call with original request body (setter): %v", d.Json())
 	}
-
-	response, err := MakeCall(ctx, s, *o)
+	response, err := DialCall(ctx, s, *o)
 	return response, IsSuccess(response), err
 }
 
-// MakeInternalCall
+// DialIn
 // This is internal call
 // Example:
 // action: originate
@@ -229,37 +224,31 @@ func MakeOutboundCall(ctx context.Context, s AMISocket, d AMIOriginateDirection)
 // exten: 1001
 // priority: 1
 // timeout: 60000
-func MakeInternalCall(ctx context.Context, s AMISocket, d AMIOriginateDirection) (AMIResultRaw, bool, error) {
-	channel := NewChannel().SetChannelProtocol(d.ChannelProtocol)
+func DialIn(ctx context.Context, s AMISocket, d AMIOriginateDirection) (AmiReply, bool, error) {
+	channel := NewChannel().
+		SetChannelProtocol(d.ChannelProtocol)
 	o := NewAMIPayloadOriginate().
+		SetPriority(1).
 		SetAsync(true).
+		SetTimeout(d.Timeout).
 		SetContext(config.AmiContextFromInternal).
 		SetExtension(strings.TrimSpace(d.Telephone)).
-		SetPriority(1).
 		SetChannel(channel.JoinChannelWith(channel.ChannelProtocol, fmt.Sprintf("%v", d.Extension)))
-
-	if d.Timeout >= config.AmiMinTimeoutInMsForCall && d.Timeout <= config.AmiMaxTimeoutInMsForCall {
-		o.SetTimeout(d.Timeout)
-	} else {
-		o.SetTimeout(30000) // as default
-	}
 
 	if d.ExtensionExists {
 		peer, err := SIPPeerStatusShort(ctx, s, fmt.Sprintf("%v", d.Extension))
 		if err != nil {
 			return nil, false, err
 		}
-		if peer.LenValue() == 0 {
+		if peer.Size() == 0 {
 			return nil, false, fmt.Errorf("Peer %v not found", d.Extension)
 		}
 		o.SetChannel(peer.GetVal(config.AmiJsonFieldPeer))
 	}
-
 	if d.DebugMode {
-		log.Printf("MakeInternalCall, an internal call with originate request body = %v", o.Json())
-		log.Printf("MakeInternalCall, an internal call with original request body (setter) = %v", d.Json())
+		D().Info("DialIn, an internal call with originate request body: %v", o.Json())
+		D().Info("DialIn, an internal call with original request body (setter): %v", d.Json())
 	}
-
-	response, err := MakeCall(ctx, s, *o)
+	response, err := DialCall(ctx, s, *o)
 	return response, IsSuccess(response), err
 }

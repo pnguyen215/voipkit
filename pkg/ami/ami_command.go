@@ -54,7 +54,7 @@ func (a *AMICommand) TransformCommand(c *AMICommand) ([]byte, error) {
 }
 
 // Send
-func (a *AMICommand) Send(ctx context.Context, socket AMISocket, c *AMICommand) (AMIResultRaw, error) {
+func (a *AMICommand) Send(ctx context.Context, socket AMISocket, c *AMICommand) (AmiReply, error) {
 	b, err := a.TransformCommand(c)
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func (a *AMICommand) Send(ctx context.Context, socket AMISocket, c *AMICommand) 
 }
 
 // SendLevel
-func (a *AMICommand) SendLevel(ctx context.Context, socket AMISocket, c *AMICommand) (AMIResultRawLevel, error) {
+func (a *AMICommand) SendLevel(ctx context.Context, socket AMISocket, c *AMICommand) (AmiReplies, error) {
 	b, err := a.TransformCommand(c)
 	if err != nil {
 		return nil, err
@@ -84,7 +84,7 @@ func (a *AMICommand) SendLevel(ctx context.Context, socket AMISocket, c *AMIComm
 // 2. AMICommand - to build command cli will be sent to server
 // 3. acceptedEvents - select event will captured as response
 // 4. ignoreEvents - the event will been stopped fetching command
-func (a *AMICommand) DoGetResult(ctx context.Context, s AMISocket, c *AMICommand, acceptedEvents []string, ignoreEvents []string) ([]AMIResultRaw, error) {
+func (a *AMICommand) DoGetResult(ctx context.Context, s AMISocket, c *AMICommand, acceptedEvents []string, ignoreEvents []string) ([]AmiReply, error) {
 	bytes, err := c.TransformCommand(c)
 
 	if err != nil {
@@ -95,7 +95,7 @@ func (a *AMICommand) DoGetResult(ctx context.Context, s AMISocket, c *AMICommand
 		return nil, err
 	}
 
-	response := make([]AMIResultRaw, 0)
+	response := make([]AmiReply, 0)
 
 	for {
 		raw, err := c.Read(ctx, s)
@@ -130,7 +130,7 @@ func (a *AMICommand) DoGetResult(ctx context.Context, s AMISocket, c *AMICommand
 }
 
 // Read
-func (a *AMICommand) Read(ctx context.Context, socket AMISocket) (AMIResultRaw, error) {
+func (a *AMICommand) Read(ctx context.Context, socket AMISocket) (AmiReply, error) {
 	var buffer bytes.Buffer
 	var concurrency int64 = 0
 	_start := time.Now().UnixMilli()
@@ -157,11 +157,11 @@ func (a *AMICommand) Read(ctx context.Context, socket AMISocket) (AMIResultRaw, 
 			break
 		}
 	}
-	return ParseResult(socket, buffer.String())
+	return ParseReply(socket, buffer.String())
 }
 
 // ReadLevel
-func (a *AMICommand) ReadLevel(ctx context.Context, socket AMISocket) (AMIResultRawLevel, error) {
+func (a *AMICommand) ReadLevel(ctx context.Context, socket AMISocket) (AmiReplies, error) {
 	var buffer bytes.Buffer
 	var concurrency int64 = 0
 	_start := time.Now().UnixMilli()
@@ -188,5 +188,5 @@ func (a *AMICommand) ReadLevel(ctx context.Context, socket AMISocket) (AMIResult
 			break
 		}
 	}
-	return ParseResultLevel(socket, buffer.String())
+	return ParseReplies(socket, buffer.String())
 }

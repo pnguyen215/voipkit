@@ -472,7 +472,7 @@ func GenUUIDShorten() string {
 //	raw := AMIResultRaw{"Response": "Success", "ActionID": "123", "Event": "SomeEvent"}
 //	success := IsSuccess(raw)
 //	// success is true if the response indicates success, otherwise false.
-func IsSuccess(raw AMIResultRaw) bool {
+func IsSuccess(raw AmiReply) bool {
 	if len(raw) == 0 {
 		return false
 	}
@@ -495,7 +495,7 @@ func IsSuccess(raw AMIResultRaw) bool {
 //	raw := AMIResultRaw{"Response": "Error", "ActionID": "123", "Message": "Command failed"}
 //	failure := IsFailure(raw)
 //	// failure is true if the response indicates failure, otherwise false.
-func IsFailure(raw AMIResultRaw) bool {
+func IsFailure(raw AmiReply) bool {
 	return !IsSuccess(raw)
 }
 
@@ -513,7 +513,7 @@ func IsFailure(raw AMIResultRaw) bool {
 //	raw := AMIResultRaw{"Event": "SomeEvent", "ActionID": "123"}
 //	isEvent := IsEvent(raw)
 //	// isEvent is true if the response represents an event, otherwise false.
-func IsEvent(raw AMIResultRaw) bool {
+func IsEvent(raw AmiReply) bool {
 	if len(raw) == 0 {
 		return false
 	}
@@ -524,7 +524,7 @@ func IsEvent(raw AMIResultRaw) bool {
 // IsResponse
 // Check result from asterisk server to console is response?
 // Get key `response` and value of `response` is not equal whitespace
-func IsResponse(raw AMIResultRaw) bool {
+func IsResponse(raw AmiReply) bool {
 	if len(raw) == 0 {
 		return false
 	}
@@ -532,10 +532,10 @@ func IsResponse(raw AMIResultRaw) bool {
 	return response != ""
 }
 
-// ParseResult
+// ParseReply
 // Break line by line for parsing to map[string]string
-func ParseResult(socket AMISocket, raw string) (AMIResultRaw, error) {
-	response := make(AMIResultRaw)
+func ParseReply(socket AMISocket, raw string) (AmiReply, error) {
+	response := make(AmiReply)
 	lines := strings.Split(raw, config.AmiSignalLetter)
 
 	for _, line := range lines {
@@ -553,10 +553,10 @@ func ParseResult(socket AMISocket, raw string) (AMIResultRaw, error) {
 	return TransformKey(response, socket.Dictionary), nil
 }
 
-// ParseResultLevel
+// ParseReplies
 // Break line by line for parsing to map[string]string
-func ParseResultLevel(socket AMISocket, raw string) (AMIResultRawLevel, error) {
-	response := make(AMIResultRawLevel)
+func ParseReplies(socket AMISocket, raw string) (AmiReplies, error) {
+	response := make(AmiReplies)
 	lines := strings.Split(raw, config.AmiSignalLetter)
 
 	for _, line := range lines {
@@ -581,7 +581,7 @@ func ParseResultLevel(socket AMISocket, raw string) (AMIResultRawLevel, error) {
 // 2. AMICommand - to build command cli will be sent to server
 // 3. acceptedEvents - select event will captured as response
 // 4. ignoreEvents - the event will been stopped fetching command
-func DoGetResult(ctx context.Context, s AMISocket, c *AMICommand, acceptedEvents []string, ignoreEvents []string) ([]AMIResultRaw, error) {
+func DoGetResult(ctx context.Context, s AMISocket, c *AMICommand, acceptedEvents []string, ignoreEvents []string) ([]AmiReply, error) {
 	return c.DoGetResult(ctx, s, c, acceptedEvents, ignoreEvents)
 }
 
@@ -590,7 +590,7 @@ func DoGetResult(ctx context.Context, s AMISocket, c *AMICommand, acceptedEvents
 // Example:
 // The field key is Response, so then transferred to response
 // Or from ResponseEvent to response_event
-func TransformKey(response AMIResultRaw, d *AMIDictionary) AMIResultRaw {
+func TransformKey(response AmiReply, d *AMIDictionary) AmiReply {
 	if len(response) <= 0 {
 		return response
 	}
@@ -599,7 +599,7 @@ func TransformKey(response AMIResultRaw, d *AMIDictionary) AMIResultRaw {
 		return response
 	}
 
-	_m := make(AMIResultRaw, len(response))
+	_m := make(AmiReply, len(response))
 	for k, v := range response {
 		_m[d.TranslateField(k)] = v
 	}
@@ -612,7 +612,7 @@ func TransformKey(response AMIResultRaw, d *AMIDictionary) AMIResultRaw {
 // Example:
 // The field key is Response, so then transferred to response
 // Or from ResponseEvent to response_event
-func TransformKeyLevel(response AMIResultRawLevel, d *AMIDictionary) AMIResultRawLevel {
+func TransformKeyLevel(response AmiReplies, d *AMIDictionary) AmiReplies {
 	if len(response) <= 0 {
 		return response
 	}
@@ -621,7 +621,7 @@ func TransformKeyLevel(response AMIResultRawLevel, d *AMIDictionary) AMIResultRa
 		return response
 	}
 
-	_m := make(AMIResultRawLevel, len(response))
+	_m := make(AmiReplies, len(response))
 	for k, v := range response {
 		_m[d.TranslateField(k)] = v
 	}

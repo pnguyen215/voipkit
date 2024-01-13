@@ -7,7 +7,7 @@ import (
 )
 
 // IAXnetstats show IAX channels network statistics.
-func IAXnetstats(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func IAXnetstats(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionIAXnetstats)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventPeerEntry}, []string{config.AmiListenerEventPeerlistComplete})
@@ -15,7 +15,7 @@ func IAXnetstats(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
 }
 
 // IAXpeerlist show IAX channels network statistics.
-func IAXpeerlist(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func IAXpeerlist(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionIAXpeerlist)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventPeerEntry}, []string{config.AmiListenerEventPeerlistComplete})
@@ -23,7 +23,7 @@ func IAXpeerlist(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
 }
 
 // IAXpeers list IAX peers.
-func IAXpeers(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func IAXpeers(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionIAXpeers)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventPeerEntry}, []string{config.AmiListenerEventPeerlistComplete})
@@ -31,7 +31,7 @@ func IAXpeers(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
 }
 
 // IAXregistry show IAX registrations.
-func IAXregistry(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func IAXregistry(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionIAXregistry)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventPeerEntry}, []string{config.AmiListenerEventPeerlistComplete})

@@ -47,7 +47,7 @@ func (e *AMIPayloadExtension) SetApplicationDataWith(v interface{}) *AMIPayloadE
 }
 
 // AddDialplanExtension add an extension to the dialplan.
-func AddDialplanExtension(ctx context.Context, s AMISocket, extension AMIPayloadExtension) (AMIResultRaw, error) {
+func AddDialplanExtension(ctx context.Context, s AMISocket, extension AMIPayloadExtension) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDialplanExtensionAdd)
 	c.SetVCmd(extension)
 	_s := s
@@ -57,7 +57,7 @@ func AddDialplanExtension(ctx context.Context, s AMISocket, extension AMIPayload
 }
 
 // RemoveDialplanExtension remove an extension from the dialplan.
-func RemoveDialplanExtension(ctx context.Context, s AMISocket, extension AMIPayloadExtension) (AMIResultRaw, error) {
+func RemoveDialplanExtension(ctx context.Context, s AMISocket, extension AMIPayloadExtension) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDialplanExtensionRemove)
 	c.SetVCmd(extension)
 	_s := s

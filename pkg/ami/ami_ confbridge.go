@@ -7,7 +7,7 @@ import (
 )
 
 // ConfbridgeList lists all users in a particular ConfBridge conference.
-func ConfbridgeList(ctx context.Context, s AMISocket, conference string) ([]AMIResultRaw, error) {
+func ConfbridgeList(ctx context.Context, s AMISocket, conference string) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionConfbridgeList).SetVCmd(map[string]interface{}{
 		config.AmiFieldConference: conference,
 	})
@@ -17,7 +17,7 @@ func ConfbridgeList(ctx context.Context, s AMISocket, conference string) ([]AMIR
 }
 
 // ConfbridgeListRooms lists data about all active conferences.
-func ConfbridgeListRooms(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func ConfbridgeListRooms(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionConfbridgeListRooms)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventConfbridgeListRooms}, []string{config.AmiListenerEventConfbridgeListRoomsComplete})
@@ -25,7 +25,7 @@ func ConfbridgeListRooms(ctx context.Context, s AMISocket) ([]AMIResultRaw, erro
 }
 
 // ConfbridgeMute mutes a specified user in a specified conference.
-func ConfbridgeMute(ctx context.Context, s AMISocket, conference string, channel string) (AMIResultRaw, error) {
+func ConfbridgeMute(ctx context.Context, s AMISocket, conference string, channel string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionConfbridgeMute).SetVCmd(map[string]interface{}{
 		config.AmiFieldConference: conference,
 		config.AmiFieldChannel:    channel,
@@ -35,7 +35,7 @@ func ConfbridgeMute(ctx context.Context, s AMISocket, conference string, channel
 }
 
 // ConfbridgeUnmute unmute a specified user in a specified conference.
-func ConfbridgeUnmute(ctx context.Context, s AMISocket, conference string, channel string) (AMIResultRaw, error) {
+func ConfbridgeUnmute(ctx context.Context, s AMISocket, conference string, channel string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionConfbridgeUnmute).SetVCmd(map[string]interface{}{
 		config.AmiFieldConference: conference,
 		config.AmiFieldChannel:    channel,
@@ -45,7 +45,7 @@ func ConfbridgeUnmute(ctx context.Context, s AMISocket, conference string, chann
 }
 
 // ConfbridgeKick removes a specified user from a specified conference.
-func ConfbridgeKick(ctx context.Context, s AMISocket, conference string, channel string) (AMIResultRaw, error) {
+func ConfbridgeKick(ctx context.Context, s AMISocket, conference string, channel string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionConfbridgeKick).SetVCmd(map[string]interface{}{
 		config.AmiFieldConference: conference,
 		config.AmiFieldChannel:    channel,
@@ -55,7 +55,7 @@ func ConfbridgeKick(ctx context.Context, s AMISocket, conference string, channel
 }
 
 // ConfbridgeLock locks a specified conference.
-func ConfbridgeLock(ctx context.Context, s AMISocket, conference string, channel string) (AMIResultRaw, error) {
+func ConfbridgeLock(ctx context.Context, s AMISocket, conference string, channel string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionConfbridgeLock).SetVCmd(map[string]interface{}{
 		config.AmiFieldConference: conference,
 		config.AmiFieldChannel:    channel,
@@ -65,7 +65,7 @@ func ConfbridgeLock(ctx context.Context, s AMISocket, conference string, channel
 }
 
 // ConfbridgeUnlock unlocks a specified conference.
-func ConfbridgeUnlock(ctx context.Context, s AMISocket, conference string, channel string) (AMIResultRaw, error) {
+func ConfbridgeUnlock(ctx context.Context, s AMISocket, conference string, channel string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionConfbridgeUnlock).SetVCmd(map[string]interface{}{
 		config.AmiFieldConference: conference,
 		config.AmiFieldChannel:    channel,
@@ -75,7 +75,7 @@ func ConfbridgeUnlock(ctx context.Context, s AMISocket, conference string, chann
 }
 
 // ConfbridgeSetSingleVideoSrc sets a conference user as the single video source distributed to all other video-capable participants.
-func ConfbridgeSetSingleVideoSrc(ctx context.Context, s AMISocket, conference string, channel string) (AMIResultRaw, error) {
+func ConfbridgeSetSingleVideoSrc(ctx context.Context, s AMISocket, conference string, channel string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionConfbridgeSetSingleVideoSrc).SetVCmd(map[string]interface{}{
 		config.AmiFieldConference: conference,
 		config.AmiFieldChannel:    channel,
@@ -85,7 +85,7 @@ func ConfbridgeSetSingleVideoSrc(ctx context.Context, s AMISocket, conference st
 }
 
 // ConfbridgeStartRecord starts a recording in the context of given conference and creates a file with the name specified by recordFile
-func ConfbridgeStartRecord(ctx context.Context, s AMISocket, conference string, recordFile string) (AMIResultRaw, error) {
+func ConfbridgeStartRecord(ctx context.Context, s AMISocket, conference string, recordFile string) (AmiReply, error) {
 	params := map[string]string{
 		config.AmiFieldConference: conference,
 	}
@@ -98,7 +98,7 @@ func ConfbridgeStartRecord(ctx context.Context, s AMISocket, conference string, 
 }
 
 // ConfbridgeStopRecord stops a recording pertaining to the given conference
-func ConfbridgeStopRecord(ctx context.Context, s AMISocket, conference string) (AMIResultRaw, error) {
+func ConfbridgeStopRecord(ctx context.Context, s AMISocket, conference string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionConfbridgeStopRecord).SetVCmd(map[string]interface{}{
 		config.AmiFieldConference: conference,
 	})

@@ -89,8 +89,8 @@ type AMISocket struct {
 	MaxConcurrencyMillis int64          `json:"max_concurrency_millis"`
 }
 
-type AMIResultRaw map[string]string
-type AMIResultRawLevel map[string][]string
+type AmiReply map[string]string
+type AmiReplies map[string][]string
 
 // AMICommand
 // Do not set tags json on field V
@@ -107,12 +107,12 @@ type AMIAuth struct {
 }
 
 type AMICore struct {
-	Socket     *AMISocket        `json:"-"`
-	Event      chan AMIResultRaw `json:"-"`
-	Stop       chan struct{}     `json:"-"`
-	Wg         sync.WaitGroup    `json:"-"`
-	Dictionary *AMIDictionary    `json:"-"`
-	UUID       string            `json:"uuid,omitempty"`
+	Socket     *AMISocket     `json:"-"`
+	Event      chan AmiReply  `json:"-"`
+	Stop       chan struct{}  `json:"-"`
+	Wg         sync.WaitGroup `json:"-"`
+	Dictionary *AMIDictionary `json:"-"`
+	UUID       string         `json:"uuid,omitempty"`
 }
 
 type AMICallbackHandler struct {

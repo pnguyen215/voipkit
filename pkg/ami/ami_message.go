@@ -438,7 +438,7 @@ func FromJson(jsonString string) (*AMIMessage, error) {
 }
 
 // MessageSend send an out of call message to an endpoint.
-func MessageSend(ctx context.Context, s AMISocket, message AMIPayloadMessage) (AMIResultRaw, error) {
+func MessageSend(ctx context.Context, s AMISocket, message AMIPayloadMessage) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMessageSend)
 	c.SetVCmd(message)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})

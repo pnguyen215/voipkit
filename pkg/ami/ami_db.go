@@ -27,7 +27,7 @@ func (d *AMIPayloadDb) SetValue(value string) *AMIPayloadDb {
 }
 
 // DBDel Delete DB entry.
-func DBDel(ctx context.Context, s AMISocket, family, key string) (AMIResultRaw, error) {
+func DBDel(ctx context.Context, s AMISocket, family, key string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDBDel)
 	db := NewAMIPayloadDb().SetFamily(family).SetKey(key)
 	c.SetV(db)
@@ -36,7 +36,7 @@ func DBDel(ctx context.Context, s AMISocket, family, key string) (AMIResultRaw, 
 }
 
 // DBDelTree delete DB tree.
-func DBDelTree(ctx context.Context, s AMISocket, family, key string) (AMIResultRaw, error) {
+func DBDelTree(ctx context.Context, s AMISocket, family, key string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDBDelTree)
 	db := NewAMIPayloadDb().SetFamily(family).SetKey(key)
 	c.SetV(db)
@@ -45,7 +45,7 @@ func DBDelTree(ctx context.Context, s AMISocket, family, key string) (AMIResultR
 }
 
 // DBPut puts DB entry.
-func DBPut(ctx context.Context, s AMISocket, family, key, value string) (AMIResultRaw, error) {
+func DBPut(ctx context.Context, s AMISocket, family, key, value string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDBPut)
 	db := NewAMIPayloadDb().SetFamily(family).SetKey(key).SetValue(value)
 	c.SetV(db)
@@ -54,7 +54,7 @@ func DBPut(ctx context.Context, s AMISocket, family, key, value string) (AMIResu
 }
 
 // DBGet gets DB Entry.
-func DBGet(ctx context.Context, s AMISocket, family, key string) ([]AMIResultRaw, error) {
+func DBGet(ctx context.Context, s AMISocket, family, key string) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDBGet)
 	db := NewAMIPayloadDb().SetFamily(family).SetKey(key)
 	c.SetV(db)

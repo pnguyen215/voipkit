@@ -7,7 +7,7 @@ import (
 )
 
 // FAXSession responds with a detailed description of a single FAX session.
-func FAXSession(ctx context.Context, s AMISocket, sessionNumber string) (AMIResultRaw, error) {
+func FAXSession(ctx context.Context, s AMISocket, sessionNumber string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionFAXSession)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldSessionNumber: sessionNumber,
@@ -17,7 +17,7 @@ func FAXSession(ctx context.Context, s AMISocket, sessionNumber string) (AMIResu
 }
 
 // FAXSessions list active FAX sessions.
-func FAXSessions(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func FAXSessions(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionFAXSessions)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventFAXSessionsEntry}, []string{config.AmiListenerEventFAXSessionsComplete})
@@ -25,7 +25,7 @@ func FAXSessions(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
 }
 
 // FAXStats responds with fax statistics.
-func FAXStats(ctx context.Context, s AMISocket) (AMIResultRaw, error) {
+func FAXStats(ctx context.Context, s AMISocket) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionFAXStats)
 	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
 	callback.Send() // preprocessing

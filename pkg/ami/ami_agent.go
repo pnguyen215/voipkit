@@ -7,7 +7,7 @@ import (
 )
 
 // Agents lists agents and their status.
-func Agents(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func Agents(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionAgents)
 	callback := NewAMICallbackService(ctx, s, c, []string{config.AmiListenerEventAgents},
 		[]string{config.AmiListenerEventAgentsComplete})
@@ -15,7 +15,7 @@ func Agents(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
 }
 
 // AgentLogoff sets an agent as no longer logged in.
-func AgentLogoff(ctx context.Context, s AMISocket, agent string, soft bool) (AMIResultRaw, error) {
+func AgentLogoff(ctx context.Context, s AMISocket, agent string, soft bool) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionAgentLogOff)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldAgent: agent,

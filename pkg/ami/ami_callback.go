@@ -10,9 +10,9 @@ import (
 )
 
 type AMICallbackService interface {
-	Send() (AMIResultRaw, error)
-	SendLevel() (AMIResultRawLevel, error)
-	SendSuperLevel() ([]AMIResultRaw, error)
+	Send() (AmiReply, error)
+	SendLevel() (AmiReplies, error)
+	SendSuperLevel() ([]AmiReply, error)
 }
 
 func NewAMICallbackService(ctx context.Context, socket AMISocket, command *AMICommand,
@@ -74,7 +74,7 @@ func (a *AMICallbackHandler) Json() string {
 	return JsonString(a)
 }
 
-func (h *AMICallbackHandler) Send() (AMIResultRaw, error) {
+func (h *AMICallbackHandler) Send() (AmiReply, error) {
 	if !h.Socket.Retry {
 		return h.Command.Send(h.Ctx, h.Socket, h.Command)
 	}
@@ -83,7 +83,7 @@ func (h *AMICallbackHandler) Send() (AMIResultRaw, error) {
 		return h.Command.Send(h.Ctx, h.Socket, h.Command)
 	}
 
-	var response AMIResultRaw
+	var response AmiReply
 	var err error
 	var total time.Duration = 0
 
@@ -113,7 +113,7 @@ func (h *AMICallbackHandler) Send() (AMIResultRaw, error) {
 	return response, err
 }
 
-func (h *AMICallbackHandler) SendLevel() (AMIResultRawLevel, error) {
+func (h *AMICallbackHandler) SendLevel() (AmiReplies, error) {
 	if !h.Socket.Retry {
 		return h.Command.SendLevel(h.Ctx, h.Socket, h.Command)
 	}
@@ -122,7 +122,7 @@ func (h *AMICallbackHandler) SendLevel() (AMIResultRawLevel, error) {
 		return h.Command.SendLevel(h.Ctx, h.Socket, h.Command)
 	}
 
-	var response AMIResultRawLevel
+	var response AmiReplies
 	var err error
 	var total time.Duration = 0
 
@@ -153,7 +153,7 @@ func (h *AMICallbackHandler) SendLevel() (AMIResultRawLevel, error) {
 	return response, err
 }
 
-func (h *AMICallbackHandler) SendSuperLevel() ([]AMIResultRaw, error) {
+func (h *AMICallbackHandler) SendSuperLevel() ([]AmiReply, error) {
 	if !h.Socket.Retry {
 		return h.Command.DoGetResult(h.Ctx, h.Socket, h.Command, h.AcceptedEvents, h.IgnoreEvents)
 	}
@@ -162,7 +162,7 @@ func (h *AMICallbackHandler) SendSuperLevel() ([]AMIResultRaw, error) {
 		return h.Command.DoGetResult(h.Ctx, h.Socket, h.Command, h.AcceptedEvents, h.IgnoreEvents)
 	}
 
-	var response []AMIResultRaw
+	var response []AmiReply
 	var err error
 	var total time.Duration = 0
 

@@ -7,7 +7,7 @@ import (
 )
 
 // AGI add an AGI command to execute by Async AGI.
-func AGI(ctx context.Context, s AMISocket, channel, agiCommand, agiCommandID string) (AMIResultRaw, error) {
+func AGI(ctx context.Context, s AMISocket, channel, agiCommand, agiCommandID string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionAgi)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel:   channel,
@@ -19,7 +19,7 @@ func AGI(ctx context.Context, s AMISocket, channel, agiCommand, agiCommandID str
 }
 
 // ControlPlayback control the playback of a file being played to a channel.
-func ControlPlayback(ctx context.Context, s AMISocket, channel string, control config.AGIControl) (AMIResultRaw, error) {
+func ControlPlayback(ctx context.Context, s AMISocket, channel string, control config.AGIControl) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionControlPlayback)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel: channel,

@@ -86,7 +86,7 @@ func (c *AMICore) GetSIPPeerStatusMap(ctx context.Context, g *AMIPeerStatusGuard
 	return response, nil
 }
 
-func (c *AMICore) convRaw2ExtensionStatus(v AMIResultRaw) *AMIExtensionStatus {
+func (c *AMICore) convRaw2ExtensionStatus(v AmiReply) *AMIExtensionStatus {
 	e := NewAMIExtensionStatus().
 		SetActionId(v.GetVal(config.AmiJsonFieldActionId)).
 		SetContext(v.GetVal(config.AmiJsonFieldContext)).
@@ -99,7 +99,7 @@ func (c *AMICore) convRaw2ExtensionStatus(v AMIResultRaw) *AMIExtensionStatus {
 	return e
 }
 
-func (c *AMICore) convRaw2PeerStatus(v AMIResultRaw, g *AMIPeerStatusGuard) *AMIPeerStatus {
+func (c *AMICore) convRaw2PeerStatus(v AmiReply, g *AMIPeerStatusGuard) *AMIPeerStatus {
 	e := NewAMIPeerStatus().
 		SetActionId(v.GetVal(config.AmiJsonFieldActionId)).
 		SetChannelType(v.GetVal(config.AmiJsonFieldChannelType)).

@@ -8,7 +8,7 @@ import (
 
 // MeetMeList lists all users in a particular MeetMe conference.
 // Will follow as separate events, followed by a final event called MeetmeListComplete.
-func MeetMeList(ctx context.Context, s AMISocket, conference string) ([]AMIResultRaw, error) {
+func MeetMeList(ctx context.Context, s AMISocket, conference string) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMeetMeList)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventMeetMeEntry}, []string{config.AmiListenerEventMeetMeListComplete})
@@ -16,7 +16,7 @@ func MeetMeList(ctx context.Context, s AMISocket, conference string) ([]AMIResul
 }
 
 // MeetMeMute mute a Meetme user.
-func MeetMeMute(ctx context.Context, s AMISocket, meetme, userNumber string) (AMIResultRaw, error) {
+func MeetMeMute(ctx context.Context, s AMISocket, meetme, userNumber string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMeetMeMute)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldMeetMe:     meetme,
@@ -27,7 +27,7 @@ func MeetMeMute(ctx context.Context, s AMISocket, meetme, userNumber string) (AM
 }
 
 // MeetMeUnMute unmute a Meetme user.
-func MeetMeUnMute(ctx context.Context, s AMISocket, meetme, userNumber string) (AMIResultRaw, error) {
+func MeetMeUnMute(ctx context.Context, s AMISocket, meetme, userNumber string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMeetMeUnmute)
 	c.SetV(map[string]interface{}{
 		config.AmiFieldMeetMe:     meetme,
@@ -38,7 +38,7 @@ func MeetMeUnMute(ctx context.Context, s AMISocket, meetme, userNumber string) (
 }
 
 // MeetMeListRooms list active conferences.
-func MeetMeListRooms(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func MeetMeListRooms(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMeetMeListRooms)
 	callback := NewAMICallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventMeetMeEntry}, []string{config.AmiListenerEventMeetMeListRoomsComplete})

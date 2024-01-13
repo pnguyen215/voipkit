@@ -9,7 +9,7 @@ import (
 
 // SIPPeers lists SIP peers in text format with details on current status.
 // Peerlist will follow as separate events, followed by a final event called PeerlistComplete
-func SIPPeers(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func SIPPeers(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionSIPPeers)
 	callback := NewAMICallbackService(ctx, s, c, []string{config.AmiListenerEventPeerEntry},
 		[]string{config.AmiListenerEventPeerlistComplete})
@@ -17,7 +17,7 @@ func SIPPeers(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
 }
 
 // SIPShowPeer shows one SIP peer with details on current status.
-func SIPShowPeer(ctx context.Context, s AMISocket, peer string) (AMIResultRaw, error) {
+func SIPShowPeer(ctx context.Context, s AMISocket, peer string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionSIPShowPeer)
 	c.SetV(map[string]string{
 		config.AmiFieldPeer: peer,
@@ -27,7 +27,7 @@ func SIPShowPeer(ctx context.Context, s AMISocket, peer string) (AMIResultRaw, e
 }
 
 // SIPPeerStatus show the status of one or all of the sip peers.
-func SIPPeerStatus(ctx context.Context, s AMISocket, peer string) ([]AMIResultRaw, error) {
+func SIPPeerStatus(ctx context.Context, s AMISocket, peer string) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionSIPPeerStatus)
 	if peer == "" {
 		callback := NewAMICallbackService(ctx, s, c, []string{config.AmiListenerEventPeerStatus},
@@ -43,13 +43,13 @@ func SIPPeerStatus(ctx context.Context, s AMISocket, peer string) ([]AMIResultRa
 }
 
 // SIPPeerStatusShort
-func SIPPeerStatusShort(ctx context.Context, s AMISocket, peer string) (AMIResultRaw, error) {
+func SIPPeerStatusShort(ctx context.Context, s AMISocket, peer string) (AmiReply, error) {
 	peers, err := SIPPeerStatus(ctx, s, peer)
 	if err != nil {
-		return AMIResultRaw{}, err
+		return AmiReply{}, err
 	}
 	if len(peers) == 0 {
-		return AMIResultRaw{}, nil
+		return AmiReply{}, nil
 	}
 	return peers[0], nil
 }
@@ -59,14 +59,14 @@ func HasSIPPeerStatus(ctx context.Context, s AMISocket, peer string) (bool, erro
 	if err != nil {
 		return false, err
 	}
-	if sip.LenValue() == 0 {
+	if sip.Size() == 0 {
 		return false, fmt.Errorf("Peer %v not found", peer)
 	}
 	return true, nil
 }
 
 // SIPShowRegistry shows SIP registrations (text format).
-func SIPShowRegistry(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
+func SIPShowRegistry(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionSIPShowRegistry)
 	callback := NewAMICallbackService(ctx, s, c, []string{config.AmiListenerEventRegistrationEntry},
 		[]string{config.AmiListenerEventRegistrationsComplete})
@@ -74,7 +74,7 @@ func SIPShowRegistry(ctx context.Context, s AMISocket) ([]AMIResultRaw, error) {
 }
 
 // SIPQualifyPeer qualify SIP peers.
-func SIPQualifyPeer(ctx context.Context, s AMISocket, peer string) (AMIResultRaw, error) {
+func SIPQualifyPeer(ctx context.Context, s AMISocket, peer string) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionSIPQualifyPeer)
 	c.SetV(map[string]string{
 		config.AmiFieldPeer: peer,
