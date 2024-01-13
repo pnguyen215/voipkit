@@ -11,7 +11,7 @@ import (
 
 // NewAmi connect to Asterisk Server using net connection and try to login
 func NewAmi(host string, port int, username, password string) (*AMI, error) {
-	conn, err := OnConn(host, port)
+	conn, err := OnTcpConn(host, port)
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +25,7 @@ func NewAmiDial(conn net.Conn, username, password string) (*AMI, error) {
 
 // NewAmi connect to Asterisk Server using net connection and try to login
 func NewAmiWithTimeout(host string, port int, username, password string, timeout time.Duration) (*AMI, error) {
-	conn, err := OnConn(host, port)
+	conn, err := OnTcpConn(host, port)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,6 @@ func NewAmiWith(conn net.Conn, username, password string, timeout time.Duration)
 func (c *AMI) ReadPrompt(parentCtx context.Context, timeout time.Duration) error {
 	ctx, cancel := context.WithTimeout(parentCtx, timeout)
 	defer cancel()
-
 	reader := func() (chan string, chan error) {
 		prompt := make(chan string)
 		fail := make(chan error)
@@ -72,9 +71,7 @@ func (c *AMI) ReadPrompt(parentCtx context.Context, timeout time.Duration) error
 		}()
 		return prompt, fail
 	}
-
 	prompt, fail := reader()
-
 	select {
 	case <-ctx.Done():
 		return ErrorAsteriskConnTimeout
@@ -85,7 +82,6 @@ func (c *AMI) ReadPrompt(parentCtx context.Context, timeout time.Duration) error
 			return ErrorAsteriskInvalidPrompt.AMIError(promptLine)
 		}
 	}
-
 	return nil
 }
 
@@ -125,13 +121,10 @@ func (c *AMI) Write(bytes []byte) error {
 func (c *AMI) Login(parentContext context.Context, timeout time.Duration, username, password string) error {
 	ctx, cancel := context.WithTimeout(parentContext, timeout)
 	defer cancel()
-
 	message := LoginWith(username, password)
-
 	reader := func() (chan *AMIMessage, chan error) {
 		chMessage := make(chan *AMIMessage)
 		fail := make(chan error)
-
 		go func() {
 			defer close(chMessage)
 			defer close(fail)
@@ -167,7 +160,6 @@ func (c *AMI) Login(parentContext context.Context, timeout time.Duration, userna
 			c.Raw = msg
 		}
 	}
-
 	return nil
 }
 

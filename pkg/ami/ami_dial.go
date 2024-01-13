@@ -52,7 +52,7 @@ func OnConnContext(conn net.Conn) (*AMI, context.Context) {
 	return client, ctx
 }
 
-// OnConn opens a network connection to the specified IP address and port using the default TCP network.
+// OnTcpConn opens a network connection to the specified IP address and port using the default TCP network.
 //
 // Parameters:
 //   - ip:   The IP address to connect to.
@@ -65,18 +65,42 @@ func OnConnContext(conn net.Conn) (*AMI, context.Context) {
 // Example:
 //
 //	// Dialing an AMI server at localhost on port 5038
-//	conn, err := OnConn("localhost", 5038)
+//	conn, err := OnTcpConn("localhost", 5038)
 //	if err != nil {
 //	    log.Fatal(err)
 //	}
 //	// Use the connection for AMI operations.
 //	// Make sure to close the connection when done.
 //	defer conn.Close()
-func OnConn(ip string, port int) (net.Conn, error) {
-	return createConn(config.AmiNetworkTcpKey, ip, port)
+func OnTcpConn(ip string, port int) (net.Conn, error) {
+	return NewConn(config.AmiNetworkTcpKey, ip, port)
 }
 
-// createConn opens a network connection to the specified IP address and port using the specified network type.
+// OnUdpConn opens a network connection to the specified IP address and port using the default UDP network.
+//
+// Parameters:
+//   - ip:   The IP address to connect to.
+//   - port: The port number to connect to.
+//
+// Returns:
+//   - The opened network connection (net.Conn).
+//   - An error if the connection cannot be established.
+//
+// Example:
+//
+//	// Dialing an AMI server at localhost on port 5038
+//	conn, err := OnUdpConn("localhost", 5038)
+//	if err != nil {
+//	    log.Fatal(err)
+//	}
+//	// Use the connection for AMI operations.
+//	// Make sure to close the connection when done.
+//	defer conn.Close()
+func OnUdpConn(ip string, port int) (net.Conn, error) {
+	return NewConn(config.AmiNetworkUdpKey, ip, port)
+}
+
+// NewConn opens a network connection to the specified IP address and port using the specified network type.
 //
 // Parameters:
 //   - network: The network type ("tcp", "udp", etc.).
@@ -90,14 +114,14 @@ func OnConn(ip string, port int) (net.Conn, error) {
 // Example:
 //
 //	// Dialing an AMI server at localhost on port 5038 using UDP
-//	conn, err := createConn("udp", "localhost", 5038)
+//	conn, err := NewConn("udp", "localhost", 5038)
 //	if err != nil {
 //	    log.Fatal(err)
 //	}
 //	// Use the connection for AMI operations.
 //	// Make sure to close the connection when done.
 //	defer conn.Close()
-func createConn(network, ip string, port int) (net.Conn, error) {
+func NewConn(network, ip string, port int) (net.Conn, error) {
 	if !config.AmiNetworkKeys[network] {
 		return nil, AMIErrorNew("AMI: Invalid network")
 	}
