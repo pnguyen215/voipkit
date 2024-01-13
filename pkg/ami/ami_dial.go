@@ -3,15 +3,35 @@ package ami
 import (
 	"bufio"
 	"context"
-	"log"
 	"net"
 	"net/textproto"
 
 	"github.com/pnguyen215/voipkit/pkg/ami/config"
 )
 
-// OpenContext
-func OpenContext(conn net.Conn) (*AMI, context.Context) {
+// OnConnContext initializes a new AMI client with the provided network connection.
+// It returns the initialized AMI client along with a cancellable context for managing its lifecycle.
+//
+// Parameters:
+//   - conn: The network connection used by the AMI client.
+//
+// Returns:
+//   - An initialized AMI client (*AMI).
+//   - A cancellable context for managing the AMI client's lifecycle (context.Context).
+//
+// Example:
+//
+//	// Creating an AMI client with a network connection
+//	conn, err := net.Dial("tcp", "localhost:5038")
+//	if err != nil {
+//	    log.Fatal(err)
+//	}
+//	client, ctx := OnConnContext(conn)
+//	// Use the client and context for AMI operations.
+//	// Make sure to close the connection and cancel the context when done.
+//	defer client.Close()
+//	defer client.Cancel()
+func OnConnContext(conn net.Conn) (*AMI, context.Context) {
 	ctx, cancel := context.WithCancel(context.Background())
 	client := &AMI{
 		Reader: textproto.NewReader(bufio.NewReader(conn)),
@@ -19,30 +39,69 @@ func OpenContext(conn net.Conn) (*AMI, context.Context) {
 		Conn:   conn,
 		Cancel: cancel,
 	}
-	// checking conn available
+	// Check if the connection is available
 	if conn != nil {
 		addr := conn.RemoteAddr().String()
 		_socket, err := NewAMISocketWith(ctx, addr)
 
 		if err == nil {
 			client.Socket = _socket
-			log.Printf("OpenContext, cloning (addr: %v) socket connection succeeded", addr)
+			D().Info("OnConnContext, cloning (addr: %v) socket connection succeeded", addr)
 		}
 	}
 	return client, ctx
 }
 
-// OpenDial
-func OpenDial(ip string, port int) (net.Conn, error) {
-	return OpenDialWith(config.AmiNetworkTcpKey, ip, port)
+// OnConn opens a network connection to the specified IP address and port using the default TCP network.
+//
+// Parameters:
+//   - ip:   The IP address to connect to.
+//   - port: The port number to connect to.
+//
+// Returns:
+//   - The opened network connection (net.Conn).
+//   - An error if the connection cannot be established.
+//
+// Example:
+//
+//	// Dialing an AMI server at localhost on port 5038
+//	conn, err := OnConn("localhost", 5038)
+//	if err != nil {
+//	    log.Fatal(err)
+//	}
+//	// Use the connection for AMI operations.
+//	// Make sure to close the connection when done.
+//	defer conn.Close()
+func OnConn(ip string, port int) (net.Conn, error) {
+	return createConn(config.AmiNetworkTcpKey, ip, port)
 }
 
-// OpenDialWith
-func OpenDialWith(network, ip string, port int) (net.Conn, error) {
+// createConn opens a network connection to the specified IP address and port using the specified network type.
+//
+// Parameters:
+//   - network: The network type ("tcp", "udp", etc.).
+//   - ip:      The IP address to connect to.
+//   - port:    The port number to connect to.
+//
+// Returns:
+//   - The opened network connection (net.Conn).
+//   - An error if the connection cannot be established.
+//
+// Example:
+//
+//	// Dialing an AMI server at localhost on port 5038 using UDP
+//	conn, err := createConn("udp", "localhost", 5038)
+//	if err != nil {
+//	    log.Fatal(err)
+//	}
+//	// Use the connection for AMI operations.
+//	// Make sure to close the connection when done.
+//	defer conn.Close()
+func createConn(network, ip string, port int) (net.Conn, error) {
 	if !config.AmiNetworkKeys[network] {
 		return nil, AMIErrorNew("AMI: Invalid network")
 	}
-	if ip == "" {
+	if IsStringEmpty(ip) {
 		return nil, AMIErrorNew("AMI: IP must be not empty")
 	}
 	if port <= 0 {
@@ -51,10 +110,10 @@ func OpenDialWith(network, ip string, port int) (net.Conn, error) {
 	host, _port, _ := DecodeIp(ip)
 	if len(host) > 0 && len(_port) > 0 {
 		form := net.JoinHostPort(host, _port)
-		log.Printf("AMI: (IP decoded) dial connection = %v", form)
+		D().Info("AMI: (IP decoded) dial connection: %v", form)
 		return net.Dial(network, form)
 	}
 	form := RemoveProtocol(ip, port)
-	log.Printf("AMI: dial connection = %v", form)
+	D().Info("AMI: dial connection: %v", form)
 	return net.Dial(network, form)
 }

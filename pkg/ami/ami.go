@@ -11,7 +11,7 @@ import (
 
 // NewAmi connect to Asterisk Server using net connection and try to login
 func NewAmi(host string, port int, username, password string) (*AMI, error) {
-	conn, err := OpenDial(host, port)
+	conn, err := OnConn(host, port)
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +25,7 @@ func NewAmiDial(conn net.Conn, username, password string) (*AMI, error) {
 
 // NewAmi connect to Asterisk Server using net connection and try to login
 func NewAmiWithTimeout(host string, port int, username, password string, timeout time.Duration) (*AMI, error) {
-	conn, err := OpenDial(host, port)
+	conn, err := OnConn(host, port)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func NewAmiWithTimeout(host string, port int, username, password string, timeout
 // NewAmiWith connect to Asterisk Server using net connection and try to login
 // using username, password and timeout after seconds. Create new Asterisk Manager Interface (AMI) and return client or error
 func NewAmiWith(conn net.Conn, username, password string, timeout time.Duration) (*AMI, error) {
-	client, ctx := OpenContext(conn)
+	client, ctx := OnConnContext(conn)
 
 	err := client.ReadPrompt(ctx, timeout)
 
