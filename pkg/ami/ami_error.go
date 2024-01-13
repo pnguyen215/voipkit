@@ -4,40 +4,38 @@ import "fmt"
 
 var (
 	// ErrorAsteriskConnTimeout error on connection timeout
-	ErrorAsteriskConnTimeout = AMIErrorNew("Asterisk Server connection timeout")
+	ErrorAsteriskConnTimeout = AmiErrorWrap("Asterisk Server connection timeout")
 
 	// ErrorAsteriskInvalidPrompt invalid prompt received from AMI server
-	ErrorAsteriskInvalidPrompt = AMIErrorNew("Asterisk Server invalid prompt command line")
+	ErrorAsteriskInvalidPrompt = AmiErrorWrap("Asterisk Server invalid prompt command line")
 
 	// ErrorAsteriskNetwork networking errors
-	ErrorAsteriskNetwork = AMIErrorNew("Network error")
+	ErrorAsteriskNetwork = AmiErrorWrap("Network error")
 
-	// ErrorAsteriskLogin AMI server login failed
-	ErrorAsteriskLogin = AMIErrorNew("Asterisk Server login failed")
+	// ErrorAsteriskAuthenticated AMI server authenticated unsuccessful
+	ErrorAsteriskAuthenticated = AmiErrorWrap("Asterisk Server authenticated unsuccessful")
 
-	// Error EOF
-	ErrorEOF = "EOF"
-
-	// Error I/O
-	ErrorIO          = "io: read/write on closed pipe"
-	ErrorLoginFailed = "Failed login"
+	// Error messages
+	ErrorEOF                         = "EOF"
+	ErrorIO                          = "io: read/write on closed pipe"
+	ErrorAuthenticatedUnsuccessfully = "Authenticated unsuccessful"
 )
 
-type AMIError struct {
+type AmiError struct {
 	S string
 	E string
 }
 
-func AMIErrorNew(message string) *AMIError {
-	return &AMIError{S: message}
+func AmiErrorWrap(message string) *AmiError {
+	return &AmiError{S: message}
 }
 
-func (e *AMIError) AMIError(message string, args ...interface{}) *AMIError {
+func (e *AmiError) ErrorWrap(message string, args ...interface{}) *AmiError {
 	t := fmt.Sprintf(message, args...)
 	e.E = fmt.Sprintf(": %s", t)
 	return e
 }
 
-func (e *AMIError) Error() string {
+func (e *AmiError) Error() string {
 	return fmt.Sprintf("ami has error ocurred: %s%s", e.S, e.E)
 }

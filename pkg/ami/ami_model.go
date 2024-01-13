@@ -11,6 +11,17 @@ import (
 
 type PubChannel chan *AMIMessage
 type MessageChannel map[string]PubChannel
+type tcpAmiFactory struct{}
+type udpAmiFactory struct{}
+
+type AmiClient struct {
+	enabled  bool
+	host     string
+	port     int
+	username string
+	password string
+	timeout  time.Duration
+}
 
 type AMI struct {
 	Mutex  sync.RWMutex       `json:"-"`

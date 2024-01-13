@@ -53,24 +53,23 @@ func (s *AMISocket) Json() string {
 }
 
 // NewSocket provides a new socket client, connecting to a tcp server.
-func NewAmiSocketContext(ctx context.Context, address string) (*AMISocket, error) {
+func WithSocket(ctx context.Context, address string) (*AMISocket, error) {
 	var dialer net.Dialer
 	conn, err := dialer.DialContext(ctx, config.AmiNetworkTcpKey, address)
 	if err != nil {
 		return nil, err
 	}
-	return NewAmiSocketConn(ctx, conn, true)
+	return WithAmiSocketOver(ctx, conn, true)
 }
 
-// NewSocket provides a new socket client, connecting to a tcp server.
+// WithAmiSocketOver provides a new socket client, connecting to a tcp server.
 // If the reuseConn = true, then using current connection.
 // Otherwise, clone the connection from current connection
-func NewAmiSocketConn(ctx context.Context, conn net.Conn, reuseConn bool) (*AMISocket, error) {
+func WithAmiSocketOver(ctx context.Context, conn net.Conn, reuseConn bool) (*AMISocket, error) {
 	s := NewAmiSocket()
 	if reuseConn {
 		s.Conn = conn
 	} else {
-		// checking conn available
 		if conn != nil {
 			var dialer net.Dialer
 			_conn, err := dialer.DialContext(ctx, config.AmiNetworkTcpKey, conn.RemoteAddr().String())

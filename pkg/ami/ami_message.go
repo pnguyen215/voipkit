@@ -68,8 +68,8 @@ func ofMessageWithDictionary(d *AMIDictionary, header textproto.MIMEHeader) *AMI
 	return m
 }
 
-// Login action by message
-func LoginWith(username, password string) *AMIMessage {
+// Authenticate action by message
+func Authenticate(username, password string) *AMIMessage {
 	a := NewActionWith(config.AmiLoginKey)
 	a.AddField(config.AmiFieldUsername, username)
 	a.AddField(config.AmiFieldSecret, password)
