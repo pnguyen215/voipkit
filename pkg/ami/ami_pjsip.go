@@ -22,7 +22,7 @@ func PJSIPNotify(ctx context.Context, s AMISocket, endpoint, uri, variable strin
 
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPNotify)
 	c.SetV(params)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -32,7 +32,7 @@ func PJSIPQualify(ctx context.Context, s AMISocket, endpoint string) (AmiReply, 
 	c.SetV(map[string]interface{}{
 		config.AmiFieldEndpoint: endpoint,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -42,7 +42,7 @@ func PJSIPRegister(ctx context.Context, s AMISocket, registration string) (AmiRe
 	c.SetVCmd(map[string]interface{}{
 		config.AmiFieldRegistration: registration,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -52,7 +52,7 @@ func PJSIPUnregister(ctx context.Context, s AMISocket, registration string) (Ami
 	c.SetVCmd(map[string]interface{}{
 		config.AmiFieldRegistration: registration,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -62,7 +62,7 @@ func PJSIPShowEndpoint(ctx context.Context, s AMISocket, endpoint string) ([]Ami
 	c.SetV(map[string]interface{}{
 		config.AmiFieldEndpoint: endpoint,
 	})
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventEndpointDetail, config.AmiListenerEventContactStatusDetail,
 			config.AmiListenerEventAorDetail, config.AmiListenerEventAuthDetail,
 			config.AmiListenerEventTransportDetail, config.AmiListenerEventIdentifyDetail,
@@ -74,7 +74,7 @@ func PJSIPShowEndpoint(ctx context.Context, s AMISocket, endpoint string) ([]Ami
 // PJSIPShowEndpoints list pjsip endpoints.
 func PJSIPShowEndpoints(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPShowEndpoints)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventEndpointList},
 		[]string{config.AmiListenerEventEndpointListComplete})
 	return callback.SendSuperLevel()
@@ -83,7 +83,7 @@ func PJSIPShowEndpoints(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 // PJSIPShowRegistrationInboundContactStatuses lists ContactStatuses for PJSIP inbound registrations.
 func PJSIPShowRegistrationInboundContactStatuses(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPShowRegistrationInboundContactStatuses)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventContactStatusDetail},
 		[]string{config.AmiListenerEventContactStatusDetailComplete})
 	return callback.SendSuperLevel()
@@ -92,7 +92,7 @@ func PJSIPShowRegistrationInboundContactStatuses(ctx context.Context, s AMISocke
 // PJSIPShowRegistrationsInbound lists PJSIP inbound registrations.
 func PJSIPShowRegistrationsInbound(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPShowRegistrationsInbound)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventInboundRegistrationDetail},
 		[]string{config.AmiListenerEventInboundRegistrationDetailComplete})
 	return callback.SendSuperLevel()
@@ -101,7 +101,7 @@ func PJSIPShowRegistrationsInbound(ctx context.Context, s AMISocket) ([]AmiReply
 // PJSIPShowRegistrationsOutbound lists PJSIP outbound registrations.
 func PJSIPShowRegistrationsOutbound(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPShowRegistrationsOutbound)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventOutboundRegistrationDetail},
 		[]string{config.AmiListenerEventOutboundRegistrationDetailComplete})
 	return callback.SendSuperLevel()
@@ -110,7 +110,7 @@ func PJSIPShowRegistrationsOutbound(ctx context.Context, s AMISocket) ([]AmiRepl
 // PJSIPShowResourceLists displays settings for configured resource lists.
 func PJSIPShowResourceLists(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPShowResourceLists)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventResourceListDetail},
 		[]string{config.AmiListenerEventResourceListDetailComplete})
 	return callback.SendSuperLevel()
@@ -119,7 +119,7 @@ func PJSIPShowResourceLists(ctx context.Context, s AMISocket) ([]AmiReply, error
 // PJSIPShowSubscriptionsInbound list of inbound subscriptions.
 func PJSIPShowSubscriptionsInbound(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPShowSubscriptionsInbound)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventInboundSubscriptionDetail},
 		[]string{config.AmiListenerEventInboundSubscriptionDetailComplete})
 	return callback.SendSuperLevel()
@@ -128,7 +128,7 @@ func PJSIPShowSubscriptionsInbound(ctx context.Context, s AMISocket) ([]AmiReply
 // PJSIPShowSubscriptionsOutbound list of outbound subscriptions.
 func PJSIPShowSubscriptionsOutbound(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPJSIPShowSubscriptionsOutbound)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventOutboundSubscriptionDetail},
 		[]string{config.AmiListenerEventOutboundSubscriptionDetailComplete})
 	return callback.SendSuperLevel()

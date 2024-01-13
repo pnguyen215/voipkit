@@ -14,7 +14,7 @@ func Bridge(ctx context.Context, s AMISocket, channel1, channel2 string, tone st
 		config.AmiFieldChannel2: channel2,
 		config.AmiFieldTone:     tone,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -26,7 +26,7 @@ func BlindTransfer(ctx context.Context, s AMISocket, channel, context, extension
 		config.AmiFieldContext:   context,
 		config.AmiFieldExtension: extension,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -36,7 +36,7 @@ func BridgeDestroy(ctx context.Context, s AMISocket, bridgeUniqueId string) (Ami
 	c.SetV(map[string]interface{}{
 		config.AmiFieldBridgeUniqueId: bridgeUniqueId,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -46,7 +46,7 @@ func BridgeInfo(ctx context.Context, s AMISocket, bridgeUniqueId string) (AmiRep
 	c.SetV(map[string]interface{}{
 		config.AmiFieldBridgeUniqueId: bridgeUniqueId,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -60,7 +60,7 @@ func BridgeKick(ctx context.Context, s AMISocket, bridgeUniqueId, channel string
 	}
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionBridgeKick)
 	c.SetV(params)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -70,14 +70,14 @@ func BridgeList(ctx context.Context, s AMISocket, bridgeType string) (AmiReply, 
 	c.SetV(map[string]interface{}{
 		config.AmiFieldBridgeType: bridgeType,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
 // BridgeTechnologyList list available bridging technologies and their statuses.
 func BridgeTechnologyList(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionBridgeTechnologyList)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventBridgeTechnologyListItem}, []string{config.AmiListenerEventBridgeTechnologyListComplete})
 	return callback.SendSuperLevel()
 }
@@ -88,7 +88,7 @@ func BridgeTechnologySuspend(ctx context.Context, s AMISocket, bridgeTechnology 
 	c.SetV(map[string]interface{}{
 		config.AmiFieldBridgeTechnology: bridgeTechnology,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -98,6 +98,6 @@ func BridgeTechnologyUnsuspend(ctx context.Context, s AMISocket, bridgeTechnolog
 	c.SetV(map[string]interface{}{
 		config.AmiFieldBridgeTechnology: bridgeTechnology,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }

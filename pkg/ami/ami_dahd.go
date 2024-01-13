@@ -14,7 +14,7 @@ func DAHDIDialOffhook(ctx context.Context, s AMISocket, channel, number string) 
 		config.AmiFieldDAHDIChannel: channel,
 		config.AmiFieldNumber:       number,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -24,7 +24,7 @@ func DAHDIDNDoff(ctx context.Context, s AMISocket, channel string) (AmiReply, er
 	c.SetV(map[string]interface{}{
 		config.AmiFieldDAHDIChannel: channel,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -34,7 +34,7 @@ func DAHDIDNDon(ctx context.Context, s AMISocket, channel string) (AmiReply, err
 	c.SetV(map[string]interface{}{
 		config.AmiFieldDAHDIChannel: channel,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -44,14 +44,14 @@ func DAHDIHangup(ctx context.Context, s AMISocket, channel string) (AmiReply, er
 	c.SetV(map[string]interface{}{
 		config.AmiFieldDAHDIChannel: channel,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
 // DAHDIRestart fully Restart DAHDI channels (terminates calls).
 func DAHDIRestart(ctx context.Context, s AMISocket) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDAHDIRestart)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -61,7 +61,7 @@ func DAHDIShowChannels(ctx context.Context, s AMISocket, channel string) ([]AmiR
 	c.SetV(map[string]interface{}{
 		config.AmiFieldDAHDIChannel: channel,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{config.AmiListenerEventDAHDIShowChannels}, []string{config.AmiListenerEventDAHDIShowChannelsComplete})
+	callback := NewAmiCallbackService(ctx, s, c, []string{config.AmiListenerEventDAHDIShowChannels}, []string{config.AmiListenerEventDAHDIShowChannelsComplete})
 	return callback.SendSuperLevel()
 }
 
@@ -71,6 +71,6 @@ func DAHDITransfer(ctx context.Context, s AMISocket, channel string) (AmiReply, 
 	c.SetV(map[string]interface{}{
 		config.AmiFieldDAHDIChannel: channel,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }

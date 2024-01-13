@@ -205,7 +205,7 @@ func DialOut(ctx context.Context, s AMISocket, d AMIOriginateDirection) (AmiRepl
 		if peer.Size() == 0 {
 			return nil, false, fmt.Errorf("Peer %v not found", d.Extension)
 		}
-		o.SetChannel(peer.GetVal(config.AmiJsonFieldPeer))
+		o.SetChannel(peer.Get(config.AmiJsonFieldPeer))
 	}
 	if d.DebugMode {
 		D().Info("DialOut, an outgoing call with originate request body: %v", o.Json())
@@ -243,7 +243,7 @@ func DialIn(ctx context.Context, s AMISocket, d AMIOriginateDirection) (AmiReply
 		if peer.Size() == 0 {
 			return nil, false, fmt.Errorf("Peer %v not found", d.Extension)
 		}
-		o.SetChannel(peer.GetVal(config.AmiJsonFieldPeer))
+		o.SetChannel(peer.Get(config.AmiJsonFieldPeer))
 	}
 	if d.DebugMode {
 		D().Info("DialIn, an internal call with originate request body: %v", o.Json())

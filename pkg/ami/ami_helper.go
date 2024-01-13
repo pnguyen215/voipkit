@@ -476,7 +476,7 @@ func IsSuccess(raw AmiReply) bool {
 	if len(raw) == 0 {
 		return false
 	}
-	response := raw.GetVal(strings.ToLower(config.AmiResponseKey))
+	response := raw.Get(strings.ToLower(config.AmiResponseKey))
 	return IsResponse(raw) &&
 		strings.EqualFold(response, config.AmiStatusSuccessKey)
 }
@@ -517,7 +517,7 @@ func IsEvent(raw AmiReply) bool {
 	if len(raw) == 0 {
 		return false
 	}
-	event := raw.GetVal(strings.ToLower(config.AmiEventKey))
+	event := raw.Get(strings.ToLower(config.AmiEventKey))
 	return event != ""
 }
 
@@ -528,7 +528,7 @@ func IsResponse(raw AmiReply) bool {
 	if len(raw) == 0 {
 		return false
 	}
-	response := raw.GetVal(strings.ToLower(config.AmiResponseKey))
+	response := raw.Get(strings.ToLower(config.AmiResponseKey))
 	return response != ""
 }
 

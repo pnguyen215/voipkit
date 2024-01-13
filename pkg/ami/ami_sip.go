@@ -11,7 +11,7 @@ import (
 // Peerlist will follow as separate events, followed by a final event called PeerlistComplete
 func SIPPeers(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionSIPPeers)
-	callback := NewAMICallbackService(ctx, s, c, []string{config.AmiListenerEventPeerEntry},
+	callback := NewAmiCallbackService(ctx, s, c, []string{config.AmiListenerEventPeerEntry},
 		[]string{config.AmiListenerEventPeerlistComplete})
 	return callback.SendSuperLevel()
 }
@@ -22,7 +22,7 @@ func SIPShowPeer(ctx context.Context, s AMISocket, peer string) (AmiReply, error
 	c.SetV(map[string]string{
 		config.AmiFieldPeer: peer,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -30,14 +30,14 @@ func SIPShowPeer(ctx context.Context, s AMISocket, peer string) (AmiReply, error
 func SIPPeerStatus(ctx context.Context, s AMISocket, peer string) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionSIPPeerStatus)
 	if peer == "" {
-		callback := NewAMICallbackService(ctx, s, c, []string{config.AmiListenerEventPeerStatus},
+		callback := NewAmiCallbackService(ctx, s, c, []string{config.AmiListenerEventPeerStatus},
 			[]string{config.AmiListenerEventSIPpeerstatusComplete})
 		return callback.SendSuperLevel()
 	}
 	c.SetV(map[string]string{
 		config.AmiFieldPeer: peer,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{config.AmiListenerEventPeerStatus},
+	callback := NewAmiCallbackService(ctx, s, c, []string{config.AmiListenerEventPeerStatus},
 		[]string{config.AmiListenerEventSIPpeerstatusComplete})
 	return callback.SendSuperLevel()
 }
@@ -68,7 +68,7 @@ func HasSIPPeerStatus(ctx context.Context, s AMISocket, peer string) (bool, erro
 // SIPShowRegistry shows SIP registrations (text format).
 func SIPShowRegistry(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionSIPShowRegistry)
-	callback := NewAMICallbackService(ctx, s, c, []string{config.AmiListenerEventRegistrationEntry},
+	callback := NewAmiCallbackService(ctx, s, c, []string{config.AmiListenerEventRegistrationEntry},
 		[]string{config.AmiListenerEventRegistrationsComplete})
 	return callback.SendSuperLevel()
 }
@@ -79,6 +79,6 @@ func SIPQualifyPeer(ctx context.Context, s AMISocket, peer string) (AmiReply, er
 	c.SetV(map[string]string{
 		config.AmiFieldPeer: peer,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }

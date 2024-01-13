@@ -51,7 +51,7 @@ func (m *AMIPayloadMonitor) SetMixMonitorId(value string) *AMIPayloadMonitor {
 func Monitor(ctx context.Context, s AMISocket, payload AMIPayloadMonitor) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMonitor)
 	c.SetVCmd(payload)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -67,7 +67,7 @@ func MonitorWith(ctx context.Context, s AMISocket, channel, file, format string,
 func ChangeMonitor(ctx context.Context, s AMISocket, payload AMIPayloadMonitor) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionChangeMonitor)
 	c.SetVCmd(payload)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -82,7 +82,7 @@ func ChangeMonitorWith(ctx context.Context, s AMISocket, channel, file string) (
 func MixMonitor(ctx context.Context, s AMISocket, payload AMIPayloadMonitor) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMixMonitor)
 	c.SetVCmd(payload)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -95,7 +95,7 @@ func MixMonitorWith(ctx context.Context, s AMISocket, channel, file, options, co
 		config.AmiFieldOptions: options,
 		config.AmiFieldCommand: command,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -106,7 +106,7 @@ func MixMonitorMute(ctx context.Context, s AMISocket, channel, direction string,
 	p := NewAMIPayloadMonitor().SetChannel(channel).SetDirection(direction).SetState(states[state])
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMixMonitorMute)
 	c.SetVCmd(p)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -116,7 +116,7 @@ func PauseMonitor(ctx context.Context, s AMISocket, channel string) (AmiReply, e
 	p := NewAMIPayloadMonitor().SetChannel(channel)
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPauseMonitor)
 	c.SetVCmd(p)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -126,7 +126,7 @@ func UnpauseMonitor(ctx context.Context, s AMISocket, channel string) (AmiReply,
 	p := NewAMIPayloadMonitor().SetChannel(channel)
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionUnpauseMonitor)
 	c.SetVCmd(p)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -136,7 +136,7 @@ func StopMonitor(ctx context.Context, s AMISocket, channel string) (AmiReply, er
 	p := NewAMIPayloadMonitor().SetChannel(channel)
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionStopMonitor)
 	c.SetVCmd(p)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -145,6 +145,6 @@ func StopMixMonitor(ctx context.Context, s AMISocket, channel, mixMonitorId stri
 	p := NewAMIPayloadMonitor().SetChannel(channel).SetMixMonitorId(mixMonitorId)
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionStopMixMonitor)
 	c.SetVCmd(p)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }

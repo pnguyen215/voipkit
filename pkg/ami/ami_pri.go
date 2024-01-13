@@ -12,14 +12,14 @@ func PRIDebugFileSet(ctx context.Context, s AMISocket, filename string) (AmiRepl
 	c.SetV(map[string]interface{}{
 		config.AmiFieldFile: filename,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
 // PRIDebugFileUnset disables file output for PRI debug messages.
 func PRIDebugFileUnset(ctx context.Context, s AMISocket) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionPRIDebugFileUnset)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -30,7 +30,7 @@ func PRIDebugSet(ctx context.Context, s AMISocket, span, level string) (AmiReply
 		config.AmiFieldSpan:  span,
 		config.AmiFieldLevel: level,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -40,6 +40,6 @@ func PRIShowSpans(ctx context.Context, s AMISocket, span string) ([]AmiReply, er
 	c.SetV(map[string]interface{}{
 		config.AmiFieldSpan: span,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{config.AmiActionPRIShowSpans}, []string{config.AmiListenerEventPRIShowSpansComplete})
+	callback := NewAmiCallbackService(ctx, s, c, []string{config.AmiActionPRIShowSpans}, []string{config.AmiListenerEventPRIShowSpansComplete})
 	return callback.SendSuperLevel()
 }

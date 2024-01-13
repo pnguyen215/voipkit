@@ -135,7 +135,7 @@ func (c *AMIChannel) JoinChannelWith(protocol, extension string) string {
 // CoreShowChannels list currently active channels.
 func CoreShowChannels(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionCoreShowChannels)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventCoreShowChannel}, []string{config.AmiListenerEventCoreShowChannelsComplete})
 	return callback.SendSuperLevel()
 }
@@ -149,7 +149,7 @@ func AbsoluteTimeout(ctx context.Context, s AMISocket, channel string, timeout i
 		config.AmiFieldChannel: channel,
 		config.AmiFieldTimeout: _timeout,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -160,7 +160,7 @@ func Hangup(ctx context.Context, s AMISocket, channel, cause string) (AmiReply, 
 		config.AmiFieldChannel: channel,
 		config.AmiFieldCause:   cause,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -169,14 +169,14 @@ func Hangup(ctx context.Context, s AMISocket, channel, cause string) (AmiReply, 
 func Originate(ctx context.Context, s AMISocket, originate AMIPayloadOriginate) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionOriginate)
 	c.SetVCmd(originate)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
 // ParkedCalls list parked calls.
 func ParkedCalls(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionParkedCalls)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventParkedCall}, []string{config.AmiListenerEventParkedCallsComplete})
 	return callback.SendSuperLevel()
 }
@@ -190,14 +190,14 @@ func Park(ctx context.Context, s AMISocket, channel1, channel2 string, timeout i
 		config.AmiFieldTimeout:    timeout,
 		config.AmiFieldParkinglot: parkinglot,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
 // Parkinglots get a list of parking lots.
 func Parkinglots(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionParkingLots)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventParkedCall}, []string{config.AmiListenerEventParkinglotsComplete})
 	return callback.SendSuperLevel()
 }
@@ -210,7 +210,7 @@ func PlayDTMF(ctx context.Context, s AMISocket, channel, digit string, duration 
 		config.AmiFieldDigit:    digit,
 		config.AmiFieldDuration: duration,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -218,7 +218,7 @@ func PlayDTMF(ctx context.Context, s AMISocket, channel, digit string, duration 
 func Redirect(ctx context.Context, s AMISocket, call AMIPayloadCall) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionRedirect)
 	c.SetVCmd(call)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -229,7 +229,7 @@ func SendText(ctx context.Context, s AMISocket, channel, message string) (AmiRep
 		config.AmiFieldChannel: channel,
 		config.AmiFieldMessage: message,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -242,7 +242,7 @@ func SetVar(ctx context.Context, s AMISocket, channel, variable, value string) (
 		config.AmiFieldVariable: variable,
 		config.AmiFieldValue:    value,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -254,7 +254,7 @@ func Status(ctx context.Context, s AMISocket, channel, variables string) (AmiRep
 		config.AmiFieldChannel:   channel,
 		config.AmiFieldVariables: variables,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -262,7 +262,7 @@ func Status(ctx context.Context, s AMISocket, channel, variables string) (AmiRep
 func AOCMessage(ctx context.Context, s AMISocket, aoc AMIPayloadAOC) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionAocMessage)
 	c.SetVCmd(aoc)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -273,7 +273,7 @@ func GetVar(ctx context.Context, s AMISocket, channel, variable string) (AmiRepl
 		config.AmiFieldChannel:  channel,
 		config.AmiFieldVariable: variable,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -285,7 +285,7 @@ func LocalOptimizeAway(ctx context.Context, s AMISocket, channel string) (AmiRep
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel: channel,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -298,6 +298,6 @@ func MuteAudio(ctx context.Context, s AMISocket, channel, direction string, stat
 		config.AmiFieldDirection: direction,
 		config.AmiFieldState:     states[state],
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }

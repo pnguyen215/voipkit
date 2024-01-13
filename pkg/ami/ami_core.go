@@ -182,7 +182,7 @@ func (c *AMICore) GetSIPPeers(ctx context.Context) ([]AmiReply, error) {
 		return nil, fmt.Errorf(config.AmiErrorNoExtensionConfigured)
 	default:
 		for _, v := range response {
-			peer, err := SIPShowPeer(ctx, *c.Socket, v.GetVal(config.AmiJsonFieldObjectName))
+			peer, err := SIPShowPeer(ctx, *c.Socket, v.Get(config.AmiJsonFieldObjectName))
 			if err != nil {
 				return nil, err
 			}
@@ -289,7 +289,7 @@ func (c *AMICore) GetSIPPeersStatus(ctx context.Context) ([]AmiReply, error) {
 		return nil, fmt.Errorf(config.AmiErrorNoExtensionConfigured)
 	default:
 		for _, v := range response {
-			peer, err := SIPPeerStatus(ctx, *c.Socket, v.GetVal(config.AmiJsonFieldObjectName))
+			peer, err := SIPPeerStatus(ctx, *c.Socket, v.Get(config.AmiJsonFieldObjectName))
 			if err != nil {
 				return nil, err
 			}
@@ -356,7 +356,7 @@ func (c *AMICore) GetSIPQualifyPeer(ctx context.Context) ([]AmiReply, error) {
 		return nil, fmt.Errorf(config.AmiErrorNoExtensionConfigured)
 	default:
 		for _, v := range response {
-			peer, err := SIPQualifyPeer(ctx, *c.Socket, v.GetVal(config.AmiJsonFieldObjectName))
+			peer, err := SIPQualifyPeer(ctx, *c.Socket, v.Get(config.AmiJsonFieldObjectName))
 			if err != nil {
 				return nil, err
 			}
@@ -677,7 +677,7 @@ func (c *AMICore) ExtensionStates(ctx context.Context) ([]AmiReply, error) {
 		return nil, fmt.Errorf(config.AmiErrorNoExtensionsConfigured)
 	default:
 		for _, v := range response {
-			extension, err := ExtensionState(ctx, *c.Socket, v.GetVal(config.AmiJsonFieldExten), v.GetVal(config.AmiJsonFieldContext))
+			extension, err := ExtensionState(ctx, *c.Socket, v.Get(config.AmiJsonFieldExten), v.Get(config.AmiJsonFieldContext))
 			if err != nil {
 				return nil, err
 			}

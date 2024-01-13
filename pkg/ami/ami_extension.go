@@ -9,7 +9,7 @@ import (
 // ExtensionStateList list the current known extension states.
 func ExtensionStateList(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionExtensionStateList)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventExtensionStatus}, []string{config.AmiListenerEventExtensionStateListComplete})
 	return callback.SendSuperLevel()
 }
@@ -21,6 +21,6 @@ func ExtensionState(ctx context.Context, s AMISocket, exten, context string) (Am
 		config.AmiFieldExtension: exten,
 		config.AmiFieldContext:   context,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }

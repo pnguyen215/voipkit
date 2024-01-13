@@ -2,22 +2,21 @@ package ami
 
 import (
 	"context"
-	"log"
 	"strings"
 	"time"
 
 	"github.com/pnguyen215/voipkit/pkg/ami/config"
 )
 
-type AMICallbackService interface {
+type AmiCallbackService interface {
 	Send() (AmiReply, error)
 	SendLevel() (AmiReplies, error)
 	SendSuperLevel() ([]AmiReply, error)
 }
 
-func NewAMICallbackService(ctx context.Context, socket AMISocket, command *AMICommand,
-	acceptedEvents []string, ignoreEvents []string) AMICallbackService {
-	a := NewAMICallbackHandler()
+func NewAmiCallbackService(ctx context.Context, socket AMISocket, command *AMICommand,
+	acceptedEvents []string, ignoreEvents []string) AmiCallbackService {
+	a := NewAmiCallbackHandler()
 	a.SetContext(ctx)
 	a.SetSocket(socket)
 	a.SetCommand(command)
@@ -26,11 +25,11 @@ func NewAMICallbackService(ctx context.Context, socket AMISocket, command *AMICo
 	return a
 }
 
-func NewAMICallbackServiceWith(handler *AMICallbackHandler) AMICallbackService {
+func NewAmiCallbackHandlerService(handler *AMICallbackHandler) AmiCallbackService {
 	return handler
 }
 
-func NewAMICallbackHandler() *AMICallbackHandler {
+func NewAmiCallbackHandler() *AMICallbackHandler {
 	a := &AMICallbackHandler{}
 	return a
 }
@@ -88,28 +87,23 @@ func (h *AMICallbackHandler) Send() (AmiReply, error) {
 	var total time.Duration = 0
 
 	for i := 1; i <= h.Socket.MaxRetries; i++ {
-		// _start := time.Now().UnixMilli()
 		_start := time.Now()
 		response, err = h.Command.Send(h.Ctx, h.Socket, h.Command)
-		// _end := time.Now().UnixMilli() - _start
 		_end := time.Since(_start)
 		total += _end
-		if _end == 0 || strings.EqualFold(response.GetVal(config.AmiJsonFieldStatus), config.AmiFullyBootedKey) {
+		if _end == 0 || strings.EqualFold(response.Get(config.AmiJsonFieldStatus), config.AmiFullyBootedKey) {
 			continue
 		}
-
 		if len(response) > 0 && err == nil {
 			if h.Socket.DebugMode {
-				log.Printf("Send(). callback return for the %v time(s) and waste time = %v", i, _end)
+				D().Info("Send(). callback return for the %v time(s) and waste time: %v", i, _end)
 			}
 			break
 		}
 	}
-
 	if h.Socket.DebugMode {
-		log.Printf("Send(). callback total waste time = %v", total)
+		D().Info("Send(). callback total waste time: %v", total)
 	}
-
 	return response, err
 }
 
@@ -127,29 +121,23 @@ func (h *AMICallbackHandler) SendLevel() (AmiReplies, error) {
 	var total time.Duration = 0
 
 	for i := 1; i <= h.Socket.MaxRetries; i++ {
-		// _start := time.Now().UnixMilli()
 		_start := time.Now()
 		response, err = h.Command.SendLevel(h.Ctx, h.Socket, h.Command)
-		// _end := time.Now().UnixMilli() - _start
 		_end := time.Since(_start)
-		// total += _end
 		total += _end
-		if _end == 0 || strings.EqualFold(response.GetVal(config.AmiJsonFieldStatus), config.AmiFullyBootedKey) {
+		if _end == 0 || strings.EqualFold(response.Get(config.AmiJsonFieldStatus), config.AmiFullyBootedKey) {
 			continue
 		}
-
 		if len(response) > 0 && err == nil {
 			if h.Socket.DebugMode {
-				log.Printf("SendLevel(). callback return for the %v time(s) and waste time = %v", i, _end)
+				D().Info("SendLevel(). callback return for the %v time(s) and waste time: %v", i, _end)
 			}
 			break
 		}
 	}
-
 	if h.Socket.DebugMode {
-		log.Printf("SendLevel(). callback total waste time = %v", total)
+		D().Info("SendLevel(). callback total waste time: %v", total)
 	}
-
 	return response, err
 }
 
@@ -167,27 +155,22 @@ func (h *AMICallbackHandler) SendSuperLevel() ([]AmiReply, error) {
 	var total time.Duration = 0
 
 	for i := 1; i <= h.Socket.MaxRetries; i++ {
-		// _start := time.Now().UnixMilli()
 		_start := time.Now()
 		response, err = h.Command.DoGetResult(h.Ctx, h.Socket, h.Command, h.AcceptedEvents, h.IgnoreEvents)
-		// _end := time.Now().UnixMilli() - _start
 		_end := time.Since(_start)
 		total += _end
 		if _end == 0 {
 			continue
 		}
-
 		if len(response) > 0 && err == nil {
 			if h.Socket.DebugMode {
-				log.Printf("SendSuperLevel(). callback return for the %v time(s) and waste time = %v", i, _end)
+				D().Info("SendSuperLevel(). callback return for the %v time(s) and waste time: %v", i, _end)
 			}
 			break
 		}
 	}
-
 	if h.Socket.DebugMode {
-		log.Printf("SendSuperLevel(). callback total waste time = %v", total)
+		D().Info("SendSuperLevel(). callback total waste time: %v", total)
 	}
-
 	return response, err
 }

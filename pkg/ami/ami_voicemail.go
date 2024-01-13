@@ -13,14 +13,14 @@ func VoicemailRefresh(ctx context.Context, s AMISocket, context, mailbox string)
 		config.AmiFieldMailbox: mailbox,
 		config.AmiFieldContext: context,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
 // VoicemailUsersList list all voicemail user information.
 func VoicemailUsersList(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionVoicemailUsersList)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventVoicemailUserEntry}, []string{config.AmiListenerEventVoicemailUserEntryComplete})
 	return callback.SendSuperLevel()
 }

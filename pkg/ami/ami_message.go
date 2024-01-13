@@ -441,7 +441,7 @@ func FromJson(jsonString string) (*AMIMessage, error) {
 func MessageSend(ctx context.Context, s AMISocket, message AMIPayloadMessage) (AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionMessageSend)
 	c.SetVCmd(message)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 

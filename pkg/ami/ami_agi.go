@@ -14,7 +14,7 @@ func AGI(ctx context.Context, s AMISocket, channel, agiCommand, agiCommandID str
 		config.AmiFieldCommand:   agiCommand,
 		config.AmiFieldCommandID: agiCommandID,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -25,6 +25,6 @@ func ControlPlayback(ctx context.Context, s AMISocket, channel string, control c
 		config.AmiFieldChannel: channel,
 		config.AmiFieldControl: control,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }

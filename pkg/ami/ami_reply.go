@@ -12,15 +12,15 @@ func NewAmiReplies() *AmiReplies {
 	return s
 }
 
-func (s AmiReply) GetVal(key string) string {
+// Get retrieves the value associated with the specified key in the AmiReply map.
+// If the key is not found or the value is empty, an empty string is returned.
+func (s AmiReply) Get(key string) string {
 	if s == nil {
 		return ""
 	}
-
 	if len(s) == 0 {
 		return ""
 	}
-
 	v := s[key]
 	if len(v) == 0 {
 		return ""
@@ -28,6 +28,34 @@ func (s AmiReply) GetVal(key string) string {
 	return v
 }
 
+// GetOrFallback retrieves the value associated with the specified key in the AmiReply map.
+// If the value is empty, it falls back to the value associated with the fallback_key.
+func (s AmiReply) GetOrFallback(key, fallback_key string) string {
+	_v := s.Get(key)
+	if len(_v) == 0 {
+		return s.Get(fallback_key)
+	}
+	return _v
+}
+
+// GetOrFallbacks retrieves the value associated with the specified key in the AmiReply map.
+// If the value is empty, it falls back to the values associated with the fallback_keys, checking in order.
+func (s AmiReply) GetOrFallbacks(key string, fallback_keys ...string) string {
+	if len(fallback_keys) == 0 {
+		return s.GetOrFallback(key, "")
+	}
+	_v := ""
+	for _, v := range fallback_keys {
+		_v = s.GetOrFallback(key, v)
+		if len(_v) > 0 {
+			break
+		}
+	}
+	return _v
+}
+
+// Values returns a slice containing unique values from the AmiReply map.
+// Values are filtered based on the fields specified in config.AmiJsonIgnoringFieldType.
 func (s AmiReply) Values() []string {
 	if len(s) == 0 {
 		return []string{}
@@ -37,7 +65,7 @@ func (s AmiReply) Values() []string {
 		if config.AmiJsonIgnoringFieldType[k] {
 			continue
 		}
-		v := s.GetVal(k)
+		v := s.Get(k)
 		if !Contains(result, v) {
 			result = append(result, v)
 		}
@@ -45,42 +73,21 @@ func (s AmiReply) Values() []string {
 	return result
 }
 
+// Size returns the number of unique values in the AmiReply map.
 func (s AmiReply) Size() int {
 	return len(s.Values())
 }
 
-func (s AmiReply) GetValOrPref(key, pref string) string {
-	_v := s.GetVal(key)
-
-	if len(_v) == 0 {
-		return s.GetVal(pref)
-	}
-	return _v
-}
-
-func (s AmiReply) GetValOrPrefers(key string, pref ...string) string {
-	if len(pref) == 0 {
-		return s.GetValOrPref(key, "")
-	}
-	_v := ""
-	for _, v := range pref {
-		_v = s.GetValOrPref(key, v)
-		if len(_v) > 0 {
-			break
-		}
-	}
-	return _v
-}
-
-func (s AmiReplies) GetVal(key string) string {
+// Get retrieves the value associated with the specified key in the AmiReplies map.
+// If the key is not found or the value is empty, an empty string is returned.
+// If the key has multiple values, it returns a JSON string representation of the values.
+func (s AmiReplies) Get(key string) string {
 	if s == nil {
 		return ""
 	}
-
 	if len(s) == 0 {
 		return ""
 	}
-
 	v := s[key]
 	if len(v) == 0 {
 		return ""
@@ -91,6 +98,34 @@ func (s AmiReplies) GetVal(key string) string {
 	return JsonString(v)
 }
 
+// GetOrFallback retrieves the value associated with the specified key in the AmiReplies map.
+// If the value is empty, it falls back to the value associated with the fallback_key.
+func (s AmiReplies) GetOrFallback(key, fallback_key string) string {
+	_v := s.Get(key)
+	if len(_v) == 0 {
+		return s.Get(fallback_key)
+	}
+	return _v
+}
+
+// GetOrFallbacks retrieves the value associated with the specified key in the AmiReplies map.
+// If the value is empty, it falls back to the values associated with the fallback_keys, checking in order.
+func (s AmiReplies) GetOrFallbacks(key string, fallback_keys ...string) string {
+	if len(fallback_keys) == 0 {
+		return s.GetOrFallback(key, "")
+	}
+	_v := ""
+	for _, v := range fallback_keys {
+		_v = s.GetOrFallback(key, v)
+		if len(_v) > 0 {
+			break
+		}
+	}
+	return _v
+}
+
+// Values returns a slice containing unique values from the AmiReplies map.
+// Values are filtered based on the fields specified in config.AmiJsonIgnoringFieldType.
 func (s AmiReplies) Values() []string {
 	if len(s) == 0 {
 		return []string{}
@@ -100,7 +135,7 @@ func (s AmiReplies) Values() []string {
 		if config.AmiJsonIgnoringFieldType[k] {
 			continue
 		}
-		v := s.GetVal(k)
+		v := s.Get(k)
 		if !Contains(result, v) {
 			result = append(result, v)
 		}
@@ -108,29 +143,7 @@ func (s AmiReplies) Values() []string {
 	return result
 }
 
+// Size returns the number of unique values in the AmiReplies map.
 func (s AmiReplies) Size() int {
 	return len(s.Values())
-}
-
-func (s AmiReplies) GetValOrPref(key, pref string) string {
-	_v := s.GetVal(key)
-
-	if len(_v) == 0 {
-		return s.GetVal(pref)
-	}
-	return _v
-}
-
-func (s AmiReplies) GetValOrPrefers(key string, pref ...string) string {
-	if len(pref) == 0 {
-		return s.GetValOrPref(key, "")
-	}
-	_v := ""
-	for _, v := range pref {
-		_v = s.GetValOrPref(key, v)
-		if len(_v) > 0 {
-			break
-		}
-	}
-	return _v
 }

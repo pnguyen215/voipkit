@@ -52,7 +52,7 @@ func AddDialplanExtension(ctx context.Context, s AMISocket, extension AMIPayload
 	c.SetVCmd(extension)
 	_s := s
 	_s.SetRetry(false)
-	callback := NewAMICallbackService(ctx, _s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, _s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -62,6 +62,6 @@ func RemoveDialplanExtension(ctx context.Context, s AMISocket, extension AMIPayl
 	c.SetVCmd(extension)
 	_s := s
 	_s.SetRetry(false)
-	callback := NewAMICallbackService(ctx, _s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, _s, c, []string{}, []string{})
 	return callback.Send()
 }

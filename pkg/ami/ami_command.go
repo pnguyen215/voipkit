@@ -102,8 +102,8 @@ func (a *AMICommand) DoGetResult(ctx context.Context, s AMISocket, c *AMICommand
 		if err != nil {
 			return nil, err
 		}
-		_event := raw.GetVal(strings.ToLower(config.AmiEventKey))
-		_response := raw.GetVal(strings.ToLower(config.AmiResponseKey))
+		_event := raw.Get(strings.ToLower(config.AmiEventKey))
+		_response := raw.Get(strings.ToLower(config.AmiResponseKey))
 
 		if len(acceptedEvents) == 0 {
 			if s.DebugMode {

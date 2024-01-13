@@ -31,7 +31,7 @@ func DBDel(ctx context.Context, s AMISocket, family, key string) (AmiReply, erro
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDBDel)
 	db := NewAMIPayloadDb().SetFamily(family).SetKey(key)
 	c.SetV(db)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -40,7 +40,7 @@ func DBDelTree(ctx context.Context, s AMISocket, family, key string) (AmiReply, 
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDBDelTree)
 	db := NewAMIPayloadDb().SetFamily(family).SetKey(key)
 	c.SetV(db)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -49,7 +49,7 @@ func DBPut(ctx context.Context, s AMISocket, family, key, value string) (AmiRepl
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDBPut)
 	db := NewAMIPayloadDb().SetFamily(family).SetKey(key).SetValue(value)
 	c.SetV(db)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -58,6 +58,6 @@ func DBGet(ctx context.Context, s AMISocket, family, key string) ([]AmiReply, er
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionDBGet)
 	db := NewAMIPayloadDb().SetFamily(family).SetKey(key)
 	c.SetV(db)
-	callback := NewAMICallbackService(ctx, s, c, []string{config.AmiListenerEventDbGetResponse}, []string{config.AmiListenerEventDBGetComplete})
+	callback := NewAmiCallbackService(ctx, s, c, []string{config.AmiListenerEventDbGetResponse}, []string{config.AmiListenerEventDBGetComplete})
 	return callback.SendSuperLevel()
 }

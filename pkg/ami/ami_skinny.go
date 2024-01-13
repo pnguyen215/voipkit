@@ -12,7 +12,7 @@ import (
 // followed by a final event called DevicelistComplete.
 func SKINNYDevices(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionSKINNYdevices)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventDeviceEntry}, []string{config.AmiListenerEventDeviceListComplete})
 	return callback.SendSuperLevel()
 }
@@ -23,7 +23,7 @@ func SKINNYDevices(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 // followed by a final event called LinelistComplete.
 func SKINNYLines(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionSKINNYlines)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventLineEntry}, []string{config.AmiListenerEventLineListComplete})
 	return callback.SendSuperLevel()
 }
@@ -35,7 +35,7 @@ func SKINNYShowDevice(ctx context.Context, s AMISocket, device string) (AmiReply
 	c.SetV(map[string]interface{}{
 		config.AmiFieldDevice: device,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -46,6 +46,6 @@ func SKINNYShowline(ctx context.Context, s AMISocket, line string) (AmiReply, er
 	c.SetV(map[string]interface{}{
 		config.AmiFieldLine: line,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }

@@ -9,7 +9,7 @@ import (
 // Agents lists agents and their status.
 func Agents(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionAgents)
-	callback := NewAMICallbackService(ctx, s, c, []string{config.AmiListenerEventAgents},
+	callback := NewAmiCallbackService(ctx, s, c, []string{config.AmiListenerEventAgents},
 		[]string{config.AmiListenerEventAgentsComplete})
 	return callback.SendSuperLevel()
 }
@@ -21,6 +21,6 @@ func AgentLogoff(ctx context.Context, s AMISocket, agent string, soft bool) (Ami
 		config.AmiFieldAgent: agent,
 		config.AmiFieldSoft:  soft,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }

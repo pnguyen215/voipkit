@@ -14,7 +14,7 @@ func Atxfer(ctx context.Context, s AMISocket, channel, extension, context string
 		config.AmiFieldExtension: extension,
 		config.AmiFieldContext:   context,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -24,6 +24,6 @@ func CancelAtxfer(ctx context.Context, s AMISocket, channel string) (AmiReply, e
 	c.SetV(map[string]interface{}{
 		config.AmiFieldChannel: channel,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }

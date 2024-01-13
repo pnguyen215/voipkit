@@ -11,7 +11,7 @@ func ConfbridgeList(ctx context.Context, s AMISocket, conference string) ([]AmiR
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionConfbridgeList).SetVCmd(map[string]interface{}{
 		config.AmiFieldConference: conference,
 	})
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventConfbridgeList}, []string{config.AmiListenerEventConfbridgeListComplete})
 	return callback.SendSuperLevel()
 }
@@ -19,7 +19,7 @@ func ConfbridgeList(ctx context.Context, s AMISocket, conference string) ([]AmiR
 // ConfbridgeListRooms lists data about all active conferences.
 func ConfbridgeListRooms(ctx context.Context, s AMISocket) ([]AmiReply, error) {
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionConfbridgeListRooms)
-	callback := NewAMICallbackService(ctx, s, c,
+	callback := NewAmiCallbackService(ctx, s, c,
 		[]string{config.AmiListenerEventConfbridgeListRooms}, []string{config.AmiListenerEventConfbridgeListRoomsComplete})
 	return callback.SendSuperLevel()
 }
@@ -30,7 +30,7 @@ func ConfbridgeMute(ctx context.Context, s AMISocket, conference string, channel
 		config.AmiFieldConference: conference,
 		config.AmiFieldChannel:    channel,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -40,7 +40,7 @@ func ConfbridgeUnmute(ctx context.Context, s AMISocket, conference string, chann
 		config.AmiFieldConference: conference,
 		config.AmiFieldChannel:    channel,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -50,7 +50,7 @@ func ConfbridgeKick(ctx context.Context, s AMISocket, conference string, channel
 		config.AmiFieldConference: conference,
 		config.AmiFieldChannel:    channel,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -60,7 +60,7 @@ func ConfbridgeLock(ctx context.Context, s AMISocket, conference string, channel
 		config.AmiFieldConference: conference,
 		config.AmiFieldChannel:    channel,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -70,7 +70,7 @@ func ConfbridgeUnlock(ctx context.Context, s AMISocket, conference string, chann
 		config.AmiFieldConference: conference,
 		config.AmiFieldChannel:    channel,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -80,7 +80,7 @@ func ConfbridgeSetSingleVideoSrc(ctx context.Context, s AMISocket, conference st
 		config.AmiFieldConference: conference,
 		config.AmiFieldChannel:    channel,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -93,7 +93,7 @@ func ConfbridgeStartRecord(ctx context.Context, s AMISocket, conference string, 
 		params[config.AmiFieldRecordFile] = recordFile
 	}
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionConfbridgeStartRecord).SetVCmd(params)
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -102,6 +102,6 @@ func ConfbridgeStopRecord(ctx context.Context, s AMISocket, conference string) (
 	c := NewCommand().SetId(s.UUID).SetAction(config.AmiActionConfbridgeStopRecord).SetVCmd(map[string]interface{}{
 		config.AmiFieldConference: conference,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }

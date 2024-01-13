@@ -20,20 +20,20 @@ func (c *AMICore) ExtensionStatesMap(ctx context.Context, guard *AMIExtensionGua
 
 	for _, v := range peers {
 		if guard.AllowExtensionNumeric {
-			_, err := strconv.Atoi(v.GetVal(config.AmiJsonFieldExten))
+			_, err := strconv.Atoi(v.Get(config.AmiJsonFieldExten))
 			if err != nil {
 				continue
 			}
 		}
 
 		if len(guard.Context) > 0 {
-			if !Contains(guard.Context, v.GetVal(config.AmiJsonFieldContext)) {
+			if !Contains(guard.Context, v.Get(config.AmiJsonFieldContext)) {
 				continue
 			}
 		}
 
 		if len(guard.StatusesText) > 0 {
-			if !Contains(guard.StatusesText, v.GetVal(config.AmiJsonFieldStatusText)) {
+			if !Contains(guard.StatusesText, v.Get(config.AmiJsonFieldStatusText)) {
 				continue
 			}
 		}
@@ -88,26 +88,26 @@ func (c *AMICore) GetSIPPeerStatusMap(ctx context.Context, g *AMIPeerStatusGuard
 
 func (c *AMICore) convRaw2ExtensionStatus(v AmiReply) *AMIExtensionStatus {
 	e := NewAMIExtensionStatus().
-		SetActionId(v.GetVal(config.AmiJsonFieldActionId)).
-		SetContext(v.GetVal(config.AmiJsonFieldContext)).
-		SetExtension(v.GetVal(config.AmiJsonFieldExten)).
-		SetHint(v.GetVal(config.AmiJsonFieldHint)).
-		SetMessage(v.GetVal(config.AmiJsonFieldMessage)).
-		SetResponse(v.GetVal(config.AmiJsonFieldResponse)).
-		SetStatus(v.GetVal(config.AmiJsonFieldStatus)).
-		SetStatusText(v.GetVal(config.AmiJsonFieldStatusText))
+		SetActionId(v.Get(config.AmiJsonFieldActionId)).
+		SetContext(v.Get(config.AmiJsonFieldContext)).
+		SetExtension(v.Get(config.AmiJsonFieldExten)).
+		SetHint(v.Get(config.AmiJsonFieldHint)).
+		SetMessage(v.Get(config.AmiJsonFieldMessage)).
+		SetResponse(v.Get(config.AmiJsonFieldResponse)).
+		SetStatus(v.Get(config.AmiJsonFieldStatus)).
+		SetStatusText(v.Get(config.AmiJsonFieldStatusText))
 	return e
 }
 
 func (c *AMICore) convRaw2PeerStatus(v AmiReply, g *AMIPeerStatusGuard) *AMIPeerStatus {
 	e := NewAMIPeerStatus().
-		SetActionId(v.GetVal(config.AmiJsonFieldActionId)).
-		SetChannelType(v.GetVal(config.AmiJsonFieldChannelType)).
-		SetEvent(v.GetVal(config.AmiJsonFieldEvent)).
-		SetPeer(v.GetVal(config.AmiJsonFieldPeer)).
-		SetPeerStatus(v.GetVal(config.AmiJsonFieldPeerStatus)).
-		SetPrivilege(v.GetVal(config.AmiJsonFieldPrivilege)).
-		SetTimeInMs(v.GetVal(config.AmiJsonFieldTime)).
+		SetActionId(v.Get(config.AmiJsonFieldActionId)).
+		SetChannelType(v.Get(config.AmiJsonFieldChannelType)).
+		SetEvent(v.Get(config.AmiJsonFieldEvent)).
+		SetPeer(v.Get(config.AmiJsonFieldPeer)).
+		SetPeerStatus(v.Get(config.AmiJsonFieldPeerStatus)).
+		SetPrivilege(v.Get(config.AmiJsonFieldPrivilege)).
+		SetTimeInMs(v.Get(config.AmiJsonFieldTime)).
 		SetPublishedAt(AdjustTimezone(time.Now(), g.Timezone))
 
 	if e.TimeInMs > 0 {

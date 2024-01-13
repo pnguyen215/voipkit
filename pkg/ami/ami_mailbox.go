@@ -12,7 +12,7 @@ func MailboxCount(ctx context.Context, s AMISocket, mailbox string) (AmiReply, e
 	c.SetV(map[string]interface{}{
 		config.AmiFieldMailbox: mailbox,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -22,7 +22,7 @@ func MailboxStatus(ctx context.Context, s AMISocket, mailbox string) (AmiReply, 
 	c.SetV(map[string]interface{}{
 		config.AmiFieldMailbox: mailbox,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -32,7 +32,7 @@ func MWIDelete(ctx context.Context, s AMISocket, mailbox string) (AmiReply, erro
 	c.SetV(map[string]interface{}{
 		config.AmiFieldMailbox: mailbox,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -42,7 +42,7 @@ func MWIGet(ctx context.Context, s AMISocket, mailbox string) (AmiReply, error) 
 	c.SetV(map[string]interface{}{
 		config.AmiFieldMailbox: mailbox,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
 
@@ -54,6 +54,6 @@ func MWIUpdate(ctx context.Context, s AMISocket, mailbox, oldMessages, newMessag
 		config.AmiFieldOldMessages: oldMessages,
 		config.AmiFieldNewMessages: newMessages,
 	})
-	callback := NewAMICallbackService(ctx, s, c, []string{}, []string{})
+	callback := NewAmiCallbackService(ctx, s, c, []string{}, []string{})
 	return callback.Send()
 }
