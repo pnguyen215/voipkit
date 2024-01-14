@@ -37,6 +37,15 @@ func (c *AMI) Context() context.Context {
 	return c.ctx
 }
 
+func (c *AMI) SetSubs(value *AMIPubSubQueue) *AMI {
+	c.subs = value
+	return c
+}
+
+func (c *AMI) Subs() *AMIPubSubQueue {
+	return c.subs
+}
+
 // Action sends an AMI action message to the Asterisk server.
 // If the action message does not have an ActionID, it adds one automatically.
 // The method returns true if the action message is successfully sent, otherwise false.
@@ -298,7 +307,7 @@ func (c *AMI) release(ctx context.Context) {
 	c.subs = NewPubSubQueue()
 	c.err = make(chan error)
 	go func() {
-		defer c.subs.Disabled()
+		defer c.subs.TurnOff()
 		for {
 			select {
 			case <-ctx.Done():

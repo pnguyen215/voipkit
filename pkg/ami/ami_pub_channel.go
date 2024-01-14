@@ -13,10 +13,16 @@ func NewPubSubQueue() *AMIPubSubQueue {
 	return c
 }
 
-func (k *AMIPubSubQueue) Disabled() {
+func (k *AMIPubSubQueue) TurnOff() {
 	k.mutex.Lock()
 	defer k.mutex.Unlock()
 	k.Off = true
+}
+
+func (k *AMIPubSubQueue) TurnOn() {
+	k.mutex.Lock()
+	defer k.mutex.Unlock()
+	k.Off = false
 }
 
 func (k *AMIPubSubQueue) Destroy() {
