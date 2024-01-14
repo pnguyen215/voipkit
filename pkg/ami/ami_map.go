@@ -114,10 +114,10 @@ func (c *AMICore) convRaw2PeerStatus(v AmiReply, g *AMIPeerStatusGuard) *AMIPeer
 		e.SetPublishedAt(e.PublishedAt.Add(-time.Millisecond * time.Duration(e.TimeInMs)))
 	}
 
-	if IsStringEmpty(g.DateTimeLayout) {
+	if IsStringEmpty(g.TimeFormat) {
 		e.SetPrePublishedAt(e.PublishedAt.Format(config.DateTimeFormat20060102150405))
 	} else {
-		e.SetPrePublishedAt(e.PublishedAt.Format(g.DateTimeLayout))
+		e.SetPrePublishedAt(e.PublishedAt.Format(g.TimeFormat))
 	}
 
 	return e

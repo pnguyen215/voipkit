@@ -26,8 +26,8 @@ func NewMessage() *AMIMessage {
 	return ofMessage(header)
 }
 
-func (m *AMIMessage) SetDateTimeLayout(value string) *AMIMessage {
-	m.DateTimeLayout = value
+func (m *AMIMessage) SetTimeFormat(value string) *AMIMessage {
+	m.TimeFormat = value
 	return m
 }
 
@@ -206,8 +206,8 @@ func (k *AMIMessage) AddActionId() {
 
 // Added Date Received at generated
 func (k *AMIMessage) AddFieldDateReceivedAt() {
-	if len(k.DateTimeLayout) > 0 {
-		k.AddField(config.AmiFieldDateReceivedAt, time.Now().Format(k.DateTimeLayout))
+	if len(k.TimeFormat) > 0 {
+		k.AddField(config.AmiFieldDateReceivedAt, time.Now().Format(k.TimeFormat))
 	} else {
 		k.AddField(config.AmiFieldDateReceivedAt, time.Now().String())
 	}

@@ -327,7 +327,7 @@ func ParseCdr(e *AMIMessage, d *AMIDictionary) *AMICdr {
 		SetBillableSecondWith(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldBillableSeconds, "BillableSeconds")).
 		SetCallerId(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldCallerId, "CallerID")).
 		SetChannel(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldChannel, "Channel")).
-		SetDateReceivedAtWith(e.DateTimeLayout, e.FieldDictionaryOrRefer(d, config.AmiJsonFieldDateReceivedAt, "DateReceivedAt")).
+		SetDateReceivedAtWith(e.TimeFormat, e.FieldDictionaryOrRefer(d, config.AmiJsonFieldDateReceivedAt, "DateReceivedAt")).
 		SetDestination(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldDestination, "Destination")).
 		SetDestinationChannel(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldDestinationChannel, "DestinationChannel")).
 		SetDestinationContext(e.FieldDictionaryOrRefer(d, config.AmiJsonFieldDestinationContext, "DestinationContext")).

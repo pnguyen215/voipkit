@@ -49,7 +49,7 @@ func (c *AMIAction) Revoke(a *AMI, d *AMIDictionary, e *AMIMessage, deadlock boo
 	for {
 		select {
 		case message := <-all:
-			message.SetDateTimeLayout(e.DateTimeLayout)
+			message.SetTimeFormat(e.TimeFormat)
 			message.SetPhonePrefix(e.PhonePrefix)
 			message.SetRegion(e.Region)
 			message.AddFieldDateReceivedAt()

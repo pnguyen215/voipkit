@@ -47,17 +47,17 @@ type AMIPubSubQueue struct {
 }
 
 type AMIMessage struct {
-	header         textproto.MIMEHeader
-	mutex          sync.RWMutex
-	DateTimeLayout string   `json:"date_time_layout,omitempty"`
-	PhonePrefix    []string `json:"phone_prefix,omitempty"`
-	Region         string   `json:"region,omitempty"`
+	header      textproto.MIMEHeader
+	mutex       sync.RWMutex
+	TimeFormat  string   `json:"time_format,omitempty"`
+	PhonePrefix []string `json:"phone_prefix,omitempty"`
+	Region      string   `json:"region,omitempty"`
 }
 
 type AMIEvent struct {
-	DateTimeLayout string   `json:"date_time_layout,omitempty"`
-	PhonePrefix    []string `json:"phone_prefix,omitempty"`
-	Region         string   `json:"region,omitempty"`
+	TimeFormat  string   `json:"time_format,omitempty"`
+	PhonePrefix []string `json:"phone_prefix,omitempty"`
+	Region      string   `json:"region,omitempty"`
 }
 
 type AMIDictionary struct {
@@ -389,8 +389,8 @@ type AMIPeerStatus struct {
 }
 
 type AMIPeerStatusGuard struct {
-	DateTimeLayout string `json:"date_time_layout"`
-	Timezone       string `json:"timezone"`
+	TimeFormat string `json:"time_format"`
+	Timezone   string `json:"timezone"`
 }
 
 type AMICdr struct {
