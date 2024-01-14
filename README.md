@@ -15,7 +15,7 @@ The go version 1.20
 - Use a specific version (tag)
 
 ```bash
-go get github.com/pnguyen215/voipkit@v1.0.0
+go get github.com/pnguyen215/voipkit@v1.0.1
 ```
 
 - Latest version
@@ -23,10 +23,6 @@ go get github.com/pnguyen215/voipkit@v1.0.0
 ```bash
 go get -u github.com/pnguyen215/voipkit@latest
 ```
-
-### Usage
-
-- [Asterisk Manager Interface (AMI)](https://github.com/pnguyen215/voipkit/blob/master/docs/ami.md)
 
 ### Github Action
 
