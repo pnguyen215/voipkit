@@ -2,7 +2,6 @@ package ami
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/pnguyen215/voipkit/pkg/ami/config"
 )
@@ -12,7 +11,7 @@ func NewAction() *AMIAction {
 	return a
 }
 
-func NewRevokeAction(cmd string, timeout int) *AMIAction {
+func NewRevoke(cmd string, timeout int) *AMIAction {
 	cli := NewAction()
 	cli.Name = cmd
 	cli.Timeout = timeout
@@ -33,24 +32,20 @@ func (a *AMIAction) SetTimeout(timeout int) *AMIAction {
 
 // Revoke run cli on asterisk server
 func (c *AMIAction) Revoke(a *AMI, d *AMIDictionary, e *AMIMessage, deadlock bool) (*AMIResponse, error) {
-	D().Info("[>] Ami revoke action (state mutex opened lock~unlock) >>> '%v'", e.String())
+	D().Info("Ami revoking action (state mutex opened lock~unlock): '%v'", e.String())
 	var response AMIResponse
 	var _err error
-
-	if strings.EqualFold(c.Name, "") {
-		response.ErrorMessage = fmt.Sprintf(config.AmiErrorFieldRequired, "name")
+	if IsStringEmpty(c.Name) {
+		response.Message = fmt.Sprintf(config.AmiErrorFieldRequired, "name")
 		response.IsSuccess = false
-		_err = fmt.Errorf(response.ErrorMessage)
+		_err = fmt.Errorf(response.Message)
 		return &response, _err
 	}
-
 	a.Action(e)
 	all := a.AllEvents()
-
 	if deadlock {
 		defer a.Close()
 	}
-
 	for {
 		select {
 		case message := <-all:
@@ -59,17 +54,17 @@ func (c *AMIAction) Revoke(a *AMI, d *AMIDictionary, e *AMIMessage, deadlock boo
 			message.SetRegion(e.Region)
 			message.AddFieldDateReceivedAt()
 			if message.IsResponse() {
-				response.Event = message
+				response.event = message
 				response.IsSuccess = true
-				response.RawJson = message.JsonTranslator(d)
+				response.Json = message.JsonTranslator(d)
 				goto on_success
 			}
 		case err := <-a.Error():
 			a.Close()
 			_err = err
-			response.Event = nil
+			response.event = nil
 			response.IsSuccess = false
-			response.ErrorMessage = _err.Error()
+			response.Message = _err.Error()
 			goto on_failed
 		}
 	}

@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"net"
 	"strings"
 
@@ -15,9 +14,9 @@ import (
 
 func NewAmiSocket() *AMISocket {
 	s := &AMISocket{
-		Incoming:  make(chan string, 32),
-		Shutdown:  make(chan struct{}),
-		Errors:    make(chan error),
+		incoming:  make(chan string, 32),
+		shutdown:  make(chan struct{}),
+		errors:    make(chan error),
 		DebugMode: false,
 	}
 	d := NewDictionary()
@@ -66,13 +65,13 @@ func WithSocket(ctx context.Context, address string) (*AMISocket, error) {
 func WithAmiSocketOver(ctx context.Context, conn net.Conn, reuseConn bool) (*AMISocket, error) {
 	s := NewAmiSocket()
 	if reuseConn {
-		s.Conn = conn
+		s.conn = conn
 	} else {
 		if conn != nil {
 			var dialer net.Dialer
 			_conn, err := dialer.DialContext(ctx, config.AmiNetworkTcpKey, conn.RemoteAddr().String())
 			if err == nil {
-				s.Conn = _conn
+				s.conn = _conn
 			}
 		}
 	}
@@ -81,22 +80,22 @@ func WithAmiSocketOver(ctx context.Context, conn net.Conn, reuseConn bool) (*AMI
 }
 
 func (s *AMISocket) SetConn(conn net.Conn) *AMISocket {
-	s.Conn = conn
+	s.conn = conn
 	return s
 }
 
 func (s *AMISocket) SetErrors(_err chan error) *AMISocket {
-	s.Errors = _err
+	s.errors = _err
 	return s
 }
 
 func (s *AMISocket) SetShutdown(_shutdown chan struct{}) *AMISocket {
-	s.Shutdown = _shutdown
+	s.shutdown = _shutdown
 	return s
 }
 
 func (s *AMISocket) SetIncoming(incoming chan string) *AMISocket {
-	s.Incoming = incoming
+	s.incoming = incoming
 	return s
 }
 
@@ -126,13 +125,13 @@ func (s *AMISocket) ResetUUID() *AMISocket {
 }
 
 func (s *AMISocket) Connected() bool {
-	return s.Conn != nil
+	return s.conn != nil
 }
 
 func (s *AMISocket) Close(ctx context.Context) error {
-	close(s.Shutdown)
+	close(s.shutdown)
 	if s.Connected() {
-		return s.Conn.Close()
+		return s.conn.Close()
 	}
 	return nil
 }
@@ -140,9 +139,9 @@ func (s *AMISocket) Close(ctx context.Context) error {
 // Send
 // Send the message to socket using fprintf format
 func (s *AMISocket) Send(message string) error {
-	v, err := fmt.Fprintf(s.Conn, message)
+	v, err := fmt.Fprintf(s.conn, message)
 	if s.DebugMode {
-		log.Printf("[>] Ami command, the number of byte(s) written = %v (byte)\n%v", v, message)
+		D().Info("Ami command, the number of %v byte(s) written and message: %v", v, message)
 	}
 	return err
 }
@@ -152,7 +151,7 @@ func (s *AMISocket) Received(ctx context.Context) (string, error) {
 	var buffer bytes.Buffer
 	for {
 		select {
-		case msg, ok := <-s.Incoming:
+		case msg, ok := <-s.incoming:
 			if !ok {
 				return buffer.String(), io.EOF
 			}
@@ -160,9 +159,9 @@ func (s *AMISocket) Received(ctx context.Context) (string, error) {
 			if strings.HasSuffix(buffer.String(), config.AmiSignalLetter) {
 				return buffer.String(), nil
 			}
-		case err := <-s.Errors:
+		case err := <-s.errors:
 			return buffer.String(), err
-		case <-s.Shutdown:
+		case <-s.shutdown:
 			return buffer.String(), io.EOF
 		case <-ctx.Done():
 			return buffer.String(), io.EOF
@@ -175,9 +174,9 @@ func (s *AMISocket) Run(ctx context.Context, conn net.Conn) {
 	for {
 		msg, err := reader.ReadString('\n')
 		if err != nil {
-			s.Errors <- err
+			s.errors <- err
 			return
 		}
-		s.Incoming <- msg
+		s.incoming <- msg
 	}
 }

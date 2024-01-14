@@ -39,3 +39,7 @@ func TestAllEventConsume(t *testing.T) {
 func TestDialOut(t *testing.T) {
 	// adding logic here
 }
+
+func TestChanspy(t *testing.T) {
+
+}

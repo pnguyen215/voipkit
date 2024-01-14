@@ -13,6 +13,8 @@ type PubChannel chan *AMIMessage
 type MessageChannel map[string]PubChannel
 type tcpAmiFactory struct{}
 type udpAmiFactory struct{}
+type AmiReply map[string]string
+type AmiReplies map[string][]string
 
 type AmiClient struct {
 	enabled  bool
@@ -24,29 +26,29 @@ type AmiClient struct {
 }
 
 type AMI struct {
-	Mutex  sync.RWMutex       `json:"-"`
-	Conn   net.Conn           `json:"-"`
-	Cancel context.CancelFunc `json:"-"`
-	Reader *textproto.Reader  `json:"-"`
-	Writer *bufio.Writer      `json:"-"`
-	Subs   *AMIPubSubQueue    `json:"-"`
-	Raw    *AMIMessage        `json:"-"`
-	Socket *AMISocket         `json:"-"`
-	Err    chan error         `json:"-"`
+	err     chan error
+	mutex   sync.RWMutex
+	conn    net.Conn
+	cancel  context.CancelFunc
+	reader  *textproto.Reader
+	writer  *bufio.Writer
+	subs    *AMIPubSubQueue
+	message *AMIMessage
+	socket  *AMISocket
 }
 
 type AMIPubSubQueue struct {
-	Message MessageChannel `json:"-"`
-	Mutex   sync.RWMutex   `json:"-"`
-	Off     bool           `json:"off"`
+	message MessageChannel
+	mutex   sync.RWMutex
+	Off     bool `json:"off"`
 }
 
 type AMIMessage struct {
-	Header         textproto.MIMEHeader `json:"header,omitempty"`
-	Mutex          sync.RWMutex         `json:"-"`
-	DateTimeLayout string               `json:"date_time_layout,omitempty"`
-	PhonePrefix    []string             `json:"phone_prefix,omitempty"`
-	Region         string               `json:"region,omitempty"`
+	header         textproto.MIMEHeader
+	mutex          sync.RWMutex
+	DateTimeLayout string   `json:"date_time_layout,omitempty"`
+	PhonePrefix    []string `json:"phone_prefix,omitempty"`
+	Region         string   `json:"region,omitempty"`
 }
 
 type AMIEvent struct {
@@ -64,20 +66,17 @@ type AMIEventDictionary struct {
 	Dictionaries map[string]string `json:"dictionaries,omitempty"`
 }
 
-type AMIGrouping struct {
-}
-
 type AMIAction struct {
 	Name    string `json:"name"`
 	Timeout int    `json:"timeout,omitempty"`
 }
 
 type AMIResponse struct {
-	Event        *AMIMessage `json:"-"`
-	IsSuccess    bool        `json:"success"`
-	RawJson      string      `json:"raw_json,omitempty"`
-	ErrorMessage string      `json:"error_message,omitempty"`
-	Raw          interface{} `json:"raw,omitempty"`
+	event     *AMIMessage
+	IsSuccess bool        `json:"success"`
+	Json      string      `json:"json,omitempty"`
+	Message   string      `json:"message,omitempty"`
+	Raw       interface{} `json:"raw,omitempty"`
 }
 
 type AMIChannel struct {
@@ -87,11 +86,11 @@ type AMIChannel struct {
 }
 
 type AMISocket struct {
-	Conn                 net.Conn       `json:"-"`
-	Incoming             chan string    `json:"-"`
-	Shutdown             chan struct{}  `json:"-"`
-	Errors               chan error     `json:"-"`
-	Dictionary           *AMIDictionary `json:"-"`
+	conn                 net.Conn
+	incoming             chan string
+	shutdown             chan struct{}
+	errors               chan error
+	Dictionary           *AMIDictionary `json:"dictionary,omitempty"`
 	UUID                 string         `json:"uuid" binding:"required"`
 	IsUsedDictionary     bool           `json:"is_used_dictionary"`
 	Retry                bool           `json:"retry"`
@@ -99,9 +98,6 @@ type AMISocket struct {
 	DebugMode            bool           `json:"debug_mode"`
 	MaxConcurrencyMillis int64          `json:"max_concurrency_millis"`
 }
-
-type AmiReply map[string]string
-type AmiReplies map[string][]string
 
 // AMICommand
 // Do not set tags json on field V
@@ -118,20 +114,20 @@ type AMIAuth struct {
 }
 
 type AMICore struct {
-	Socket     *AMISocket     `json:"-"`
-	Event      chan AmiReply  `json:"-"`
-	Stop       chan struct{}  `json:"-"`
-	Wg         sync.WaitGroup `json:"-"`
-	Dictionary *AMIDictionary `json:"-"`
+	socket     *AMISocket
+	event      chan AmiReply
+	stop       chan struct{}
+	wg         sync.WaitGroup
+	Dictionary *AMIDictionary `json:"dictionary,omitempty"`
 	UUID       string         `json:"uuid,omitempty"`
 }
 
 type AMICallbackHandler struct {
-	Ctx            context.Context `json:"-"`
-	Socket         AMISocket       `json:"-"`
-	Command        *AMICommand     `json:"-"`
-	AcceptedEvents []string        `json:"accepted_events,omitempty"`
-	IgnoreEvents   []string        `json:"ignored_events,omitempty"`
+	ctx            context.Context
+	socket         AMISocket
+	command        *AMICommand
+	AcceptedEvents []string `json:"accepted_events,omitempty"`
+	IgnoreEvents   []string `json:"ignored_events,omitempty"`
 }
 
 // AMIUpdateConfigAction holds the params for an action in UpdateConfig AMI command.
@@ -372,9 +368,9 @@ type AMIExtensionStatus struct {
 }
 
 type AMIExtensionGuard struct {
-	AllowExtensionNumeric bool     `json:"allow_extension_numeric"`
-	Context               []string `json:"ctx"`
-	StatusesText          []string `json:"statuses_text"`
+	EnabledExtensionNumeric bool     `json:"enabled_extension_numeric"`
+	Context                 []string `json:"ctx"`
+	StatusesText            []string `json:"statuses_text"`
 }
 
 type AMIPeerStatus struct {
@@ -448,13 +444,13 @@ type AMICdr struct {
 	UserExtension  string    `json:"user_extension,omitempty"`
 	PhoneNumber    string    `json:"phone_number,omitempty"`
 	PlaybackUrl    string    `json:"playback_url,omitempty"` // the only cdr has status answered
-	symbol         string    `json:"-"`                      // default extension splitter symbol: -, example: SIP/1000-00098fec then split by -
+	symbol         string    // default extension splitter symbol: -, example: SIP/1000-00098fec then split by -
 }
 
-type AMIPayloadChanspy struct {
-	Join            string `json:"join" binding:"required"`
-	SourceExten     string `json:"source_extension" binding:"required"`
-	CurrentExten    string `json:"current_extension" binding:"required"`
-	ChannelProtocol string `json:"channel_protocol" binding:"required"` // protocols include: SIP, H323, IAX...
-	DebugMode       bool   `json:"debug_mode"`                          // allow to trace log
+type AMIChanspy struct {
+	Join               string `json:"join" binding:"required"`
+	ExtensionConnected string `json:"extension_connected" binding:"required"`
+	ExtensionJoined    string `json:"extension_joined" binding:"required"`
+	ChannelProtocol    string `json:"channel_protocol" binding:"required"` // protocols include: SIP, H323, IAX...
+	DebugMode          bool   `json:"debug_mode"`                          // allow to trace log
 }

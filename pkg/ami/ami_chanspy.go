@@ -9,12 +9,12 @@ import (
 	"github.com/pnguyen215/voipkit/pkg/ami/config"
 )
 
-func NewAMIPayloadChanspy() *AMIPayloadChanspy {
-	s := &AMIPayloadChanspy{}
+func NewAmiChanspy() *AMIChanspy {
+	s := &AMIChanspy{}
 	return s
 }
 
-func (s *AMIPayloadChanspy) SetJoin(value string) *AMIPayloadChanspy {
+func (s *AMIChanspy) SetJoin(value string) *AMIChanspy {
 	ok := config.AmiChanspy[value]
 	if !ok {
 		msg := fmt.Sprintf(config.AmiErrorChanspyMessage, strings.Join(GetKeys(config.AmiChanspy), ","))
@@ -24,28 +24,28 @@ func (s *AMIPayloadChanspy) SetJoin(value string) *AMIPayloadChanspy {
 	return s
 }
 
-func (s *AMIPayloadChanspy) SetSourceExten(value string) *AMIPayloadChanspy {
-	s.SourceExten = TrimStringSpaces(value)
+func (s *AMIChanspy) SetExtensionConnected(value string) *AMIChanspy {
+	s.ExtensionConnected = TrimStringSpaces(value)
 	return s
 }
 
-func (s *AMIPayloadChanspy) SetCurrentExten(value string) *AMIPayloadChanspy {
-	s.CurrentExten = TrimStringSpaces(value)
+func (s *AMIChanspy) SetExtensionJoined(value string) *AMIChanspy {
+	s.ExtensionJoined = TrimStringSpaces(value)
 	return s
 }
 
-func (s *AMIPayloadChanspy) SetChannelProtocol(value string) *AMIPayloadChanspy {
+func (s *AMIChanspy) SetChannelProtocol(value string) *AMIChanspy {
 	channel := NewChannel().SetChannelProtocol(value)
 	s.ChannelProtocol = channel.ChannelProtocol
 	return s
 }
 
-func (s *AMIPayloadChanspy) SetDebugMode(value bool) *AMIPayloadChanspy {
+func (s *AMIChanspy) SetDebugMode(value bool) *AMIChanspy {
 	s.DebugMode = value
 	return s
 }
 
-func (s *AMIPayloadChanspy) CommandChanspy(c_extension string) string {
+func (s *AMIChanspy) CommandChanspy(c_extension string) string {
 	if IsStringEmpty(s.Join) {
 		return ""
 	}
@@ -64,43 +64,43 @@ func (s *AMIPayloadChanspy) CommandChanspy(c_extension string) string {
 	return c_extension
 }
 
-// Chanspy
-func Chanspy(ctx context.Context, s AMISocket, ch AMIPayloadChanspy) (AmiReplies, error) {
+func Chanspy(ctx context.Context, s AMISocket, ch AMIChanspy) (AmiReplies, error) {
 	ok := config.AmiChanspy[ch.Join]
 	if !ok {
 		msg := fmt.Sprintf(config.AmiErrorChanspyMessage, strings.Join(GetKeys(config.AmiChanspy), ","))
-		log.Panic(config.AmiErrorInvalidChanspy, "\n", msg)
+		D().Warn(msg)
+		return nil, fmt.Errorf(config.AmiErrorInvalidChanspy)
 	}
-	if IsStringEmpty(ch.SourceExten) {
-		return AmiReplies{}, fmt.Errorf("Source extension is required")
+	if IsStringEmpty(ch.ExtensionConnected) {
+		return AmiReplies{}, fmt.Errorf("Extension connected is required")
 	}
-	if IsStringEmpty(ch.CurrentExten) {
-		return AmiReplies{}, fmt.Errorf("Current extension is required")
+	if IsStringEmpty(ch.ExtensionJoined) {
+		return AmiReplies{}, fmt.Errorf("Extension joined is required")
 	}
-	source_extension_verify, err := HasSIPPeerStatus(ctx, s, ch.SourceExten)
+	extension_connected_verify, err := SIPPeerStatusExists(ctx, s, ch.ExtensionConnected)
 	if err != nil {
 		return AmiReplies{}, err
 	}
-	if !source_extension_verify {
-		return AmiReplies{}, fmt.Errorf("Source extension '%v' not found", ch.SourceExten)
+	if !extension_connected_verify {
+		return AmiReplies{}, fmt.Errorf("Extension connected '%v' not found", ch.ExtensionConnected)
 	}
-	current_extension_verify, err := HasSIPPeerStatus(ctx, s, ch.CurrentExten)
+	extension_joined_verify, err := SIPPeerStatusExists(ctx, s, ch.ExtensionJoined)
 	if err != nil {
 		return AmiReplies{}, err
 	}
-	if !current_extension_verify {
-		return AmiReplies{}, fmt.Errorf("Current extension '%v' not found", ch.CurrentExten)
+	if !extension_joined_verify {
+		return AmiReplies{}, fmt.Errorf("Extension joined '%v' not found", ch.ExtensionJoined)
 	}
 	channel := NewChannel().SetChannelProtocol(ch.ChannelProtocol)
-	sourceExt := channel.JoinChannelWith(channel.ChannelProtocol, fmt.Sprintf("%v", ch.SourceExten))
-	currentExt := channel.JoinChannelWith(channel.ChannelProtocol, fmt.Sprintf("%v", ch.CurrentExten))
-	channelId := ch.CommandChanspy(sourceExt)
-	cmd := fmt.Sprintf("channel originate %s application ChanSpy %s", currentExt, channelId)
+	extensionConnected := channel.JoinChannelWith(channel.ChannelProtocol, fmt.Sprintf("%v", ch.ExtensionConnected))
+	extensionJoined := channel.JoinChannelWith(channel.ChannelProtocol, fmt.Sprintf("%v", ch.ExtensionJoined))
+	channelId := ch.CommandChanspy(extensionConnected)
+	cmd := fmt.Sprintf("channel originate %s application ChanSpy %s", extensionJoined, channelId)
 	if ch.DebugMode {
-		log.Printf("Chanspy command: %v \n", cmd)
-		log.Printf("Chanspy channel_id: %v \n", channelId)
-		log.Printf("Chanspy source.ext: %v \n", sourceExt)
-		log.Printf("Chanspy current.ext: %v \n", currentExt)
+		D().Debug("Chanspy command: %v", cmd)
+		D().Debug("Chanspy channel_id: %v", channelId)
+		D().Debug("Chanspy extension.connected: %v", extensionConnected)
+		D().Debug("Chanspy extension.joined: %v", extensionJoined)
 	}
 	return Command(ctx, s, cmd)
 }

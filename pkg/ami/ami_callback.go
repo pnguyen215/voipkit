@@ -35,17 +35,17 @@ func NewAmiCallbackHandler() *AMICallbackHandler {
 }
 
 func (a *AMICallbackHandler) SetContext(value context.Context) *AMICallbackHandler {
-	a.Ctx = value
+	a.ctx = value
 	return a
 }
 
 func (a *AMICallbackHandler) SetSocket(value AMISocket) *AMICallbackHandler {
-	a.Socket = value
+	a.socket = value
 	return a
 }
 
 func (a *AMICallbackHandler) SetCommand(value *AMICommand) *AMICallbackHandler {
-	a.Command = value
+	a.command = value
 	return a
 }
 
@@ -74,102 +74,102 @@ func (a *AMICallbackHandler) Json() string {
 }
 
 func (h *AMICallbackHandler) Send() (AmiReply, error) {
-	if !h.Socket.Retry {
-		return h.Command.Send(h.Ctx, h.Socket, h.Command)
+	if !h.socket.Retry {
+		return h.command.Send(h.ctx, h.socket, h.command)
 	}
 
-	if h.Socket.MaxRetries == 1 || h.Socket.MaxRetries <= 0 {
-		return h.Command.Send(h.Ctx, h.Socket, h.Command)
+	if h.socket.MaxRetries == 1 || h.socket.MaxRetries <= 0 {
+		return h.command.Send(h.ctx, h.socket, h.command)
 	}
 
 	var response AmiReply
 	var err error
 	var total time.Duration = 0
 
-	for i := 1; i <= h.Socket.MaxRetries; i++ {
+	for i := 1; i <= h.socket.MaxRetries; i++ {
 		_start := time.Now()
-		response, err = h.Command.Send(h.Ctx, h.Socket, h.Command)
+		response, err = h.command.Send(h.ctx, h.socket, h.command)
 		_end := time.Since(_start)
 		total += _end
 		if _end == 0 || strings.EqualFold(response.Get(config.AmiJsonFieldStatus), config.AmiFullyBootedKey) {
 			continue
 		}
 		if len(response) > 0 && err == nil {
-			if h.Socket.DebugMode {
+			if h.socket.DebugMode {
 				D().Info("Send(). callback return for the %v time(s) and waste time: %v", i, _end)
 			}
 			break
 		}
 	}
-	if h.Socket.DebugMode {
+	if h.socket.DebugMode {
 		D().Info("Send(). callback total waste time: %v", total)
 	}
 	return response, err
 }
 
 func (h *AMICallbackHandler) SendLevel() (AmiReplies, error) {
-	if !h.Socket.Retry {
-		return h.Command.SendLevel(h.Ctx, h.Socket, h.Command)
+	if !h.socket.Retry {
+		return h.command.SendLevel(h.ctx, h.socket, h.command)
 	}
 
-	if h.Socket.MaxRetries == 1 || h.Socket.MaxRetries <= 0 {
-		return h.Command.SendLevel(h.Ctx, h.Socket, h.Command)
+	if h.socket.MaxRetries == 1 || h.socket.MaxRetries <= 0 {
+		return h.command.SendLevel(h.ctx, h.socket, h.command)
 	}
 
 	var response AmiReplies
 	var err error
 	var total time.Duration = 0
 
-	for i := 1; i <= h.Socket.MaxRetries; i++ {
+	for i := 1; i <= h.socket.MaxRetries; i++ {
 		_start := time.Now()
-		response, err = h.Command.SendLevel(h.Ctx, h.Socket, h.Command)
+		response, err = h.command.SendLevel(h.ctx, h.socket, h.command)
 		_end := time.Since(_start)
 		total += _end
 		if _end == 0 || strings.EqualFold(response.Get(config.AmiJsonFieldStatus), config.AmiFullyBootedKey) {
 			continue
 		}
 		if len(response) > 0 && err == nil {
-			if h.Socket.DebugMode {
+			if h.socket.DebugMode {
 				D().Info("SendLevel(). callback return for the %v time(s) and waste time: %v", i, _end)
 			}
 			break
 		}
 	}
-	if h.Socket.DebugMode {
+	if h.socket.DebugMode {
 		D().Info("SendLevel(). callback total waste time: %v", total)
 	}
 	return response, err
 }
 
 func (h *AMICallbackHandler) SendSuperLevel() ([]AmiReply, error) {
-	if !h.Socket.Retry {
-		return h.Command.DoGetResult(h.Ctx, h.Socket, h.Command, h.AcceptedEvents, h.IgnoreEvents)
+	if !h.socket.Retry {
+		return h.command.DoGetResult(h.ctx, h.socket, h.command, h.AcceptedEvents, h.IgnoreEvents)
 	}
 
-	if h.Socket.MaxRetries == 1 || h.Socket.MaxRetries <= 0 {
-		return h.Command.DoGetResult(h.Ctx, h.Socket, h.Command, h.AcceptedEvents, h.IgnoreEvents)
+	if h.socket.MaxRetries == 1 || h.socket.MaxRetries <= 0 {
+		return h.command.DoGetResult(h.ctx, h.socket, h.command, h.AcceptedEvents, h.IgnoreEvents)
 	}
 
 	var response []AmiReply
 	var err error
 	var total time.Duration = 0
 
-	for i := 1; i <= h.Socket.MaxRetries; i++ {
+	for i := 1; i <= h.socket.MaxRetries; i++ {
 		_start := time.Now()
-		response, err = h.Command.DoGetResult(h.Ctx, h.Socket, h.Command, h.AcceptedEvents, h.IgnoreEvents)
+		response, err = h.command.DoGetResult(h.ctx, h.socket, h.command, h.AcceptedEvents, h.IgnoreEvents)
 		_end := time.Since(_start)
 		total += _end
 		if _end == 0 {
 			continue
 		}
 		if len(response) > 0 && err == nil {
-			if h.Socket.DebugMode {
+			if h.socket.DebugMode {
 				D().Info("SendSuperLevel(). callback return for the %v time(s) and waste time: %v", i, _end)
 			}
 			break
 		}
 	}
-	if h.Socket.DebugMode {
+	if h.socket.DebugMode {
 		D().Info("SendSuperLevel(). callback total waste time: %v", total)
 	}
 	return response, err

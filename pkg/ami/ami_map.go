@@ -19,7 +19,7 @@ func (c *AMICore) ExtensionStatesMap(ctx context.Context, guard *AMIExtensionGua
 	}
 
 	for _, v := range peers {
-		if guard.AllowExtensionNumeric {
+		if guard.EnabledExtensionNumeric {
 			_, err := strconv.Atoi(v.Get(config.AmiJsonFieldExten))
 			if err != nil {
 				continue

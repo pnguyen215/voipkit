@@ -9,19 +9,19 @@ import (
 
 func NewPubSubQueue() *AMIPubSubQueue {
 	c := &AMIPubSubQueue{}
-	c.Message = make(MessageChannel)
+	c.message = make(MessageChannel)
 	return c
 }
 
 func (k *AMIPubSubQueue) Disabled() {
-	k.Mutex.Lock()
-	defer k.Mutex.Unlock()
+	k.mutex.Lock()
+	defer k.mutex.Unlock()
 	k.Off = true
 }
 
 func (k *AMIPubSubQueue) Destroy() {
-	k.Mutex.Lock()
-	defer k.Mutex.Unlock()
+	k.mutex.Lock()
+	defer k.mutex.Unlock()
 
 	if k.Off {
 		log.Println("Destroy pub-sub stopped")
@@ -29,21 +29,21 @@ func (k *AMIPubSubQueue) Destroy() {
 	}
 
 	k.Off = true
-	for key, ch := range k.Message {
+	for key, ch := range k.message {
 		close(ch)
-		delete(k.Message, key)
+		delete(k.message, key)
 	}
 }
 
 func (k *AMIPubSubQueue) SizeMessage() int {
-	k.Mutex.Lock()
-	defer k.Mutex.Unlock()
-	return len(k.Message)
+	k.mutex.Lock()
+	defer k.mutex.Unlock()
+	return len(k.message)
 }
 
 func (k *AMIPubSubQueue) Subscribe(key string) PubChannel {
-	k.Mutex.Lock()
-	defer k.Mutex.Unlock()
+	k.mutex.Lock()
+	defer k.mutex.Unlock()
 
 	if k.Off {
 		return nil
@@ -53,32 +53,28 @@ func (k *AMIPubSubQueue) Subscribe(key string) PubChannel {
 
 	ch := make(PubChannel)
 
-	if _, ok := k.Message[key]; !ok {
-		k.Message[key] = ch
+	if _, ok := k.message[key]; !ok {
+		k.message[key] = ch
 	}
 
 	return ch
 }
 
 func (k *AMIPubSubQueue) Subscribes(keys ...string) PubChannel {
-	k.Mutex.Lock()
-	defer k.Mutex.Unlock()
-
+	k.mutex.Lock()
+	defer k.mutex.Unlock()
 	if k.Off {
 		return nil
 	}
-
 	ch := make(PubChannel, len((keys)))
-
 	for _, key := range keys {
 		key = strings.ToLower(key)
-		if _, ok := k.Message[key]; !ok {
-			k.Message[key] = ch
+		if _, ok := k.message[key]; !ok {
+			k.message[key] = ch
 			// ch <- <-k.Message[key]
 		}
 	}
 	// close(ch)
-
 	return ch
 }
 
@@ -93,12 +89,12 @@ func (k *AMIPubSubQueue) Subscribes(keys ...string) PubChannel {
 // Note: The AMI Pub-Sub mechanism allows subscribers to receive notifications for specific events or all events.
 // This method ensures that the message is sent to relevant subscribers based on event type and general subscriptions.
 func (k *AMIPubSubQueue) Publish(message *AMIMessage) bool {
-	k.Mutex.RLock()
-	defer k.Mutex.RUnlock()
+	k.mutex.RLock()
+	defer k.mutex.RUnlock()
 	if k.Off {
 		return false
 	}
-	ch, ok := k.Message[config.AmiPubSubKeyRef]
+	ch, ok := k.message[config.AmiPubSubKeyRef]
 	if ok {
 		go func(ch PubChannel) {
 			ch <- message
@@ -106,7 +102,7 @@ func (k *AMIPubSubQueue) Publish(message *AMIMessage) bool {
 	}
 	name := strings.ToLower(message.Field(strings.ToLower(config.AmiEventKey)))
 	if name != "" {
-		if ch, ok := k.Message[name]; ok {
+		if ch, ok := k.message[name]; ok {
 			go func(ch PubChannel) {
 				ch <- message
 			}(ch)

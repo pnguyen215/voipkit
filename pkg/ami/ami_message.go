@@ -48,7 +48,7 @@ func (m *AMIMessage) SetRegion(value string) *AMIMessage {
 
 func ofMessage(header textproto.MIMEHeader) *AMIMessage {
 	m := &AMIMessage{}
-	m.Header = header
+	m.header = header
 	return m
 }
 
@@ -61,9 +61,9 @@ func ofMessageWithDictionary(d *AMIDictionary, header textproto.MIMEHeader) *AMI
 			p.Add(d.TranslateField(k), header.Get(k))
 			log.Printf("(AMI). header renew with key = %v and value = %v", k, JsonString(v))
 		}
-		m.Header = p
+		m.header = p
 	} else {
-		m.Header = header
+		m.header = header
 	}
 	return m
 }
@@ -78,9 +78,9 @@ func Authenticate(username, password string) *AMIMessage {
 
 // Field return first value associated with then given key
 func (k *AMIMessage) Field(key string) string {
-	k.Mutex.RLock()
-	defer k.Mutex.RUnlock()
-	return k.Header.Get(key)
+	k.mutex.RLock()
+	defer k.mutex.RUnlock()
+	return k.header.Get(key)
 }
 
 func (k *AMIMessage) FieldOrRefer(key, ref string) string {
@@ -118,9 +118,9 @@ func (k *AMIMessage) GetFirstValueByFieldDictionary(d *AMIDictionary, key string
 
 // Field Values return all values associated with the given key
 func (k *AMIMessage) FieldValues(key string) []string {
-	k.Mutex.RLock()
-	defer k.Mutex.RUnlock()
-	return k.Header.Values(key)
+	k.mutex.RLock()
+	defer k.mutex.RUnlock()
+	return k.header.Values(key)
 }
 
 func (k *AMIMessage) FieldValuesOrRefer(key, ref string) []string {
@@ -154,17 +154,17 @@ func (k *AMIMessage) GetValuesByFieldDictionary(d *AMIDictionary, key string) []
 
 // Added new pair header as form key:value
 func (k *AMIMessage) AddField(key, value string) {
-	k.Mutex.Lock()
-	defer k.Mutex.Unlock()
-	k.Header.Add(key, value)
+	k.mutex.Lock()
+	defer k.mutex.Unlock()
+	k.header.Add(key, value)
 }
 
 // SetField
 // Reset value for key associated specified
 func (k *AMIMessage) SetField(key, value string) {
-	k.Mutex.Lock()
-	defer k.Mutex.Unlock()
-	k.Header.Set(key, value)
+	k.mutex.Lock()
+	defer k.mutex.Unlock()
+	k.header.Set(key, value)
 }
 
 // SetFields
@@ -215,23 +215,23 @@ func (k *AMIMessage) AddFieldDateReceivedAt() {
 
 // Return AMI message Action Id as string
 func (k *AMIMessage) GetActionId() string {
-	k.Mutex.RLock()
-	defer k.Mutex.RUnlock()
-	return k.Header.Get(strings.ToLower(config.AmiActionIdKey))
+	k.mutex.RLock()
+	defer k.mutex.RUnlock()
+	return k.header.Get(strings.ToLower(config.AmiActionIdKey))
 }
 
 // Return AMI message Date Received At as string
 func (k *AMIMessage) GetDateReceivedAt() string {
-	k.Mutex.RLock()
-	defer k.Mutex.RUnlock()
-	return k.Header.Get(strings.ToLower(config.AmiFieldDateReceivedAt))
+	k.mutex.RLock()
+	defer k.mutex.RUnlock()
+	return k.header.Get(strings.ToLower(config.AmiFieldDateReceivedAt))
 }
 
 // Remove fields associated with the given key
 func (k *AMIMessage) RemoveField(key string) {
-	k.Mutex.Lock()
-	defer k.Mutex.Unlock()
-	k.Header.Del(key)
+	k.mutex.Lock()
+	defer k.mutex.Unlock()
+	k.header.Del(key)
 }
 
 func (k *AMIMessage) RemoveFieldDictionary(d *AMIDictionary, key string) {
@@ -253,12 +253,12 @@ func (k *AMIMessage) RemoveFieldsDictionary(d *AMIDictionary, keys ...string) {
 
 // Return new bytes buffer
 func (k *AMIMessage) toBytesBuffer() bytes.Buffer {
-	k.Mutex.RLock()
-	defer k.Mutex.RUnlock()
+	k.mutex.RLock()
+	defer k.mutex.RUnlock()
 	var buffer bytes.Buffer
 
-	for key := range k.Header {
-		for _, value := range k.Header.Values(key) {
+	for key := range k.header {
+		for _, value := range k.header.Values(key) {
 			buffer.WriteString(key)
 			buffer.WriteString(": ")
 			buffer.WriteString(value)
@@ -350,12 +350,12 @@ func (k *AMIMessage) ProduceMessageWith(lowercaseField bool) map[string]interfac
 
 // Return AMI message as interface{}
 func (k *AMIMessage) ProduceMessageWithDictionaries(lowercaseField bool, translator *AMIDictionary) map[string]interface{} {
-	k.Mutex.RLock()
-	defer k.Mutex.RUnlock()
+	k.mutex.RLock()
+	defer k.mutex.RUnlock()
 
 	data := make(map[string]interface{})
 
-	for key, value := range k.Header {
+	for key, value := range k.header {
 		var field string = key
 
 		if lowercaseField {
@@ -376,12 +376,12 @@ func (k *AMIMessage) ProduceMessageWithDictionaries(lowercaseField bool, transla
 
 // Return AMI message as interface{}
 func (k *AMIMessage) ProduceMessagePure() map[string]interface{} {
-	k.Mutex.RLock()
-	defer k.Mutex.RUnlock()
+	k.mutex.RLock()
+	defer k.mutex.RUnlock()
 
 	data := make(map[string]interface{})
 
-	for key, value := range k.Header {
+	for key, value := range k.header {
 		var field string = key
 
 		if len(value) == 1 {

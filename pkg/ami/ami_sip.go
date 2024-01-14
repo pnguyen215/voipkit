@@ -54,7 +54,7 @@ func SIPPeerStatusShort(ctx context.Context, s AMISocket, peer string) (AmiReply
 	return peers[0], nil
 }
 
-func HasSIPPeerStatus(ctx context.Context, s AMISocket, peer string) (bool, error) {
+func SIPPeerStatusExists(ctx context.Context, s AMISocket, peer string) (bool, error) {
 	sip, err := SIPPeerStatusShort(ctx, s, peer)
 	if err != nil {
 		return false, err

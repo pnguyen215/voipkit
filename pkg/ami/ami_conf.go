@@ -152,8 +152,8 @@ func (e *AMIExtensionStatus) SetStatusText(value string) *AMIExtensionStatus {
 	return e
 }
 
-func (e *AMIExtensionGuard) SetAllowExtensionNumeric(value bool) *AMIExtensionGuard {
-	e.AllowExtensionNumeric = value
+func (e *AMIExtensionGuard) SetEnabledExtensionNumeric(value bool) *AMIExtensionGuard {
+	e.EnabledExtensionNumeric = value
 	return e
 }
 
