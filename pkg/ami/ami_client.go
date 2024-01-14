@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/pnguyen215/voipkit/pkg/ami/config"
 )
 
 func NewAmiClient() *AmiClient {
@@ -57,6 +59,17 @@ func (a *AmiClient) SetTimeout(value time.Duration) *AmiClient {
 	return a
 }
 
+func (a *AmiClient) SetPrivilege(value string) *AmiClient {
+	a.privilege = value
+	return a
+}
+
+func (a *AmiClient) SetPrivileges(values ...string) *AmiClient {
+	v := strings.Join(values, ",")
+	a.SetPrivilege(v)
+	return a
+}
+
 func (a *AmiClient) Timeout() time.Duration {
 	return a.timeout
 }
@@ -67,6 +80,7 @@ func (a *AmiClient) String() string {
 	builder.WriteString(fmt.Sprintf("port=%v;", a.port))
 	builder.WriteString(fmt.Sprintf("username=%v;", a.username))
 	builder.WriteString(fmt.Sprintf("password=%v;", strings.Repeat("*", 8)))
+	builder.WriteString(fmt.Sprintf("privilege=%v;", a.privilege))
 	builder.WriteString(fmt.Sprintf("timeout=%v;", a.timeout))
 	return builder.String()
 }
@@ -78,6 +92,7 @@ func GetAmiClientSample() *AmiClient {
 		SetPort(5038).
 		SetUsername("admin").
 		SetPassword("password").
+		SetPrivilege(config.AmiManagerPerm).
 		SetTimeout(10 * time.Second)
 	return a
 }

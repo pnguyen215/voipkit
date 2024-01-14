@@ -17,12 +17,13 @@ type AmiReply map[string]string
 type AmiReplies map[string][]string
 
 type AmiClient struct {
-	enabled  bool
-	host     string
-	port     int
-	username string
-	password string
-	timeout  time.Duration
+	enabled   bool
+	host      string
+	port      int
+	username  string
+	password  string
+	privilege string
+	timeout   time.Duration
 }
 
 type AMI struct {

@@ -14,6 +14,7 @@ func createConn() (*ami.AMI, error) {
 		SetUsername("monast").
 		SetPassword("T5Monast").
 		SetTimeout(5 * time.Second)
+	ami.D().Debug("Asterisk server credentials: %v", c.String())
 	return ami.NewClient(ami.NewTcp(), *c)
 }
 
