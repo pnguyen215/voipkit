@@ -409,6 +409,14 @@ func (k *AMIMessage) JsonPure() string {
 	return JsonString(k.ProduceMessagePure())
 }
 
+func (k *AMIMessage) apply(e *AMIEvent) *AMIMessage {
+	k.SetTimeFormat(e.TimeFormat).
+		SetPhonePrefix(e.PhonePrefix).
+		SetRegion(e.Region).
+		AddFieldDateReceivedAt()
+	return k
+}
+
 // Create AMI message from json string
 func FromJson(jsonString string) (*AMIMessage, error) {
 	var builder interface{}

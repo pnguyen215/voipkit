@@ -34,18 +34,13 @@ func (m *AMIEvent) SetRegion(value string) *AMIEvent {
 	return m
 }
 
-// Listen All Events
 func (e *AMIEvent) OpenFullEvents(c *AMI) {
 	all := c.AllEvents()
 	defer c.Close()
-
 	for {
 		select {
 		case message := <-all:
-			message.SetTimeFormat(e.TimeFormat)
-			message.SetPhonePrefix(e.PhonePrefix)
-			message.SetRegion(e.Region)
-			message.AddFieldDateReceivedAt()
+			message.apply(e)
 			log.Printf("ami event: '%s' received: %s", message.Field(strings.ToLower(config.AmiEventKey)), message.Json())
 		case err := <-c.Error():
 			c.Close()
@@ -58,14 +53,10 @@ func (e *AMIEvent) OpenFullEvents(c *AMI) {
 func (e *AMIEvent) OpenFullEventsTranslator(c *AMI, d *AMIDictionary) {
 	all := c.AllEvents()
 	defer c.Close()
-
 	for {
 		select {
 		case message := <-all:
-			message.SetTimeFormat(e.TimeFormat)
-			message.SetPhonePrefix(e.PhonePrefix)
-			message.SetRegion(e.Region)
-			message.AddFieldDateReceivedAt()
+			message.apply(e)
 			log.Printf("ami event: '%s' received: %s", message.Field(strings.ToLower(config.AmiEventKey)), message.JsonTranslator(d))
 		case err := <-c.Error():
 			c.Close()
@@ -78,14 +69,10 @@ func (e *AMIEvent) OpenFullEventsTranslator(c *AMI, d *AMIDictionary) {
 func (e *AMIEvent) OpenFullEventsCallbackTranslator(c *AMI, d *AMIDictionary, callback func(*AMIMessage, string, error)) {
 	all := c.AllEvents()
 	defer c.Close()
-
 	for {
 		select {
 		case message := <-all:
-			message.SetTimeFormat(e.TimeFormat)
-			message.SetPhonePrefix(e.PhonePrefix)
-			message.SetRegion(e.Region)
-			message.AddFieldDateReceivedAt()
+			message.apply(e)
 			callback(message, message.JsonTranslator(d), nil)
 		case err := <-c.Error():
 			c.Close()
@@ -99,14 +86,10 @@ func (e *AMIEvent) OpenFullEventsCallbackTranslator(c *AMI, d *AMIDictionary, ca
 func (e *AMIEvent) OpenEvent(c *AMI, name string) {
 	event := c.OnEvent(name)
 	defer c.Close()
-
 	for {
 		select {
 		case message := <-event:
-			message.SetTimeFormat(e.TimeFormat)
-			message.SetPhonePrefix(e.PhonePrefix)
-			message.SetRegion(e.Region)
-			message.AddFieldDateReceivedAt()
+			message.apply(e)
 			log.Printf("ami event: '%s' received: %s", name, message.Json())
 		case err := <-c.Error():
 			c.Close()
@@ -119,14 +102,10 @@ func (e *AMIEvent) OpenEvent(c *AMI, name string) {
 func (e *AMIEvent) OpenEventTranslator(c *AMI, d *AMIDictionary, name string) {
 	event := c.OnEvent(name)
 	defer c.Close()
-
 	for {
 		select {
 		case message := <-event:
-			message.SetTimeFormat(e.TimeFormat)
-			message.SetPhonePrefix(e.PhonePrefix)
-			message.SetRegion(e.Region)
-			message.AddFieldDateReceivedAt()
+			message.apply(e)
 			log.Printf("ami event: '%s' received: %s", name, message.JsonTranslator(d))
 		case err := <-c.Error():
 			c.Close()
@@ -139,14 +118,10 @@ func (e *AMIEvent) OpenEventTranslator(c *AMI, d *AMIDictionary, name string) {
 func (e *AMIEvent) OpenEventCallbackTranslator(c *AMI, d *AMIDictionary, name string, callback func(*AMIMessage, string, error)) {
 	event := c.OnEvent(name)
 	defer c.Close()
-
 	for {
 		select {
 		case message := <-event:
-			message.SetTimeFormat(e.TimeFormat)
-			message.SetPhonePrefix(e.PhonePrefix)
-			message.SetRegion(e.Region)
-			message.AddFieldDateReceivedAt()
+			message.apply(e)
 			callback(message, message.JsonTranslator(d), nil)
 		case err := <-c.Error():
 			c.Close()
@@ -160,14 +135,10 @@ func (e *AMIEvent) OpenEventCallbackTranslator(c *AMI, d *AMIDictionary, name st
 func (e *AMIEvent) OpenEvents(c *AMI, keys ...string) {
 	event := c.OnEvents(keys...)
 	defer c.Close()
-
 	for {
 		select {
 		case message := <-event:
-			message.SetTimeFormat(e.TimeFormat)
-			message.SetPhonePrefix(e.PhonePrefix)
-			message.SetRegion(e.Region)
-			message.AddFieldDateReceivedAt()
+			message.apply(e)
 			log.Printf("ami event(s): '%s' received: %s", keys, message.Json())
 		case err := <-c.Error():
 			c.Close()
@@ -180,14 +151,10 @@ func (e *AMIEvent) OpenEvents(c *AMI, keys ...string) {
 func (e *AMIEvent) OpenEventsTranslator(c *AMI, d *AMIDictionary, keys ...string) {
 	event := c.OnEvents(keys...)
 	defer c.Close()
-
 	for {
 		select {
 		case message := <-event:
-			message.SetTimeFormat(e.TimeFormat)
-			message.SetPhonePrefix(e.PhonePrefix)
-			message.SetRegion(e.Region)
-			message.AddFieldDateReceivedAt()
+			message.apply(e)
 			log.Printf("ami event(s): '%s' received: %s", keys, message.JsonTranslator(d))
 		case err := <-c.Error():
 			c.Close()
@@ -200,14 +167,10 @@ func (e *AMIEvent) OpenEventsTranslator(c *AMI, d *AMIDictionary, keys ...string
 func (e *AMIEvent) OpenEventsCallbackTranslator(c *AMI, d *AMIDictionary, callback func(*AMIMessage, string, error), keys ...string) {
 	event := c.OnEvents(keys...)
 	defer c.Close()
-
 	for {
 		select {
 		case message := <-event:
-			message.SetTimeFormat(e.TimeFormat)
-			message.SetPhonePrefix(e.PhonePrefix)
-			message.SetRegion(e.Region)
-			message.AddFieldDateReceivedAt()
+			message.apply(e)
 			callback(message, message.JsonTranslator(d), nil)
 		case err := <-c.Error():
 			c.Close()
