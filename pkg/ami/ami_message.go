@@ -15,7 +15,7 @@ import (
 	"github.com/pnguyen215/voipkit/pkg/ami/config"
 )
 
-func NewActionWith(name string) *AMIMessage {
+func WithMessage(name string) *AMIMessage {
 	a := NewMessage()
 	a.AddField(config.AmiActionKey, name)
 	return a
@@ -70,7 +70,7 @@ func ofMessageWithDictionary(d *AMIDictionary, header textproto.MIMEHeader) *AMI
 
 // Authenticate action by message
 func Authenticate(username, password string) *AMIMessage {
-	a := NewActionWith(config.AmiLoginKey)
+	a := WithMessage(config.AmiLoginKey)
 	a.AddField(config.AmiFieldUsername, username)
 	a.AddField(config.AmiFieldSecret, password)
 	return a

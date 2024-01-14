@@ -30,7 +30,6 @@ func (a *AMIAction) SetTimeout(timeout int) *AMIAction {
 	return a
 }
 
-// Revoke run cli on asterisk server
 func (c *AMIAction) Revoke(a *AMI, d *AMIDictionary, e *AMIMessage, deadlock bool) (*AMIResponse, error) {
 	D().Info("Ami revoking action (state mutex opened lock~unlock): '%v'", e.String())
 	var response AMIResponse
@@ -75,33 +74,29 @@ on_failed:
 	return &response, _err
 }
 
-// Run for run cli asterisk server
 func (c *AMIAction) Run(a *AMI) (*AMIResponse, error) {
-	action := NewActionWith(config.AmiActionCommand)
+	action := WithMessage(config.AmiActionCommand)
 	action.AddField(config.AmiActionCommand, c.Name)
 	return c.Revoke(a, NewDictionary(), action, false)
 }
 
-// RunDictionary
-func (c *AMIAction) RunDictionary(a *AMI, dictionaries map[string]string) (*AMIResponse, error) {
-	action := NewActionWith(config.AmiActionCommand)
+func (c *AMIAction) WithRunX(a *AMI, dictionaries map[string]string) (*AMIResponse, error) {
+	action := WithMessage(config.AmiActionCommand)
 	action.AddField(config.AmiActionCommand, c.Name)
 	d := NewDictionary()
 	d.AddKeysTranslator(dictionaries)
 	return c.Revoke(a, d, action, false)
 }
 
-// RunScript with script action
-func (c *AMIAction) RunScript(a *AMI, script map[string]string) (*AMIResponse, error) {
-	action := NewActionWith(c.Name)
-	action.AddFields(script)
+func (c *AMIAction) WithRunV(a *AMI, command map[string]string) (*AMIResponse, error) {
+	action := WithMessage(c.Name)
+	action.AddFields(command)
 	return c.Revoke(a, NewDictionary(), action, false)
 }
 
-// WithRun with script action
-func (c *AMIAction) WithRun(a *AMI, script, dictionaries map[string]string) (*AMIResponse, error) {
-	action := NewActionWith(c.Name)
-	action.AddFields(script)
+func (c *AMIAction) WithRunXV(a *AMI, command, dictionaries map[string]string) (*AMIResponse, error) {
+	action := WithMessage(c.Name)
+	action.AddFields(command)
 	d := NewDictionary()
 	d.AddKeysTranslator(dictionaries)
 	return c.Revoke(a, d, action, false)
