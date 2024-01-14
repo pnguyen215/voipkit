@@ -36,6 +36,7 @@ type AMI struct {
 	subs    *AMIPubSubQueue
 	message *AMIMessage
 	socket  *AMISocket
+	c       *AMICore
 }
 
 type AMIPubSubQueue struct {

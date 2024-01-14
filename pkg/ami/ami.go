@@ -19,6 +19,15 @@ func (c *AMI) Message() *AMIMessage {
 	return c.message
 }
 
+func (c *AMI) SetCore(value *AMICore) *AMI {
+	c.c = value
+	return c
+}
+
+func (c *AMI) Core() *AMICore {
+	return c.c
+}
+
 // Action sends an AMI action message to the Asterisk server.
 // If the action message does not have an ActionID, it adds one automatically.
 // The method returns true if the action message is successfully sent, otherwise false.
@@ -439,6 +448,15 @@ func serve(conn net.Conn, request AmiClient) (*AMI, error) {
 	if err != nil {
 		return nil, err
 	}
+	u := NewAuth().
+		SetUsername(request.username).
+		SetSecret(request.password).
+		SetEvent(request.privilege)
+	c, err := WithCore(ctx, ins.socket, u)
+	if err != nil {
+		return ins, err
+	}
+	ins.SetCore(c)
 	ins.release(ctx)
 	return ins, nil
 }
