@@ -28,6 +28,15 @@ func (c *AMI) Core() *AMICore {
 	return c.c
 }
 
+func (c *AMI) SetContext(value context.Context) *AMI {
+	c.ctx = value
+	return c
+}
+
+func (c *AMI) Context() context.Context {
+	return c.ctx
+}
+
 // Action sends an AMI action message to the Asterisk server.
 // If the action message does not have an ActionID, it adds one automatically.
 // The method returns true if the action message is successfully sent, otherwise false.
@@ -457,6 +466,7 @@ func serve(conn net.Conn, request AmiClient) (*AMI, error) {
 		return ins, err
 	}
 	ins.SetCore(c)
+	ins.SetContext(ctx)
 	ins.release(ctx)
 	return ins, nil
 }

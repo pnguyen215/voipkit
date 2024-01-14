@@ -1,6 +1,8 @@
 package example
 
 import (
+	"fmt"
+	"log"
 	"testing"
 	"time"
 
@@ -43,4 +45,53 @@ func TestDialOut(t *testing.T) {
 
 func TestChanspy(t *testing.T) {
 
+}
+
+func TestGetSIPPeersStatus(t *testing.T) {
+	c, err := createConn()
+	if err != nil {
+		ami.D().Error(err.Error())
+		return
+	}
+	c.Core().AddSession()
+	peers, err := c.Core().GetSIPPeersStatus(c.Context())
+	if err != nil {
+		ami.D().Error(err.Error())
+		return
+	}
+	log.Println(fmt.Sprintf("SIP peer status: %v", ami.JsonString(peers[1])))
+}
+
+func TestGetQueueStatuses(t *testing.T) {
+	c, err := createConn()
+	if err != nil {
+		ami.D().Error(err.Error())
+		return
+	}
+	c.Core().AddSession()
+	c.Core().Dictionary.SetEnabledForceTranslate(true)
+	c.Core().Dictionary.AddKeyLinkTranslator("https://raw.githubusercontent.com/pnguyen215/gear-insights-free/master/ami.dictionaries.json")
+	peers, err := c.Core().GetQueueStatuses(c.Context(), "")
+	if err != nil {
+		ami.D().Error(err.Error())
+		return
+	}
+	log.Println(fmt.Sprintf("SIP queues status: %v", ami.JsonString(peers)))
+}
+
+func TestGetQueueSummary(t *testing.T) {
+	c, err := createConn()
+	if err != nil {
+		ami.D().Error(err.Error())
+		return
+	}
+	c.Core().AddSession()
+	c.Core().Dictionary.SetEnabledForceTranslate(true)
+	c.Core().Dictionary.AddKeyLinkTranslator("https://raw.githubusercontent.com/pnguyen215/gear-insights-free/master/ami.dictionaries.json")
+	peers, err := c.Core().GetQueueSummary(c.Context(), "")
+	if err != nil {
+		ami.D().Error(err.Error())
+		return
+	}
+	log.Println(fmt.Sprintf("SIP queues summary: %v", ami.JsonString(peers)))
 }

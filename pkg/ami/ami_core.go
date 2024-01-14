@@ -41,7 +41,7 @@ func (c *AMICore) SetDictionary(dictionary *AMIDictionary) *AMICore {
 	return c
 }
 
-func (c *AMICore) ResetUUID() *AMICore {
+func (c *AMICore) AddSession() *AMICore {
 	c.SetUUID(GenUUIDShorten())
 	c.socket.SetUUID(c.UUID)
 	return c

@@ -27,6 +27,7 @@ type AmiClient struct {
 }
 
 type AMI struct {
+	ctx     context.Context
 	err     chan error
 	mutex   sync.RWMutex
 	conn    net.Conn
