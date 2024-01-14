@@ -52,12 +52,14 @@ type AMIMessage struct {
 	TimeFormat  string   `json:"time_format,omitempty"`
 	PhonePrefix []string `json:"phone_prefix,omitempty"`
 	Region      string   `json:"region,omitempty"`
+	Timezone    string   `json:"timezone"`
 }
 
 type AMIEvent struct {
 	TimeFormat  string   `json:"time_format,omitempty"`
 	PhonePrefix []string `json:"phone_prefix,omitempty"`
 	Region      string   `json:"region,omitempty"`
+	Timezone    string   `json:"timezone"`
 }
 
 type AMIDictionary struct {

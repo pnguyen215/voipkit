@@ -46,6 +46,11 @@ func (m *AMIMessage) SetRegion(value string) *AMIMessage {
 	return m
 }
 
+func (m *AMIMessage) SetTimezone(value string) *AMIMessage {
+	m.Timezone = value
+	return m
+}
+
 func ofMessage(header textproto.MIMEHeader) *AMIMessage {
 	m := &AMIMessage{}
 	m.header = header
@@ -206,10 +211,18 @@ func (k *AMIMessage) AddActionId() {
 
 // Added Date Received at generated
 func (k *AMIMessage) AddFieldDateReceivedAt() {
-	if len(k.TimeFormat) > 0 {
-		k.AddField(config.AmiFieldDateReceivedAt, time.Now().Format(k.TimeFormat))
+	if !IsStringEmpty(k.TimeFormat) {
+		if IsStringEmpty(k.Timezone) {
+			k.AddField(config.AmiFieldDateReceivedAt, time.Now().Format(k.TimeFormat))
+		} else {
+			k.AddField(config.AmiFieldDateReceivedAt, AdjustTimezone(time.Now(), k.Timezone).Format(k.TimeFormat))
+		}
 	} else {
-		k.AddField(config.AmiFieldDateReceivedAt, time.Now().String())
+		if IsStringEmpty(k.Timezone) {
+			k.AddField(config.AmiFieldDateReceivedAt, time.Now().String())
+		} else {
+			k.AddField(config.AmiFieldDateReceivedAt, AdjustTimezone(time.Now(), k.Timezone).String())
+		}
 	}
 }
 
@@ -413,6 +426,7 @@ func (k *AMIMessage) apply(e *AMIEvent) *AMIMessage {
 	k.SetTimeFormat(e.TimeFormat).
 		SetPhonePrefix(e.PhonePrefix).
 		SetRegion(e.Region).
+		SetTimezone(e.Timezone).
 		AddFieldDateReceivedAt()
 	return k
 }

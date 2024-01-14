@@ -34,6 +34,11 @@ func (m *AMIEvent) SetRegion(value string) *AMIEvent {
 	return m
 }
 
+func (m *AMIEvent) SetTimezone(value string) *AMIEvent {
+	m.Timezone = value
+	return m
+}
+
 func (e *AMIEvent) OpenFullEvents(c *AMI) {
 	all := c.AllEvents()
 	defer c.Close()
