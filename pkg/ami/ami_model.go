@@ -195,21 +195,21 @@ type AMIPayloadQueue struct {
 //	ChannelId - Channel UniqueId to be set on the channel.
 //	OtherChannelId - Channel UniqueId to be set on the second local channel.
 type AMIOriginate struct {
-	Channel        string   `ami:"Channel,omitempty"`
-	Exten          string   `ami:"Exten,omitempty"`
-	Context        string   `ami:"Context,omitempty"`
-	Priority       int      `ami:"Priority,omitempty"`
-	Application    string   `ami:"Application,omitempty"`
-	Data           string   `ami:"Data,omitempty"`
-	Timeout        int      `ami:"Timeout,omitempty"`
-	CallerID       string   `ami:"CallerID,omitempty"`
-	Variable       []string `ami:"Variable,omitempty"`
-	Account        string   `ami:"Account,omitempty"`
-	EarlyMedia     string   `ami:"EarlyMedia,omitempty"`
-	Async          string   `ami:"Async,omitempty"`
-	Codecs         string   `ami:"Codecs,omitempty"`
-	ChannelID      string   `ami:"ChannelId,omitempty"`
-	OtherChannelID string   `ami:"OtherChannelId,omitempty"`
+	Channel        string `ami:"Channel,omitempty"`
+	Exten          string `ami:"Exten,omitempty"`
+	Context        string `ami:"Context,omitempty"`
+	Priority       int    `ami:"Priority,omitempty"`
+	Application    string `ami:"Application,omitempty"`
+	Data           string `ami:"Data,omitempty"`
+	Timeout        int    `ami:"Timeout,omitempty"`
+	CallerID       string `ami:"CallerID,omitempty"`
+	Variable       string `ami:"Variable,omitempty"`
+	Account        string `ami:"Account,omitempty"`
+	EarlyMedia     string `ami:"EarlyMedia,omitempty"`
+	Async          string `ami:"Async,omitempty"`
+	Codecs         string `ami:"Codecs,omitempty"`
+	ChannelID      string `ami:"ChannelId,omitempty"`
+	OtherChannelID string `ami:"OtherChannelId,omitempty"`
 }
 
 // AMIPayloadCall holds the call data to transfer.
@@ -339,12 +339,13 @@ type AMIPayloadDb struct {
 }
 
 type AMIDialCall struct {
-	Telephone       string `json:"telephone" binding:"required"`        // like customer phone number or no. extension internal from all routes
-	ChannelProtocol string `json:"channel_protocol" binding:"required"` // protocols include: SIP, H323, IAX...
-	Extension       int    `json:"extension" binding:"required"`        // like current user using no. extension
-	DebugMode       bool   `json:"debug_mode"`                          // allow to trace log
-	Timeout         int    `json:"timeout"`                             // set timeout while calling
-	ExtensionExists bool   `json:"extension_exists"`                    // allow validate the extension and channel
+	ChannelProtocol string            `json:"channel_protocol" binding:"required"` // protocols include: SIP, H323, IAX...
+	Telephone       string            `json:"telephone" binding:"required"`        // just customer phone number or no. extension internal from all routes
+	Extension       int               `json:"extension" binding:"required"`        // just current user using no. extension
+	Timeout         int               `json:"timeout"`                             // set timeout while calling
+	Variables       map[string]string `json:"variables,omitempty"`                 // external variables configuration which returned by event
+	DebugMode       bool              `json:"debug_mode"`                          // allow to trace log
+	ExtensionExists bool              `json:"extension_exists"`                    // allow validate the extension and channel
 }
 
 type AMIExtensionStatesConf struct {
@@ -444,9 +445,9 @@ type AMICdr struct {
 	Direction      string    `json:"direction"` // inbound, outbound
 	Desc           string    `json:"desc"`
 	Type           string    `json:"type"`
-	UserExtension  string    `json:"user_extension,omitempty"`
-	PhoneNumber    string    `json:"phone_number,omitempty"`
-	PlaybackUrl    string    `json:"playback_url,omitempty"` // the only cdr has status answered
+	Extension      string    `json:"extension,omitempty"`
+	Number         string    `json:"number,omitempty"`
+	MediaLink      string    `json:"media_link,omitempty"` // the only cdr has status answered
 	symbol         string    // default extension splitter symbol: -, example: SIP/1000-00098fec then split by -
 }
 

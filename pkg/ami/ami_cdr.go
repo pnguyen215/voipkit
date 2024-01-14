@@ -2,7 +2,6 @@ package ami
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -213,13 +212,13 @@ func (r *AMICdr) SetType(value string) *AMICdr {
 	return r
 }
 
-func (r *AMICdr) SetUserExtension(value string) *AMICdr {
-	r.UserExtension = TrimStringSpaces(value)
+func (r *AMICdr) SetExtension(value string) *AMICdr {
+	r.Extension = TrimStringSpaces(value)
 	return r
 }
 
-func (r *AMICdr) SetPhoneNumber(value string) *AMICdr {
-	r.PhoneNumber = TrimStringSpaces(value)
+func (r *AMICdr) SetNumber(value string) *AMICdr {
+	r.Number = TrimStringSpaces(value)
 	return r
 }
 
@@ -228,8 +227,8 @@ func (r *AMICdr) SetSymbol(value string) *AMICdr {
 	return r
 }
 
-func (r *AMICdr) SetPlaybackUrl(value string) *AMICdr {
-	r.PlaybackUrl = value
+func (r *AMICdr) SetMediaLink(value string) *AMICdr {
+	r.MediaLink = value
 	return r
 }
 
@@ -351,8 +350,8 @@ func ParseCdr(e *AMIMessage, d *AMIDictionary) *AMICdr {
 		r.SetDesc(flow)
 		r.SetDirection(config.AmiOutboundDirection)
 		r.SetType(config.AmiTypeOutboundNormalDirection)
-		r.SetUserExtension(strings.Split(r.Channel, r.symbol)[0])
-		r.SetPhoneNumber(phone)
+		r.SetExtension(strings.Split(r.Channel, r.symbol)[0])
+		r.SetNumber(phone)
 	} else {
 		var inCase bool = false
 		// from outbound chan-spy
@@ -362,7 +361,7 @@ func ParseCdr(e *AMIMessage, d *AMIDictionary) *AMICdr {
 			r.SetDesc(flow)
 			r.SetType(config.AmiTypeChanSpyDirection)
 			r.SetDirection(config.AmiOutboundDirection)
-			r.SetUserExtension(strings.Split(r.Channel, r.symbol)[0])
+			r.SetExtension(strings.Split(r.Channel, r.symbol)[0])
 		}
 		// from inbound dial
 		if strings.EqualFold(r.LastApplication, config.AmiLastApplicationDial) {
@@ -371,8 +370,8 @@ func ParseCdr(e *AMIMessage, d *AMIDictionary) *AMICdr {
 			r.SetDesc(flow)
 			r.SetDirection(config.AmiInboundDirection)
 			r.SetType(config.AmiTypeInboundDialDirection)
-			r.SetUserExtension(strings.Split(r.DestinationChannel, r.symbol)[0])
-			r.SetPhoneNumber(r.Source)
+			r.SetExtension(strings.Split(r.DestinationChannel, r.symbol)[0])
+			r.SetNumber(r.Source)
 		}
 		// from inbound queue
 		if strings.EqualFold(r.LastApplication, config.AmiLastApplicationQueue) {
@@ -381,11 +380,11 @@ func ParseCdr(e *AMIMessage, d *AMIDictionary) *AMICdr {
 			r.SetDesc(flow)
 			r.SetDirection(config.AmiInboundDirection)
 			r.SetType(config.AmiTypeInboundQueueDirection)
-			r.SetUserExtension(strings.Split(r.Channel, r.symbol)[0])
-			r.SetPhoneNumber(r.Source)
+			r.SetExtension(strings.Split(r.Channel, r.symbol)[0])
+			r.SetNumber(r.Source)
 		}
 		if !inCase {
-			log.Printf("ParseCdr, CDR got an error exception case:: %v", JsonString(r))
+			D().Error("ParseCdr, CDR got an error exception case:: %v", JsonString(r))
 		}
 	}
 	return r

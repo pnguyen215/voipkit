@@ -76,33 +76,14 @@ func (o *AMIOriginate) SetCallerId(value string) *AMIOriginate {
 	return o
 }
 
-func (o *AMIOriginate) SetVar(value ...string) *AMIOriginate {
-	o.Variable = append(o.Variable, value...)
-	return o
+// "custom_parameter1=value1"
+func (o *AMIOriginate) SetVariable(value string) {
+	o.Variable = value
 }
 
-func (c *AMIOriginate) SetVars(delimiter string, variables ...string) *AMIOriginate {
-	if strings.EqualFold(delimiter, "") {
-		delimiter = ";"
-	}
-	vars := strings.Join(variables, delimiter)
-	c.SetVar(vars)
-	return c
-}
-
-func (c *AMIOriginate) SetVarsMap(delimiter string, variables map[string]interface{}) *AMIOriginate {
-	if len(variables) <= 0 {
-		return c
-	}
-	_vars := make([]string, len(variables))
-
-	for k, v := range variables {
-		str := fmt.Sprintf("%s=%v", k, v)
-		_vars = append(_vars, str)
-	}
-
-	c.SetVars(delimiter, _vars...)
-	return c
+// "custom_parameter1=value1" & "custom_parameter2=value2"
+func (o *AMIOriginate) SetMultipleVariables(variables ...string) {
+	o.Variable = strings.Join(variables, "&")
 }
 
 func (o *AMIOriginate) SetAccount(value string) *AMIOriginate {
@@ -168,11 +149,39 @@ func (o *AMIDialCall) SetExtensionExists(value bool) *AMIDialCall {
 	return o
 }
 
+func (o *AMIDialCall) SetVariables(values map[string]string) *AMIDialCall {
+	o.Variables = values
+	return o
+}
+
 func (o *AMIDialCall) Json() string {
 	return JsonString(o)
 }
 
-// DialCall
+func (o *AMIDialCall) OfVars() []string {
+	var vars []string
+	if len(o.Variables) == 0 {
+		return vars
+	}
+	for k, v := range o.Variables {
+		vars = append(vars, fmt.Sprintf("%v=%v", k, v))
+	}
+	return vars
+}
+
+func GetAmiDialCallSample() *AMIDialCall {
+	a := NewAmiDialCall()
+	a.SetDebugMode(true).SetExtensionExists(true)
+	a.SetChannelProtocol("SIP").
+		SetExtension(1001).
+		SetTelephone("012345678").
+		SetTimeout(30000).
+		SetVariables(map[string]string{
+			"key": "123",
+		})
+	return a
+}
+
 func DialCall(ctx context.Context, s AMISocket, originate AMIOriginate) (AmiReply, error) {
 	return Originate(ctx, s, originate)
 }
@@ -196,6 +205,7 @@ func DialOut(ctx context.Context, s AMISocket, d AMIDialCall) (AmiReply, bool, e
 		SetContext(config.AmiContextOutbound).
 		SetExtension(strings.TrimSpace(d.Telephone)).
 		SetChannel(channel.JoinChannelWith(channel.ChannelProtocol, fmt.Sprintf("%v", d.Extension)))
+	o.SetMultipleVariables(d.OfVars()...)
 
 	if d.ExtensionExists {
 		peer, err := SIPPeerStatusShort(ctx, s, fmt.Sprintf("%v", d.Extension))
@@ -209,7 +219,7 @@ func DialOut(ctx context.Context, s AMISocket, d AMIDialCall) (AmiReply, bool, e
 	}
 	if d.DebugMode {
 		D().Info("DialOut, an outgoing call with originate request body: %v", o.Json())
-		D().Info("DialOut, an outgoing call with original request body (setter): %v", d.Json())
+		D().Info("DialOut, an outgoing call with original request body: %v", d.Json())
 	}
 	response, err := DialCall(ctx, s, *o)
 	return response, IsSuccess(response), err
@@ -234,6 +244,7 @@ func DialIn(ctx context.Context, s AMISocket, d AMIDialCall) (AmiReply, bool, er
 		SetContext(config.AmiContextFromInternal).
 		SetExtension(strings.TrimSpace(d.Telephone)).
 		SetChannel(channel.JoinChannelWith(channel.ChannelProtocol, fmt.Sprintf("%v", d.Extension)))
+	o.SetMultipleVariables(d.OfVars()...)
 
 	if d.ExtensionExists {
 		peer, err := SIPPeerStatusShort(ctx, s, fmt.Sprintf("%v", d.Extension))
@@ -247,7 +258,7 @@ func DialIn(ctx context.Context, s AMISocket, d AMIDialCall) (AmiReply, bool, er
 	}
 	if d.DebugMode {
 		D().Info("DialIn, an internal call with originate request body: %v", o.Json())
-		D().Info("DialIn, an internal call with original request body (setter): %v", d.Json())
+		D().Info("DialIn, an internal call with original request body: %v", d.Json())
 	}
 	response, err := DialCall(ctx, s, *o)
 	return response, IsSuccess(response), err
