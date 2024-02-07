@@ -60,6 +60,18 @@ type AMIEvent struct {
 	PhonePrefix []string `json:"phone_prefix,omitempty"`
 	Region      string   `json:"region,omitempty"`
 	Timezone    string   `json:"timezone"`
+	Attempt     amiRetry `json:"attempt"`
+	Post        *amiPost `json:"post"`
+}
+
+type amiRetry struct {
+	Retry      bool `json:"retry"`
+	MaxRetries int  `json:"max_retries"`
+	DebugMode  bool `json:"debug_mode"`
+}
+
+type amiPost struct {
+	err error
 }
 
 type AMIDictionary struct {

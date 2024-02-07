@@ -39,6 +39,73 @@ func (m *AMIEvent) SetTimezone(value string) *AMIEvent {
 	return m
 }
 
+func (m *AMIEvent) SetAttempt(value amiRetry) *AMIEvent {
+	m.Attempt = value
+	return m
+}
+
+func (m *AMIEvent) SetPost(value *amiPost) *AMIEvent {
+	m.Post = value
+	return m
+}
+
+func (m *AMIEvent) Json() string {
+	return JsonString(m)
+}
+
+func NewAmiRetry() *amiRetry {
+	a := &amiRetry{}
+	return a
+}
+
+func (a *amiRetry) SetRetry(value bool) *amiRetry {
+	a.Retry = value
+	return a
+}
+
+func (a *amiRetry) SetMaxRetries(value int) *amiRetry {
+	a.MaxRetries = value
+	return a
+}
+
+func (a *amiRetry) SetDebugMode(value bool) *amiRetry {
+	a.DebugMode = value
+	return a
+}
+
+func (a *amiRetry) Json() string {
+	return JsonString(a)
+}
+
+func GetAmiRetrySample() *amiRetry {
+	a := NewAmiRetry().
+		SetDebugMode(false).
+		SetMaxRetries(2).
+		SetRetry(true)
+	return a
+}
+
+func NewAmiPost() *amiPost {
+	return &amiPost{}
+}
+
+func (a *amiPost) SetErr(value error) *amiPost {
+	a.err = value
+	return a
+}
+
+func (a *amiPost) Err() error {
+	return a.err
+}
+
+func (a *amiPost) WrapErr() string {
+	return a.err.Error()
+}
+
+func (a *amiPost) IsError() bool {
+	return a.err != nil
+}
+
 func (e *AMIEvent) OpenFullEvents(c *AMI) {
 	all := c.AllEvents()
 	defer c.Close()
