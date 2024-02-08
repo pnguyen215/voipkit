@@ -185,7 +185,7 @@ func (e *AMIEvent) OpenFullEvents(c *AMI) {
 			log.Printf("ami event: '%s' received: %s", message.Field(strings.ToLower(config.AmiEventKey)), message.Json())
 		case err := <-c.Error():
 			c.Close()
-			log.Printf("ami listener has error occurred: %s", err.Error())
+			e.Reconnect(c, err)
 		}
 	}
 }
@@ -201,13 +201,13 @@ func (e *AMIEvent) OpenFullEventsTranslator(c *AMI, d *AMIDictionary) {
 			log.Printf("ami event: '%s' received: %s", message.Field(strings.ToLower(config.AmiEventKey)), message.JsonTranslator(d))
 		case err := <-c.Error():
 			c.Close()
-			log.Printf("ami listener has error occurred: %s", err.Error())
+			e.Reconnect(c, err)
 		}
 	}
 }
 
 // Listen All Events Callback with translator dictionary
-func (e *AMIEvent) OpenFullEventsCallbackTranslator(c *AMI, d *AMIDictionary, callback func(*AMIMessage, string, error)) {
+func (e *AMIEvent) OpenFullEventsCallbackTranslator(c *AMI, d *AMIDictionary, callback func(msg *AMIMessage, json string, e error)) {
 	all := c.AllEvents()
 	defer c.Close()
 	for {
@@ -217,7 +217,7 @@ func (e *AMIEvent) OpenFullEventsCallbackTranslator(c *AMI, d *AMIDictionary, ca
 			callback(message, message.JsonTranslator(d), nil)
 		case err := <-c.Error():
 			c.Close()
-			log.Printf("ami listener has error occurred: %s", err.Error())
+			e.Reconnect(c, err)
 			callback(nil, err.Error(), err)
 		}
 	}
@@ -234,7 +234,7 @@ func (e *AMIEvent) OpenEvent(c *AMI, name string) {
 			log.Printf("ami event: '%s' received: %s", name, message.Json())
 		case err := <-c.Error():
 			c.Close()
-			log.Printf("ami listener event: '%s' has error occurred: %s", name, err.Error())
+			e.Reconnect(c, err)
 		}
 	}
 }
@@ -250,13 +250,13 @@ func (e *AMIEvent) OpenEventTranslator(c *AMI, d *AMIDictionary, name string) {
 			log.Printf("ami event: '%s' received: %s", name, message.JsonTranslator(d))
 		case err := <-c.Error():
 			c.Close()
-			log.Printf("ami listener event: '%s' has error occurred: %s", name, err.Error())
+			e.Reconnect(c, err)
 		}
 	}
 }
 
 // Listen Event Callback key name
-func (e *AMIEvent) OpenEventCallbackTranslator(c *AMI, d *AMIDictionary, name string, callback func(*AMIMessage, string, error)) {
+func (e *AMIEvent) OpenEventCallbackTranslator(c *AMI, d *AMIDictionary, name string, callback func(msg *AMIMessage, json string, e error)) {
 	event := c.OnEvent(name)
 	defer c.Close()
 	for {
@@ -266,7 +266,7 @@ func (e *AMIEvent) OpenEventCallbackTranslator(c *AMI, d *AMIDictionary, name st
 			callback(message, message.JsonTranslator(d), nil)
 		case err := <-c.Error():
 			c.Close()
-			log.Printf("ami listener event: '%s' has error occurred: %s", name, err.Error())
+			e.Reconnect(c, err)
 			callback(nil, err.Error(), err)
 		}
 	}
@@ -283,7 +283,7 @@ func (e *AMIEvent) OpenEvents(c *AMI, keys ...string) {
 			log.Printf("ami event(s): '%s' received: %s", keys, message.Json())
 		case err := <-c.Error():
 			c.Close()
-			log.Printf("ami listener event(s): '%s' has error occurred: %s", keys, err.Error())
+			e.Reconnect(c, err)
 		}
 	}
 }
@@ -299,13 +299,13 @@ func (e *AMIEvent) OpenEventsTranslator(c *AMI, d *AMIDictionary, keys ...string
 			log.Printf("ami event(s): '%s' received: %s", keys, message.JsonTranslator(d))
 		case err := <-c.Error():
 			c.Close()
-			log.Printf("ami listener event(s): '%s' has error occurred: %s", keys, err.Error())
+			e.Reconnect(c, err)
 		}
 	}
 }
 
 // Listen Events Callback by collect of keys string
-func (e *AMIEvent) OpenEventsCallbackTranslator(c *AMI, d *AMIDictionary, callback func(*AMIMessage, string, error), keys ...string) {
+func (e *AMIEvent) OpenEventsCallbackTranslator(c *AMI, d *AMIDictionary, callback func(msg *AMIMessage, json string, e error), keys ...string) {
 	event := c.OnEvents(keys...)
 	defer c.Close()
 	for {
@@ -315,7 +315,7 @@ func (e *AMIEvent) OpenEventsCallbackTranslator(c *AMI, d *AMIDictionary, callba
 			callback(message, message.JsonTranslator(d), nil)
 		case err := <-c.Error():
 			c.Close()
-			log.Printf("ami listener event(s): '%s' has error occurred: %s", keys, err.Error())
+			e.Reconnect(c, err)
 			callback(nil, err.Error(), err)
 		}
 	}
