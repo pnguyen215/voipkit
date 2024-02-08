@@ -38,6 +38,7 @@ type AMI struct {
 	message *AMIMessage
 	socket  *AMISocket
 	c       *AMICore
+	a       *AMIAuth
 }
 
 type AMIPubSubQueue struct {
@@ -62,12 +63,12 @@ type AMIEvent struct {
 	Timezone    string   `json:"timezone"`
 	Attempt     amiRetry `json:"attempt"`
 	Post        *amiPost `json:"post"`
+	wrap        []error
 }
 
 type amiRetry struct {
-	Retry      bool `json:"retry"`
-	MaxRetries int  `json:"max_retries"`
-	DebugMode  bool `json:"debug_mode"`
+	Retry     bool `json:"retry"`
+	DebugMode bool `json:"debug_mode"`
 }
 
 type amiPost struct {

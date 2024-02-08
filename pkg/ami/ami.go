@@ -28,7 +28,7 @@ func (c *AMI) Core() *AMICore {
 	return c.c
 }
 
-func (c *AMI) SetContext(value context.Context) *AMI {
+func (c *AMI) setContext(value context.Context) *AMI {
 	c.ctx = value
 	return c
 }
@@ -37,13 +37,31 @@ func (c *AMI) Context() context.Context {
 	return c.ctx
 }
 
-func (c *AMI) SetSubs(value *AMIPubSubQueue) *AMI {
+func (c *AMI) setSubs(value *AMIPubSubQueue) *AMI {
 	c.subs = value
 	return c
 }
 
 func (c *AMI) Subs() *AMIPubSubQueue {
 	return c.subs
+}
+
+func (c *AMI) setAuth(value *AMIAuth) *AMI {
+	c.a = value
+	return c
+}
+
+func (c *AMI) Auth() *AMIAuth {
+	return c.a
+}
+
+func (c *AMI) Conn() net.Conn {
+	return c.conn
+}
+
+func (c *AMI) setSocket(value *AMISocket) *AMI {
+	c.socket = value
+	return c
 }
 
 // Action sends an AMI action message to the Asterisk server.
@@ -474,8 +492,9 @@ func serve(conn net.Conn, request AmiClient) (*AMI, error) {
 	if err != nil {
 		return ins, err
 	}
+	ins.setAuth(u)
 	ins.SetCore(c)
-	ins.SetContext(ctx)
+	ins.setContext(ctx)
 	ins.release(ctx)
 	return ins, nil
 }

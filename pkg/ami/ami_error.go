@@ -37,5 +37,5 @@ func (e *AmiError) ErrorWrap(message string, args ...interface{}) *AmiError {
 }
 
 func (e *AmiError) Error() string {
-	return fmt.Sprintf("Ami has an error ocurred: %s%s", e.S, e.E)
+	return fmt.Sprintf("AMI_ERR: %s%s", e.S, e.E)
 }

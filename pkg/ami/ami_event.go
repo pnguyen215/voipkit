@@ -11,6 +11,8 @@ func NewEventListener() *AMIEvent {
 	e := &AMIEvent{}
 	e.SnapChargingEvent()
 	e.SetRegion("VN")
+	e.SetWrap(make([]error, 0))
+	e.AppendWrap(ErrorAsteriskNetwork)
 	return e
 }
 
@@ -49,6 +51,28 @@ func (m *AMIEvent) SetPost(value *amiPost) *AMIEvent {
 	return m
 }
 
+func (m *AMIEvent) IsPost() bool {
+	return m.Post != nil
+}
+
+func (m *AMIEvent) SetWrap(values []error) *AMIEvent {
+	m.wrap = values
+	return m
+}
+
+func (m *AMIEvent) AppendWrap(values ...error) *AMIEvent {
+	m.wrap = append(m.wrap, values...)
+	return m
+}
+
+func (m *AMIEvent) IsWrap() bool {
+	return len(m.wrap) > 0 && m.wrap != nil
+}
+
+func (m *AMIEvent) IsRetry() bool {
+	return m.Attempt.Retry
+}
+
 func (m *AMIEvent) Json() string {
 	return JsonString(m)
 }
@@ -60,11 +84,6 @@ func NewAmiRetry() *amiRetry {
 
 func (a *amiRetry) SetRetry(value bool) *amiRetry {
 	a.Retry = value
-	return a
-}
-
-func (a *amiRetry) SetMaxRetries(value int) *amiRetry {
-	a.MaxRetries = value
 	return a
 }
 
@@ -80,7 +99,6 @@ func (a *amiRetry) Json() string {
 func GetAmiRetrySample() *amiRetry {
 	a := NewAmiRetry().
 		SetDebugMode(false).
-		SetMaxRetries(2).
 		SetRetry(true)
 	return a
 }
@@ -104,6 +122,57 @@ func (a *amiPost) WrapErr() string {
 
 func (a *amiPost) IsError() bool {
 	return a.err != nil
+}
+
+func (m *AMIEvent) Reconnect(ins *AMI, err error) {
+	if err == nil {
+		return
+	}
+	if !m.IsWrap() {
+		return
+	}
+	if !m.IsRetry() {
+		return
+	}
+	for _, err := range m.wrap {
+		switch e := err.(type) {
+		case *AmiError:
+			{
+				// reconnecting for network error
+				if ErrorAsteriskNetwork.S == e.S {
+					if m.Attempt.DebugMode {
+						D().Error("Ami wrap error occurred: %v", e.Error())
+					}
+					addr := ins.Conn().RemoteAddr().String()
+					current_socket, err := WithSocket(ins.Context(), addr)
+					if err != nil {
+						if m.Attempt.DebugMode {
+							D().Error("Ami wrap error while reconnecting socket connection: %v", err.Error())
+						}
+						break
+					}
+					ins.setSocket(current_socket)
+					conn, err := WithCore(ins.Context(), ins.Socket(), ins.Auth())
+					if err != nil {
+						if m.Attempt.DebugMode {
+							D().Error("Ami wrap error while creating server reconnection: %v", err.Error())
+						}
+						break
+					}
+					// updating stateless
+					ins.SetCore(conn)
+					ins.release(ins.Context())
+					if m.Attempt.DebugMode {
+						D().Info("Ami socket reconnected successfully")
+					}
+				}
+			}
+		default:
+			D().Error("Ami unknown error occurred: %v", err)
+			m.SetPost(NewAmiPost().SetErr(err))
+			break
+		}
+	}
 }
 
 func (e *AMIEvent) OpenFullEvents(c *AMI) {
