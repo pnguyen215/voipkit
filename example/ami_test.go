@@ -2,7 +2,6 @@ package example
 
 import (
 	"fmt"
-	"log"
 	"testing"
 	"time"
 
@@ -13,8 +12,8 @@ func createConn() (*ami.AMI, error) {
 	c := ami.GetAmiClientSample().
 		SetEnabled(true).
 		SetPort(5038).
-		SetUsername("monast").
-		SetPassword("T5Monast").
+		SetUsername("admin").
+		SetPassword("admin").
 		SetTimeout(5 * time.Second)
 	ami.D().Debug("Asterisk server credentials: %v", c.String())
 	return ami.NewClient(ami.NewTcp(), *c)
@@ -337,5 +336,5 @@ func TestCommand(t *testing.T) {
 		ami.D().Error(err.Error())
 		return
 	}
-	log.Println(fmt.Sprintf("%v", ami.JsonString(response)))
+	fmt.Println(ami.JsonString(response))
 }
