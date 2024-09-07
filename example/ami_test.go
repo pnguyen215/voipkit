@@ -1,6 +1,7 @@
 package example
 
 import (
+	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -12,9 +13,9 @@ func createConn() (*ami.AMI, error) {
 	c := ami.GetAmiClientSample().
 		SetEnabled(true).
 		SetPort(5038).
-		SetUsername("admin").
-		SetPassword("admin").
-		SetTimeout(5 * time.Second)
+		SetUsername("admin01").
+		SetPassword("c71e6acdf318703ec004d9f4d9e17046a673980e").
+		SetTimeout(10 * time.Second)
 	ami.D().Debug("Asterisk server credentials: %v", c.String())
 	return ami.NewClient(ami.NewTcp(), *c)
 }
@@ -23,7 +24,7 @@ func TestAmiClient(t *testing.T) {
 	_, err := createConn()
 	if err != nil {
 		ami.D().Error(err.Error())
-		return
+		t.Fatal("Failed to create AMI connection:", err)
 	}
 	ami.D().Info("Authenticated successfully")
 }
@@ -337,4 +338,29 @@ func TestCommand(t *testing.T) {
 		return
 	}
 	fmt.Println(ami.JsonString(response))
+}
+
+func TestAddSIPExtension(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	c, err := createConn()
+	if err != nil {
+		ami.D().Error(err.Error())
+		t.Fatal("Failed to create AMI connection:", err)
+	}
+	c.Core().AddSession()
+	exten := "9001"
+	context := "from-internal"
+	application := "Dial"
+	appData := "SIP/${EXTEN}"
+	payload := ami.NewAMIPayloadExtension().
+		SetExtension(exten).
+		SetContext(context).
+		SetApplication(application).
+		SetApplicationData(appData)
+	reply, err := c.Core().AddDialplanExtension(ctx, *payload)
+	if err != nil {
+		t.Fatal("Failed to add SIP extension:", err)
+	}
+	fmt.Println("Add SIP Extension Response:", reply)
 }
