@@ -35,13 +35,13 @@ jobs:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           format: markdown
           message: |
-            🚀 CI Commit
-            🔯 `${{ github.actor }}` created commit:
-            - message: `${{ github.event.commits[0].message }}`
-            - hash: `${{ github.sha }}`
-            - repository: `${{ github.repository }}`
-            - head: `${{ github.event.head_commit.message }}`
-            🍀 See changes: `https://github.com/${{ github.repository }}/commit/${{github.sha}}`
+            🚀 *AI Workflow Administrator (AWA)*
+            - *username*: `${{ github.actor }}`
+            - *message*: `${{ github.event.commits[0].message }}`
+            - *hash*: `${{ github.sha }}`
+            - *repository*: `${{ github.repository }}`
+            - *head*: `${{ github.event.head_commit.message }}`
+            🍀 *See changes*: `https://github.com/${{ github.repository }}/commit/${{github.sha}}`
 
   deploy:
     runs-on: ubuntu-latest
@@ -102,10 +102,12 @@ jobs:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           format: markdown
           message: |
-            🚀 New tag created: **${{ env.TAG }}**
-            🔯 `${{ github.actor }}` created tag:
-            - repository: `${{ github.repository }}`
-            - head: `${{ github.event.head_commit.message }}`
-            🍀 See changes: `https://github.com/${{ github.repository }}/releases/tag/${{ env.TAG }}`
-            📜 Changelog:
+            🚀 *AI Workflow Administrator (AWA)*
+            - *latest tag*: *${{ env.TAG }}*
+            - *username*: `${{ github.actor }}`
+            - *hash*: `${{ github.sha }}`
+            - *repository*: `${{ github.repository }}`
+            - *head*: `${{ github.event.head_commit.message }}`
+            🍀 *See changes*: `https://github.com/${{ github.repository }}/releases/tag/${{ env.TAG }}`
+            📜 *Changelog*:
             `${{ steps.changelog.outputs.changelog }}`
